@@ -25,6 +25,7 @@ Require
 ==============
 * iOS 8.0 or later
 * Xcode 8.0 or later
+* Swift3.0+
 
 Install
 ==============
