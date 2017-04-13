@@ -78,7 +78,7 @@ view.whc_RemoveAttrs(.left)
 ```
 To remove multiple constraints associated with view
 ```swift
-view.whc_RemoveAttrs(.left,.leading,.top)
+view.whc_RemoveAttrs(.left, .leading, .top)
 ```
 
 ## Modify the view constraint priority
