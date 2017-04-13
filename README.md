@@ -1,5 +1,5 @@
 # WHC_Layout (Swift)
-<img src="https://github.com/netyouli/WHC_AutoLayoutKit/blob/master/Gif/WHC_AutoLayoutLogo.png" width = "319.5" height = "129"/>
+<div align=center><img src="https://github.com/netyouli/WHC_AutoLayoutKit/blob/master/Gif/WHC_AutoLayoutLogo.png" width = "319.5" height = "129"/></div></br>
 
 ![Build Status](https://api.travis-ci.org/netyouli/WHC_AutoLayoutKit.svg?branch=master)
 [![Pod Version](http://img.shields.io/cocoapods/v/WHC_AutoLayoutKit.svg?style=flat)](http://cocoadocs.org/docsets/WHC_AutoLayoutKit/)
@@ -8,7 +8,7 @@
 -  iOS and Mac OS X platforms currently in use the fastest the simplest development to build the UI layout automatically open source library, strong dynamic layout constraint handling capacity
 -  Service to update constraints, convenient and quick dynamic UI layout.
 
-Objective-c version ☞ [WHC_AutoLayout]()
+**Objective-c version** 👉 [WHC_AutoLayout](https://github.com/netyouli/WHC_AutoLayoutKit)
 
 Introduce
 ==============
@@ -40,7 +40,7 @@ Usage
 view.whc_Left(10)
     .whc_Top(10)
     .whc_Right(10)
-    .whc_HeightAuto();
+    .whc_HeightAuto()
 ```
 
 ## Masonry/SnapKit update the constraint way unfriendly
@@ -56,28 +56,28 @@ view.whc_Left(10)
 ## Update the view constraints
 Modify the view to the left from 20 other views
 ```objective-c
-view.whc_Left(20);
+view.whc_Left(20)
 // or
-view.whc_Left(20, toView: otherView);
+view.whc_Left(20, toView: otherView)
 ```
 
 ## Can be directly modified constraints on the Xib and Storyboard
 If the view of xib leading now amended as left constraints
 ```objective-c
 /// First remove the xib view of leading and then add new constraints
-view.whc_RemoveAttrs(.leading);
-view.whc_Left(10)
+view.whc_RemoveAttrs(.leading)
+    .whc_Left(10)
 ```
 
 ## Remove the constraint
 
 Remove all constraints associated with view left
 ```objective-c
-view.whc_RemoveAttrs(.left);
+view.whc_RemoveAttrs(.left)
 ```
 To remove multiple constraints associated with view
 ```objective-c
-view.whc_RemoveAttrs(.left,.leading,.top);
+view.whc_RemoveAttrs(.left,.leading,.top)
 ```
 
 ## Modify the view constraint priority
@@ -85,7 +85,7 @@ view.whc_RemoveAttrs(.left,.leading,.top);
 Modify the view constraint for low priority right
 ```objective-c
 view.whc_Right(10)
-    .whc_PriorityLow();
+    .whc_PriorityLow()
 ```
 
 ## One line of code calculation cell height
@@ -122,7 +122,7 @@ Add constraint
 stackView.whc_Left(10)
          .whc_Top(10)
          .whc_Right(10)
-         .whc_HeightAuto();
+         .whc_HeightAuto()
 ```
 
 Configuration stackView
@@ -155,7 +155,7 @@ Prompt
 
 - For more UI layout automatically, WHC_StackView components, one line of code to calculate the cell height module, please download this demo to check the specific usage
 
-Part of the WHC_AutoLayoutKit demo show
+Part of the WHC_Layout demo show
 ==============
 
 <img src = "https://github.com/netyouli/WHC_AutoLayoutKit/blob/master/Gif/c.png" width = "375"><img src = "https://github.com/netyouli/WHC_AutoLayoutKit/blob/master/Gif/g.png" width = "375">
