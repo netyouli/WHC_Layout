@@ -153,9 +153,9 @@ stackView.whc_StartLayout()
 ```
 Prompt
 ==============
+For more UI layout automatically, WHC_StackView components, one line of code to calculate the cell height module, please download this demo to check the specific usage
 
-- For more UI layout automatically, WHC_StackView components, one line of code to calculate the cell height module, please download this demo to check the specific usage
-
-## Licenses
+Licenses
+==============
 All source code is licensed under the MIT License.
 
