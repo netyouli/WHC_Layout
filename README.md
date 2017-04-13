@@ -3,6 +3,7 @@
 
 ![Build Status](https://api.travis-ci.org/netyouli/WHC_Layout.svg?branch=master)
 [![Pod Version](http://img.shields.io/cocoapods/v/WHC_Layout.svg?style=flat)](http://cocoadocs.org/docsets/WHC_Layout/)
+[![Platform](https://img.shields.io/cocoapods/p/SnapKit.svg?style=flat)](https://github.com/SnapKit/SnapKit)
 [![Pod License](http://img.shields.io/cocoapods/l/WHC_Layout.svg?style=flat)](https://opensource.org/licenses/MIT)
 
 -  iOS and Mac OS X platforms currently in use the fastest the simplest development to build the UI layout automatically open source library, strong dynamic layout constraint handling capacity
@@ -23,9 +24,9 @@ Introduce
 
 Require
 ==============
-* iOS 8.0 or later
+* iOS 8.0+ / Mac OS X 10.11+ / tvOS 9.0+
 * Xcode 8.0 or later
-* Swift3.0+
+* Swift 3.0+
 
 Install
 ==============
