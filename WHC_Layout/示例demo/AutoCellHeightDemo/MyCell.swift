@@ -7,7 +7,7 @@
 //
 
 /*********************************************************
- *  gitHub:https://github.com/netyouli/WHC_AutoLayoutKit *
+ *  gitHub:https://github.com/netyouli/WHC_Layout *
  *  本人其他优秀开源库：https://github.com/netyouli          *
  *********************************************************/
 

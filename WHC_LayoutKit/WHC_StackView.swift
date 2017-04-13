@@ -1,11 +1,11 @@
 //
 //  WHC_StackView.swift
-//  WHC_AutoLayoutExample
+//  WHC_Layout
 //
 //  Created by WHC on 16/7/7.
 //  Copyright © 2016年 吴海超. All rights reserved.
 
-//  Github <https://github.com/netyouli/WHC_AutoLayoutKit>
+//  Github <https://github.com/netyouli/WHC_Layout>
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
