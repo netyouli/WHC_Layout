@@ -15,7 +15,9 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/netyouli/WHC_Layout.git", :tag => "1.0.0"}
 
   s.source_files  = "WHC_LayoutKit/*.{swift}"
-
+  s.ios.deployment_target = '8.0'
+  s.osx.deployment_target = '10.11'
+  s.tvos.deployment_target = '9.0'
   s.requires_arc = true
 
 
