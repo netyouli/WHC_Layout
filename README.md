@@ -36,14 +36,14 @@ Usage
 ## Automatic height view
 ![](https://github.com/netyouli/WHC_AutoLayoutKit/blob/master/Gif/autoHeight.gif)
 
-```objective-c
+```swift
 view.whc_Left(10)
     .whc_Top(10)
     .whc_Right(10)
     .whc_HeightAuto()
 ```
 
-## Masonry/SnapKit update the constraint way unfriendly
+## SnapKit/Masonry update the constraint way unfriendly
 ```objective-c
 [view mas_updateConstraints:^(MASConstraintMaker *make) {
     make.top.equalTo(superview.mas_top).with.offset(10); 
@@ -55,7 +55,7 @@ view.whc_Left(10)
 
 ## Update the view constraints
 Modify the view to the left from 20 other views
-```objective-c
+```swift
 view.whc_Left(20)
 // or
 view.whc_Left(20, toView: otherView)
@@ -63,7 +63,7 @@ view.whc_Left(20, toView: otherView)
 
 ## Can be directly modified constraints on the Xib and Storyboard
 If the view of xib leading now amended as left constraints
-```objective-c
+```swift
 /// First remove the xib view of leading and then add new constraints
 view.whc_RemoveAttrs(.leading)
     .whc_Left(10)
@@ -72,18 +72,18 @@ view.whc_RemoveAttrs(.leading)
 ## Remove the constraint
 
 Remove all constraints associated with view left
-```objective-c
+```swift
 view.whc_RemoveAttrs(.left)
 ```
 To remove multiple constraints associated with view
-```objective-c
+```swift
 view.whc_RemoveAttrs(.left,.leading,.top)
 ```
 
 ## Modify the view constraint priority
 
 Modify the view constraint for low priority right
-```objective-c
+```swift
 view.whc_Right(10)
     .whc_PriorityLow()
 ```
@@ -112,13 +112,13 @@ Reuse way calculated cell height
 ## Use WHC_StackView
 
 Create WHC_StackView
-```objective-c
+```swift
 let stackView = WHC_StackView()
 self.view.addSubview(stackView)
 ```
 
 Add constraint
-```objective-c
+```swift
 stackView.whc_Left(10)
          .whc_Top(10)
          .whc_Right(10)
@@ -126,24 +126,24 @@ stackView.whc_Left(10)
 ```
 
 Configuration stackView
-#### 1. Set the padding
-```objective-c
+**1.** Set the padding
+```swift
 stackView.whc_Edge = UIEdgeInsetsMake(10, 10, 10, 10) // 内边距
 ```
-#### 2. Set the layout direction
-```objective-c
+**2.** Set the layout direction
+```swift
 stackView.whc_Orientation = .Vertical                  // 自动垂直布局
 ```
-#### 3. Set the child views lateral clearance
-```objective-c
+**3.** Set the child views lateral clearance
+```swift
 stackView.whc_HSpace = 10                             // 子视图横向间隙
 ```
-#### 4. Set the child views vertical clearance
-```objective-c
+**4.** Set the child views vertical clearance
+```swift
 stackView.whc_VSpace = 10                             // 子视图垂直间隙
 ```
-#### 5. Add subview and start the layout 
-```objective-c
+**5.** Add subview and start the layout 
+```swift
 for _ in 0 ... 3 {
     let view = UIView()
     stackView.addSubview(view)        
