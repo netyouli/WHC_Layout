@@ -44,13 +44,13 @@ view.whc_Left(10)
 ```
 
 ## SnapKit/Masonry update the constraint way unfriendly
-```objective-c
-[view mas_updateConstraints:^(MASConstraintMaker *make) {
-    make.top.equalTo(superview.mas_top).with.offset(10); 
-    make.left.equalTo(superview.mas_left).with.offset(20);
-    make.bottom.equalTo(superview.mas_bottom).with.offset(-10);
-    make.right.equalTo(superview.mas_right).with.offset(-10);
-}];
+```swift
+view.snp.updateConstraints {(make) -> Void in
+    make.top.equalTo(superview.snp_top).with.offset(10); 
+    make.left.equalTo(superview.snp_left).with.offset(20);
+    make.bottom.equalTo(superview.snp_bottom).with.offset(-10);
+    make.right.equalTo(superview.snp_right).with.offset(-10);
+}
 ```
 
 ## Update the view constraints
@@ -91,22 +91,22 @@ view.whc_Right(10)
 ## One line of code calculation cell height
 
 No reuse way calculated cell height
-```objective-c
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return [UITableViewCell whc_CellHeightForIndexPath:indexPath tableView:tableView];
+```swift
+func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    return UITableViewCell.whc_CellHeightForIndexPath(indexPath, tableView: tableView)
 }
 ```
 
 Reuse way calculated cell height
-```objective-c
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return [UITableViewCell whc_CellHeightForIndexPath:indexPath 
-                                             tableView:tableView 
-                                            identifier:@"kFirendsCircleCellIdentifier" 
-                                           layoutBlock:^(UITableViewCell *cell) {
-         /// use model layout cell
-         [(FriendsCircleCell *)cell setFriendModel:_friendModelArray[indexPath.row]];
-    }];
+```swift
+func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    return UITableViewCell.whc_CellHeightForIndexPath(indexPath, 
+                                    tableView: tableView, 
+                                    identifier: "kFirendsCircleCellIdentifier",
+                                    layoutBlock: { (cell) in
+        /// use model layout cell
+        cell.setFriendModel(model)
+    })
 }
 ```
 ## Use WHC_StackView
