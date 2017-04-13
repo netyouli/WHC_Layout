@@ -127,6 +127,7 @@ stackView.whc_Left(10)
 ```
 
 Configuration stackView
+
 **1.** Set the padding
 ```swift
 stackView.whc_Edge = UIEdgeInsetsMake(10, 10, 10, 10) // 内边距
