@@ -47,10 +47,10 @@ view.whc_Left(10)
 ## SnapKit/Masonry update the constraint way unfriendly
 ```swift
 view.snp.updateConstraints {(make) -> Void in
-    make.top.equalTo(superview.snp_top).with.offset(10); 
-    make.left.equalTo(superview.snp_left).with.offset(20);
-    make.bottom.equalTo(superview.snp_bottom).with.offset(-10);
-    make.right.equalTo(superview.snp_right).with.offset(-10);
+    make.top.equalTo(superview.snp_top).with.offset(10) 
+    make.left.equalTo(superview.snp_left).with.offset(20)
+    make.bottom.equalTo(superview.snp_bottom).with.offset(-10)
+    make.right.equalTo(superview.snp_right).with.offset(-10)
 }
 ```
 
