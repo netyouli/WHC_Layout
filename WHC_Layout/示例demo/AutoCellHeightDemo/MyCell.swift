@@ -38,9 +38,15 @@ class MyCell: UITableViewCell , UITableViewDataSource, UITableViewDelegate {
         // 添加约束
         title.whc_AutoWidth(left: 10, top: 0, right: 10, height: 30)
         myImage.whc_Left(10).whc_Top(10, toView: title).whc_Size(40, height: 40)
-        content.whc_Top(10, toView: title).whc_Left(10, toView: myImage).whc_Right(10).whc_HeightAuto()
+        content.whc_Top(10, toView: title)
+            .whc_Left(10, toView: myImage)
+            .whc_Right(10)
+            .whc_HeightAuto()
 
-        tableView.whc_Top(10, toView: content).whc_LeftEqual(myImage).whc_Right(10).whc_Height(44)
+        tableView.whc_Top(10, toView: content)
+            .whc_LeftEqual(myImage)
+            .whc_Right(10)
+            .whc_Height(44)
         
         // 设置cell子视图内容与底部间隙
         self.whc_CellBottomOffset = 10
@@ -63,9 +69,11 @@ class MyCell: UITableViewCell , UITableViewDataSource, UITableViewDelegate {
             if !self.contentView.subviews.contains(other) {
                 self.contentView.addSubview(other)
                 // 添加约束
-                other.whc_Top(10, toView: tableView)
-                     .whc_Left(10, toView: myImage)
-                     .whc_Right(10).whc_HeightAuto()
+                other.whc_ResetConstraints()
+                    .whc_Top(10, toView: tableView)
+                    .whc_Left(10, toView: myImage)
+                    .whc_Right(10)
+                    .whc_HeightAuto()
             }
             self.whc_CellBottomView = other
         }else {
