@@ -45,6 +45,12 @@ view.whc_Left(10)
     .whc_HeightAuto()
 ```
 
+## Use lessEqual or greaterEqual (width <= 100 && width >= 20)
+```swift
+view.whc_Width(100).whc_LessOrEqual()
+    .whc_Width(20).whc_GreaterOrEqual()
+```
+
 ## SnapKit/Masonry update the constraint way unfriendly
 ```swift
 view.snp.updateConstraints {(make) -> Void in
@@ -80,6 +86,8 @@ view.whc_RemoveAttrs(.left)
 To remove multiple constraints associated with view
 ```swift
 view.whc_RemoveAttrs(.left, .leading, .top)
+// or 
+view.whc_RemoveTo(linkView, attrs: .left ...)
 ```
 
 ## Modify the view constraint priority
