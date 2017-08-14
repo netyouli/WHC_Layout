@@ -431,13 +431,13 @@ extension WHC_VIEW {
                      .top,
                      .right,
                      .left:
-                    self.whc_CommonRemoveConstraint(attr, mainView: view)
+                    self.whc_CommonRemoveConstraint(attr, mainView: view, to: to)
                 case .width,
                      .height:
                     if removeSelf {
-                        self.whc_CommonRemoveConstraint(attr, mainView: self)
+                        self.whc_CommonRemoveConstraint(attr, mainView: self, to: to)
                     }
-                    self.whc_CommonRemoveConstraint(attr, mainView: view)
+                    self.whc_CommonRemoveConstraint(attr, mainView: view, to: to)
                 default:
                     break;
             }
