@@ -128,10 +128,10 @@ class StackViewVC: UIViewController {
         stackView2.whc_HSpace = 20
         stackView2.whc_VSpace = 10
         stackView2.whc_Edge = UIEdgeInsetsMake(10, 10, 10, 10)
-        let titleArray = [["吴海超", "WHC", "Github", "iOS"],
-                          ["开发者", "whc", "netyouli", "android"],
-                          ["Star", "菜鸟你好", "谢谢", "体验"],
-                          ["还有力作", "关注", "给star", "懂了吗"]]
+        let titleArray = [["  吴海超  ", "  WHC  ", "  Github  ", "  iOS  "],
+                          ["  开发者  ", "  whc  ", "  netyouli  ", "  android  "],
+                          ["  Star  ", "  菜鸟你好  ", "  谢谢  ", "  体验  "],
+                          ["  还有力作  ", "  关注  ", "  给star  ", "  懂了吗  "]]
         for titles in titleArray {
             for title in titles {
                 let button = UIButton()
@@ -143,7 +143,6 @@ class StackViewVC: UIViewController {
                 button.layer.borderColor = UIColor.orange.cgColor
                 button.setTitle(title, for: UIControlState())
                 button.setTitleColor(UIColor.black, for: UIControlState())
-                button.titleEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 10)
             }
         }
         stackView2.whc_StartLayout()

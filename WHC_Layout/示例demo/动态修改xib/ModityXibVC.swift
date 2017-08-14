@@ -29,6 +29,19 @@ class ModityXibVC: UIViewController {
         UIView.animate(withDuration: 1) { 
             self.view.layoutIfNeeded()
         }
+        
+        let txt = UILabel()
+        self.view.addSubview(txt)
+        txt.whc_Left(10)
+        .whc_Width(100)
+        .whc_LessOrEqual()
+        .whc_Width(50)
+        .whc_GreaterOrEqual()
+        .whc_Height(30)
+        .whc_Bottom(50)
+        
+        txt.text = "宽度"
+        txt.backgroundColor = UIColor.gray
     }
 
     override func didReceiveMemoryWarning() {

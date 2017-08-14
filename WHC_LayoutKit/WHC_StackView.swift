@@ -133,135 +133,6 @@ fileprivate struct WHC_StackViewAssociatedObjectKey {
         
     }
     
-    
-    extension UIButton {
-        
-        fileprivate func calcTextSize() -> CGSize {
-            if self.titleLabel?.text != nil {
-                let value = (self.titleLabel?.text!)! as NSString
-                return value.size(attributes: [NSFontAttributeName: (self.titleLabel?.font)!])
-            }
-            return CGSize.zero
-        }
-        
-        @discardableResult
-        public override func whc_WidthAuto() -> UIView {
-            if self.titleEdgeInsets.left + self.titleEdgeInsets.right != 0 {
-                return self.whc_Width(calcTextSize().width + self.titleEdgeInsets.left + self.titleEdgeInsets.right + 0.5)
-            }
-            return super.whc_WidthAuto()
-        }
-        
-        @discardableResult
-        public override func whc_HeightAuto() -> UIView {
-            if self.titleEdgeInsets.top + self.titleEdgeInsets.bottom != 0 {
-                return self.whc_Height(calcTextSize().height + self.titleEdgeInsets.top + self.titleEdgeInsets.bottom  + 0.5)
-            }
-            return super.whc_HeightAuto()
-        }
-        
-    }
-    
-    extension UILabel {
-        
-        /// 文字左边距
-        public var whc_LeftPadding: CGFloat {
-            set {
-                objc_setAssociatedObject(self, &WHC_StackViewAssociatedObjectKey.kLeftPadding, NSNumber(value: Float(newValue) as Float), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            }
-            get {
-                let value = objc_getAssociatedObject(self, &WHC_StackViewAssociatedObjectKey.kLeftPadding)
-                if value != nil {
-                    return CGFloat((value as! NSNumber).floatValue)
-                }
-                return 0
-            }
-        }
-        
-        /// 文字右边距
-        public var whc_RightPadding: CGFloat {
-            set {
-                objc_setAssociatedObject(self, &WHC_StackViewAssociatedObjectKey.kRightPadding, NSNumber(value: Float(newValue) as Float), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            }
-            get {
-                let value = objc_getAssociatedObject(self, &WHC_StackViewAssociatedObjectKey.kRightPadding)
-                if value != nil {
-                    return CGFloat((value as! NSNumber).floatValue)
-                }
-                return 0
-            }
-        }
-        
-        /// 文字顶边距
-        public var whc_TopPadding: CGFloat {
-            set {
-                objc_setAssociatedObject(self, &WHC_StackViewAssociatedObjectKey.kTopPadding, NSNumber(value: Float(newValue) as Float), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            }
-            get {
-                let value = objc_getAssociatedObject(self, &WHC_StackViewAssociatedObjectKey.kTopPadding)
-                if value != nil {
-                    return CGFloat((value as! NSNumber).floatValue)
-                }
-                return 0
-            }
-        }
-        
-        /// 文字底边距
-        public var whc_BottomPadding: CGFloat {
-            set {
-                objc_setAssociatedObject(self, &WHC_StackViewAssociatedObjectKey.kBottomPadding, NSNumber(value: Float(newValue) as Float), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            }
-            
-            get {
-                let value = objc_getAssociatedObject(self, &WHC_StackViewAssociatedObjectKey.kBottomPadding)
-                if value != nil {
-                    return CGFloat((value as! NSNumber).floatValue)
-                }
-                return 0
-            }
-        }
-        
-        open override class func initialize() {
-            struct WHC_LabelLoad {
-                static var token: Int = 0
-            }
-            if WHC_LabelLoad.token == 0 {
-                WHC_LabelLoad.token = 1
-                let drawTextInRect = class_getInstanceMethod(self, #selector(UILabel.drawText(in:)))
-                let myDrawTextInRect = class_getInstanceMethod(self, #selector(UILabel.myDrawTextInRect(_:)))
-                method_exchangeImplementations(drawTextInRect, myDrawTextInRect)
-            }
-        }
-        
-        fileprivate func calcTextSize() -> CGSize {
-            if self.text != nil {
-                let value = self.text! as NSString
-                return value.size(attributes: [NSFontAttributeName: self.font])
-            }
-            return CGSize.zero
-        }
-        
-        @discardableResult
-        public override func whc_WidthAuto() -> UIView {
-            if whc_LeftPadding + whc_RightPadding != 0 {
-                return self.whc_Width(calcTextSize().width + whc_LeftPadding + whc_RightPadding + 1)
-            }
-            return super.whc_WidthAuto()
-        }
-        
-        @discardableResult
-        public override func whc_HeightAuto() -> UIView {
-            if whc_TopPadding + whc_BottomPadding != 0 {
-                return self.whc_Height(calcTextSize().height + whc_TopPadding + whc_BottomPadding + 1)
-            }
-            return super.whc_HeightAuto()
-        }
-        
-        @objc fileprivate func myDrawTextInRect(_ rect: CGRect) {
-            self.myDrawTextInRect(UIEdgeInsetsInsetRect(rect, UIEdgeInsetsMake(whc_TopPadding, whc_LeftPadding, whc_BottomPadding, whc_RightPadding)))
-        }
-    }
-    
 #endif
 
 extension WHC_VIEW {
@@ -750,6 +621,8 @@ public class WHC_StackView: WHC_VIEW {
                 frontRowView = rowView;
             }
             if autoWidth {
+                let subCount = self.subviews.count
+                if subCount == 0 {return}
                 #if os(iOS) || os(tvOS)
                     self.layoutIfNeeded()
                 #else
@@ -757,8 +630,8 @@ public class WHC_StackView: WHC_VIEW {
                 #endif
                 var rowLastColumnViewMaxX: CGFloat = 0
                 var rowLastColumnViewMaxXView: WHC_VIEW!
-                for r in 1 ... rowCount {
-                    let index = r * whc_Column - 1
+                for r in 0 ..< subCount {
+                    let index = r
                     let maxWidthView = subviews[index]
                     #if os(iOS) || os(tvOS)
                         maxWidthView.layoutIfNeeded()
@@ -774,6 +647,8 @@ public class WHC_StackView: WHC_VIEW {
             }
             
             if autoHeight {
+                let subCount = self.subviews.count
+                if subCount == 0 {return}
                 #if os(iOS) || os(tvOS)
                     self.layoutIfNeeded()
                 #else
@@ -781,8 +656,8 @@ public class WHC_StackView: WHC_VIEW {
                 #endif
                 var columnLastRowViewMaxY: CGFloat = 0
                 var columnLastRowViewMaxYView: WHC_VIEW!
-                for r in 1 ... rowCount {
-                    let index = r * whc_Column - 1
+                for r in 0 ..< subCount {
+                    let index = r
                     let maxHeightView = subviews[index]
                     #if os(iOS) || os(tvOS)
                         maxHeightView.layoutIfNeeded()
