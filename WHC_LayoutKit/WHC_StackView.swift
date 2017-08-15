@@ -224,9 +224,15 @@ public class WHC_StackView: WHC_VIEW {
     public var whc_SubViews: [WHC_VIEW] {
         var subViews = [WHC_VIEW]()
         self.subviews.forEach { (v) in
+            #if os(iOS) || os(tvOS)
             if !(v is WHC_Line) && !(v is WHC_VacntView) {
                 subViews.append(v)
             }
+            #else
+            if !(v is WHC_VacntView) {
+                subViews.append(v)
+            }
+            #endif
         }
         return subViews
     }
