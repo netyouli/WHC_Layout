@@ -202,10 +202,7 @@ public class WHC_StackView: WHC_VIEW {
     public lazy var whc_Orientation = WHC_LayoutOrientationOptions.horizontal
     /// StackView子视图个数
     public var whc_SubViewCount: Int {
-        if self.whc_Orientation == .all {
-            return self.subviews.count - lastRowVacantCount
-        }
-        return self.subviews.count
+        return whc_SubViews.count
     }
     
     /// 子元素高宽比
@@ -223,6 +220,16 @@ public class WHC_StackView: WHC_VIEW {
     public lazy var whc_SegmentLinePadding: CGFloat = 0
     /// 设置分割线的颜色
     public lazy var whc_SegmentLineColor = WHC_COLOR(white: 0.9, alpha: 1.0)
+    /// 子视图集合
+    public var whc_SubViews: [WHC_VIEW] {
+        var subViews = [WHC_VIEW]()
+        self.subviews.forEach { (v) in
+            if !(v is WHC_Line) && !(v is WHC_VacntView) {
+                subViews.append(v)
+            }
+        }
+        return subViews
+    }
     
     @discardableResult
     public override func whc_WidthAuto() -> WHC_VIEW {
@@ -267,6 +274,7 @@ public class WHC_StackView: WHC_VIEW {
     public func whc_RemoveAllSubviews() {
         for subView in self.subviews {
             subView.removeFromSuperview()
+            subView.whc_ResetConstraints()
         }
     }
     
@@ -284,6 +292,7 @@ public class WHC_StackView: WHC_VIEW {
         for subView in self.subviews {
             if subView is WHC_StackViewLineView {
                 subView.removeFromSuperview()
+                subView.whc_ResetConstraints()
             }
         }
     }
@@ -479,6 +488,7 @@ public class WHC_StackView: WHC_VIEW {
             for view in self.subviews {
                 if view is WHC_VacntView {
                     view.removeFromSuperview()
+                    view.whc_ResetConstraints()
                 }
             }
             currentSubViews = self.subviews;

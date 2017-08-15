@@ -840,14 +840,16 @@ extension WHC_VIEW {
             if (constraints.secondItem == nil ||
                 constraints.secondAttribute == .notAnAttribute) {
                 self.removeConstraint(constraints)
+                self.setCacheConstraint(nil, attribute: constraints.firstAttribute, relation: constraints.relation)
                 self.addConstraint(tmpConstraints)
-                self.setCacheConstraint(tmpConstraints, attribute: tmpConstraints.firstAttribute)
+                self.setCacheConstraint(tmpConstraints, attribute: tmpConstraints.firstAttribute, relation: tmpConstraints.relation)
                 self.currentConstraint = tmpConstraints
             }else {
                 if self.superview != nil {
                     self.superview?.removeConstraint(constraints)
+                    self.setCacheConstraint(nil, attribute: constraints.firstAttribute, relation: constraints.relation)
                     self.superview?.addConstraint(tmpConstraints)
-                    self.setCacheConstraint(tmpConstraints, attribute: tmpConstraints.firstAttribute)
+                    self.setCacheConstraint(tmpConstraints, attribute: tmpConstraints.firstAttribute, relation: tmpConstraints.relation)
                     self.currentConstraint = tmpConstraints
                 }
             }
@@ -1253,6 +1255,11 @@ extension WHC_VIEW {
             }
         }
         #endif
+        if widthConstraint() != nil ||
+           widthLessConstraint() != nil ||
+           widthGreaterConstraint() != nil {
+           return whc_Width(0).whc_GreaterOrEqual()
+        }
         var toAttribute = NSLayoutAttribute.notAnAttribute
         return self.constraintWithItem(self, attribute: .width, related: .greaterThanOrEqual, toItem: nil, toAttribute: &toAttribute, multiplier: 1, constant: 0)
     }
@@ -1310,6 +1317,11 @@ extension WHC_VIEW {
             }
         }
         #endif
+        if heightConstraint() != nil ||
+           heightLessConstraint() != nil ||
+           heightGreaterConstraint() != nil {
+           return whc_Height(0).whc_GreaterOrEqual()
+        }
         var toAttribute = NSLayoutAttribute.notAnAttribute
         return self.constraintWithItem(self, attribute: .height, related: .greaterThanOrEqual, toItem: nil, toAttribute: &toAttribute, multiplier: 1, constant: 0)
     }
@@ -2457,61 +2469,6 @@ extension WHC_VIEW {
                 self.setTrailingConstraint(nil, relation: related)
             }
         case .width:
-            func removeOtherWidthCache(_ relation: NSLayoutRelation) {
-                switch relation {
-                case .equal:
-                    if let cacheWidth = widthLessConstraint() {
-                        if cacheWidth.secondAttribute != .notAnAttribute {
-                            superView!.removeConstraint(cacheWidth)
-                        }else {
-                            self.removeConstraint(cacheWidth)
-                        }
-                        self.setWidthLessConstraint(nil)
-                    }
-                    if let cacheWidth = widthGreaterConstraint() {
-                        if cacheWidth.secondAttribute != .notAnAttribute {
-                            superView!.removeConstraint(cacheWidth)
-                        }else {
-                            self.removeConstraint(cacheWidth)
-                        }
-                        self.setWidthGreaterConstraint(nil)
-                    }
-                case .greaterThanOrEqual:
-                    if let cacheWidth = widthLessConstraint() {
-                        if cacheWidth.secondAttribute != .notAnAttribute {
-                            superView!.removeConstraint(cacheWidth)
-                        }else {
-                            self.removeConstraint(cacheWidth)
-                        }
-                        self.setWidthLessConstraint(nil)
-                    }
-                    if let cacheWidth = widthConstraint() {
-                        if cacheWidth.secondAttribute != .notAnAttribute {
-                            superView!.removeConstraint(cacheWidth)
-                        }else {
-                            self.removeConstraint(cacheWidth)
-                        }
-                        self.setWidthConstraint(nil)
-                    }
-                case .lessThanOrEqual:
-                    if let cacheWidth = widthConstraint() {
-                        if cacheWidth.secondAttribute != .notAnAttribute {
-                            superView!.removeConstraint(cacheWidth)
-                        }else {
-                            self.removeConstraint(cacheWidth)
-                        }
-                        self.setWidthConstraint(nil)
-                    }
-                    if let cacheWidth = widthGreaterConstraint() {
-                        if cacheWidth.secondAttribute != .notAnAttribute {
-                            superView!.removeConstraint(cacheWidth)
-                        }else {
-                            self.removeConstraint(cacheWidth)
-                        }
-                        self.setWidthGreaterConstraint(nil)
-                    }
-                }
-            }
             let width = self.widthConstraint(related)
             if width != nil {
                 if (width!.firstAttribute == attribute &&
@@ -2521,7 +2478,6 @@ extension WHC_VIEW {
                     width!.relation == related &&
                     width!.multiplier == multiplier) {
                     width!.constant = constant
-                    removeOtherWidthCache(related)
                     return self
                 }
                 if width!.secondAttribute != .notAnAttribute {
@@ -2531,63 +2487,7 @@ extension WHC_VIEW {
                 }
                 self.setWidthConstraint(nil, relation: related)
             }
-            removeOtherWidthCache(related)
         case .height:
-            func removeOtherHeightCache(_ relation: NSLayoutRelation) {
-                switch relation {
-                case .equal:
-                    if let cacheHeight = heightLessConstraint() {
-                        if cacheHeight.secondAttribute != .notAnAttribute {
-                            superView!.removeConstraint(cacheHeight)
-                        }else {
-                            self.removeConstraint(cacheHeight)
-                        }
-                        self.setHeightLessConstraint(nil)
-                    }
-                    if let cacheHeight = heightGreaterConstraint() {
-                        if cacheHeight.secondAttribute != .notAnAttribute {
-                            superView!.removeConstraint(cacheHeight)
-                        }else {
-                            self.removeConstraint(cacheHeight)
-                        }
-                        self.setHeightGreaterConstraint(nil)
-                    }
-                case .greaterThanOrEqual:
-                    if let cacheHeight = heightLessConstraint() {
-                        if cacheHeight.secondAttribute != .notAnAttribute {
-                            superView!.removeConstraint(cacheHeight)
-                        }else {
-                            self.removeConstraint(cacheHeight)
-                        }
-                        self.setHeightLessConstraint(nil)
-                    }
-                    if let cacheHeight = heightConstraint() {
-                        if cacheHeight.secondAttribute != .notAnAttribute {
-                            superView!.removeConstraint(cacheHeight)
-                        }else {
-                            self.removeConstraint(cacheHeight)
-                        }
-                        self.setHeightConstraint(nil)
-                    }
-                case .lessThanOrEqual:
-                    if let cacheHeight = heightConstraint() {
-                        if cacheHeight.secondAttribute != .notAnAttribute {
-                            superView!.removeConstraint(cacheHeight)
-                        }else {
-                            self.removeConstraint(cacheHeight)
-                        }
-                        self.setHeightConstraint(nil)
-                    }
-                    if let cacheHeight = heightGreaterConstraint() {
-                        if cacheHeight.secondAttribute != .notAnAttribute {
-                            superView!.removeConstraint(cacheHeight)
-                        }else {
-                            self.removeConstraint(cacheHeight)
-                        }
-                        self.setHeightGreaterConstraint(nil)
-                    }
-                }
-            }
             let height = self.heightConstraint(related)
             if height != nil {
                 if (height!.firstAttribute == attribute &&
@@ -2597,7 +2497,6 @@ extension WHC_VIEW {
                     height!.relation == related &&
                     height!.multiplier == multiplier) {
                     height!.constant = constant
-                    removeOtherHeightCache(related)
                     return self
                 }
                 if height!.secondAttribute != .notAnAttribute {
@@ -2606,7 +2505,6 @@ extension WHC_VIEW {
                     self.removeConstraint(height!)
                 }
                 self.setHeightConstraint(nil, relation: related)
-                removeOtherHeightCache(related)
             }
         case .centerX:
             let centerX = self.centerXConstraint(related)
@@ -2638,7 +2536,6 @@ extension WHC_VIEW {
                 superView!.removeConstraint(centerY!)
                 self.setCenterYConstraint(nil, relation: related)
             }
-            
         case .lastBaseline:
             var bottom = self.bottomConstraint()
             if bottom != nil {
@@ -2710,38 +2607,38 @@ extension WHC_VIEW {
                                             attribute: toAttribute,
                                             multiplier: multiplier,
                                             constant: constant)
-        setCacheConstraint(constraint, attribute: attribute)
+        setCacheConstraint(constraint, attribute: attribute, relation: related)
         superView!.addConstraint(constraint)
         self.currentConstraint = constraint
         return self
     }
     
-    private func setCacheConstraint(_ constraint: NSLayoutConstraint, attribute: NSLayoutAttribute) {
+    private func setCacheConstraint(_ constraint: NSLayoutConstraint!, attribute: NSLayoutAttribute, relation: NSLayoutRelation) {
         switch (attribute) {
         case .firstBaseline:
-            self.setFirstBaselineConstraint(constraint, relation: constraint.relation)
+            self.setFirstBaselineConstraint(constraint, relation: relation)
         case .lastBaseline:
-            self.setLastBaselineConstraint(constraint, relation: constraint.relation)
+            self.setLastBaselineConstraint(constraint, relation: relation)
         case .centerY:
-            self.setCenterYConstraint(constraint, relation: constraint.relation)
+            self.setCenterYConstraint(constraint, relation: relation)
         case .centerX:
-            self.setCenterXConstraint(constraint, relation: constraint.relation)
+            self.setCenterXConstraint(constraint, relation: relation)
         case .trailing:
-            self.setTrailingConstraint(constraint, relation: constraint.relation)
+            self.setTrailingConstraint(constraint, relation: relation)
         case .leading:
-            self.setLeadingConstraint(constraint, relation: constraint.relation)
+            self.setLeadingConstraint(constraint, relation: relation)
         case .bottom:
-            self.setBottomConstraint(constraint, relation: constraint.relation)
+            self.setBottomConstraint(constraint, relation: relation)
         case .top:
-            self.setTopConstraint(constraint, relation: constraint.relation)
+            self.setTopConstraint(constraint, relation: relation)
         case .right:
-            self.setRightConstraint(constraint, relation: constraint.relation)
+            self.setRightConstraint(constraint, relation: relation)
         case .left:
-            self.setLeftConstraint(constraint, relation: constraint.relation)
+            self.setLeftConstraint(constraint, relation: relation)
         case .width:
-            self.setWidthConstraint(constraint, relation: constraint.relation)
+            self.setWidthConstraint(constraint, relation: relation)
         case .height:
-            self.setHeightConstraint(constraint, relation: constraint.relation)
+            self.setHeightConstraint(constraint, relation: relation)
         default:
             break;
         }

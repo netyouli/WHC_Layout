@@ -40,7 +40,7 @@ class ModityXibVC: UIViewController {
         .whc_Height(30)
         .whc_Bottom(50)
         
-        txt.text = "宽度"
+        txt.text = "whc_LessOrEqual"
         txt.backgroundColor = UIColor.gray
     }
 
