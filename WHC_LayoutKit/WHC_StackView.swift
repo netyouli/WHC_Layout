@@ -296,9 +296,9 @@ public class WHC_StackView: WHC_VIEW {
     
     fileprivate func removeAllSegmentLine() {
         for subView in self.subviews {
+            subView.whc_ResetConstraints()
             if subView is WHC_StackViewLineView {
                 subView.removeFromSuperview()
-                subView.whc_ResetConstraints()
             }
         }
     }
@@ -308,6 +308,7 @@ public class WHC_StackView: WHC_VIEW {
         var currentSubViews = self.subviews
         var count = currentSubViews.count
         if count == 0 {return}
+        removeAllSegmentLine()
         var toView: WHC_VIEW!
         switch whc_Orientation {
         case .horizontal: /// 横向布局
@@ -492,9 +493,9 @@ public class WHC_StackView: WHC_VIEW {
             }
         case .all: // 横向垂直很混布局
             for view in self.subviews {
+                view.whc_ResetConstraints()
                 if view is WHC_VacntView {
                     view.removeFromSuperview()
-                    view.whc_ResetConstraints()
                 }
             }
             currentSubViews = self.subviews;

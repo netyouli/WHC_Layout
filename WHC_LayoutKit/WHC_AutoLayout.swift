@@ -1256,8 +1256,7 @@ extension WHC_VIEW {
         }
         #endif
         if widthConstraint() != nil ||
-           widthLessConstraint() != nil ||
-           widthGreaterConstraint() != nil {
+           widthLessConstraint() != nil {
            return whc_Width(0).whc_GreaterOrEqual()
         }
         var toAttribute = NSLayoutAttribute.notAnAttribute
@@ -1318,8 +1317,7 @@ extension WHC_VIEW {
         }
         #endif
         if heightConstraint() != nil ||
-           heightLessConstraint() != nil ||
-           heightGreaterConstraint() != nil {
+           heightLessConstraint() != nil {
            return whc_Height(0).whc_GreaterOrEqual()
         }
         var toAttribute = NSLayoutAttribute.notAnAttribute
