@@ -305,10 +305,10 @@ public class WHC_StackView: WHC_VIEW {
     
     /// 布局引擎
     fileprivate func runStackLayoutEngine() {
+        removeAllSegmentLine()
         var currentSubViews = self.subviews
         var count = currentSubViews.count
         if count == 0 {return}
-        removeAllSegmentLine()
         var toView: WHC_VIEW!
         switch whc_Orientation {
         case .horizontal: /// 横向布局
