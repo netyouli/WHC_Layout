@@ -15,6 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        UITableView.whc_InitConfig()
         // Override point for customization after application launch.
         let rootnv = UINavigationController(rootViewController: ViewController())
         window = UIWindow(frame: UIScreen.main.bounds)

@@ -810,9 +810,9 @@ extension WHC_VIEW {
         let constraints = self.currentConstraint
         if constraints != nil && constraints!.priority != priority {
             #if os(iOS) || os(tvOS)
-            let priorityRequired = UILayoutPriorityRequired
+                let priorityRequired = UILayoutPriority.required
             #else
-            let priorityRequired = NSLayoutPriorityRequired
+            let priorityRequired = NSLayoutPriority.required
             #endif
             if constraints!.priority == priorityRequired {
                 if constraints!.secondItem == nil ||
@@ -836,7 +836,7 @@ extension WHC_VIEW {
     
     private func whc_HandleConstraintsRelation(_ relation: NSLayoutRelation) -> WHC_VIEW {
         if let constraints = self.currentConstraint, constraints.relation != relation {
-            let tmpConstraints = NSLayoutConstraint(item: constraints.firstItem, attribute: constraints.firstAttribute, relatedBy: relation, toItem: constraints.secondItem, attribute: constraints.secondAttribute, multiplier: constraints.multiplier, constant: constraints.constant)
+            let tmpConstraints = NSLayoutConstraint(item: constraints.firstItem ?? 0, attribute: constraints.firstAttribute, relatedBy: relation, toItem: constraints.secondItem, attribute: constraints.secondAttribute, multiplier: constraints.multiplier, constant: constraints.constant)
             if (constraints.secondItem == nil ||
                 constraints.secondAttribute == .notAnAttribute) {
                 self.removeConstraint(constraints)
@@ -880,9 +880,9 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_PriorityLow() -> WHC_VIEW {
         #if os(iOS) || os(tvOS)
-        return whc_HandleConstraints(priority: UILayoutPriorityDefaultLow)
+            return whc_HandleConstraints(priority: .defaultLow)
         #else
-        return whc_HandleConstraints(priority: NSLayoutPriorityDefaultLow)
+        return whc_HandleConstraints(priority: .defaultLow)
         #endif
     }
     
@@ -892,9 +892,9 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_PriorityHigh() -> WHC_VIEW {
         #if os(iOS) || os(tvOS)
-        return whc_HandleConstraints(priority: UILayoutPriorityDefaultHigh)
+        return whc_HandleConstraints(priority: .defaultHigh)
         #else
-        return whc_HandleConstraints(priority: NSLayoutPriorityDefaultHigh)
+        return whc_HandleConstraints(priority: .defaultHigh)
         #endif
     }
     
@@ -905,9 +905,9 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_PriorityRequired() -> WHC_VIEW {
         #if os(iOS) || os(tvOS)
-        return whc_HandleConstraints(priority: UILayoutPriorityRequired)
+        return whc_HandleConstraints(priority: .required)
         #else
-        return whc_HandleConstraints(priority: NSLayoutPriorityRequired)
+        return whc_HandleConstraints(priority: .required)
         #endif
     }
     
@@ -917,9 +917,9 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_PriorityFitting() -> WHC_VIEW {
         #if os(iOS) || os(tvOS)
-        return whc_HandleConstraints(priority: UILayoutPriorityFittingSizeLevel)
+        return whc_HandleConstraints(priority: .fittingSizeLevel)
         #else
-        return whc_HandleConstraints(priority: NSLayoutPriorityFittingSizeCompression)
+        return whc_HandleConstraints(priority: .fittingSizeCompression)
         #endif
     }
 
@@ -929,7 +929,7 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_Priority(_ value: CGFloat) -> WHC_VIEW {
-        return whc_HandleConstraints(priority: WHC_LayoutPriority(value))
+        return whc_HandleConstraints(priority: WHC_LayoutPriority(Float(value)))
     }
     
     //MARK: -自动布局公开接口api-

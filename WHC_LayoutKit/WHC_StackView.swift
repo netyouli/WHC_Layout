@@ -46,95 +46,6 @@ fileprivate struct WHC_StackViewAssociatedObjectKey {
     static var kFieldBottomPadding     = "fieldBottomPadding"
 }
 
-#if os(iOS) || os(tvOS)
-    
-    extension UITextField {
-        open override class func initialize() {
-            struct WHC_TextFieldLoad {
-                static var token: Int = 0
-            }
-            if WHC_TextFieldLoad.token == 0 {
-                WHC_TextFieldLoad.token = 1
-                let editingRectForBounds = class_getInstanceMethod(self, #selector(UITextField.editingRect(forBounds:)))
-                let myEditingRectForBounds = class_getInstanceMethod(self, #selector(UITextField.myEditingRectForBounds(_:)))
-                method_exchangeImplementations(editingRectForBounds, myEditingRectForBounds)
-                
-                let textRectForBounds =  class_getInstanceMethod(self, #selector(UITextField.textRect(forBounds:)))
-                let myTextRectForBounds =  class_getInstanceMethod(self, #selector(UITextField.myTextRectForBounds(_:)))
-                method_exchangeImplementations(textRectForBounds, myTextRectForBounds)
-            }
-        }
-        
-        /// 文字左边距
-        public var whc_LeftPadding: CGFloat {
-            set {
-                objc_setAssociatedObject(self, &WHC_StackViewAssociatedObjectKey.kFieldLeftPadding, NSNumber(value: Float(newValue) as Float), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            }
-            get {
-                let value = objc_getAssociatedObject(self, &WHC_StackViewAssociatedObjectKey.kFieldLeftPadding)
-                if value != nil {
-                    return CGFloat((value as! NSNumber).floatValue)
-                }
-                return 0
-            }
-        }
-        
-        /// 文字右边距
-        public var whc_RightPadding: CGFloat {
-            set {
-                objc_setAssociatedObject(self, &WHC_StackViewAssociatedObjectKey.kFieldRightPadding, NSNumber(value: Float(newValue) as Float), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            }
-            get {
-                let value = objc_getAssociatedObject(self, &WHC_StackViewAssociatedObjectKey.kFieldRightPadding)
-                if value != nil {
-                    return CGFloat((value as! NSNumber).floatValue)
-                }
-                return 0
-            }
-        }
-        
-        /// 文字顶边距
-        public var whc_TopPadding: CGFloat {
-            set {
-                objc_setAssociatedObject(self, &WHC_StackViewAssociatedObjectKey.kFieldTopPadding, NSNumber(value: Float(newValue) as Float), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            }
-            get {
-                let value = objc_getAssociatedObject(self, &WHC_StackViewAssociatedObjectKey.kFieldTopPadding)
-                if value != nil {
-                    return CGFloat((value as! NSNumber).floatValue)
-                }
-                return 0
-            }
-        }
-        
-        /// 文字底边距
-        public var whc_BottomPadding: CGFloat {
-            set {
-                objc_setAssociatedObject(self, &WHC_StackViewAssociatedObjectKey.kFieldBottomPadding, NSNumber(value: Float(newValue) as Float), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            }
-            
-            get {
-                let value = objc_getAssociatedObject(self, &WHC_StackViewAssociatedObjectKey.kFieldBottomPadding)
-                if value != nil {
-                    return CGFloat((value as! NSNumber).floatValue)
-                }
-                return 0
-            }
-        }
-        
-        @objc fileprivate func myEditingRectForBounds(_ bounds: CGRect) -> CGRect {
-            
-            return self.myEditingRectForBounds(CGRect(x: self.whc_LeftPadding, y: self.whc_TopPadding, width: bounds.width - self.whc_LeftPadding - self.whc_RightPadding, height: bounds.height - whc_TopPadding - whc_BottomPadding))
-        }
-        
-        @objc fileprivate func myTextRectForBounds(_ bounds: CGRect) -> CGRect {
-            return self.myTextRectForBounds(CGRect(x: self.whc_LeftPadding, y: self.whc_TopPadding, width: bounds.width - self.whc_LeftPadding - self.whc_RightPadding, height: bounds.height - whc_TopPadding - whc_BottomPadding))
-        }
-        
-    }
-    
-#endif
-
 extension WHC_VIEW {
     /// 宽度权重
     public var whc_WidthWeight: CGFloat {
@@ -238,15 +149,15 @@ public class WHC_StackView: WHC_VIEW {
     }
     
     @discardableResult
-    public override func whc_WidthAuto() -> WHC_VIEW {
+    public func whc_AutoWidth() -> WHC_VIEW {
         autoWidth = true
-        return super.whc_WidthAuto()
+        return self.whc_WidthAuto()
     }
     
     @discardableResult
-    public override func whc_HeightAuto() -> WHC_VIEW {
+    public func whc_AutoHeight() -> WHC_VIEW {
         autoHeight = true
-        return super.whc_HeightAuto()
+        return self.whc_HeightAuto()
     }
     
     public override func awakeFromNib() {

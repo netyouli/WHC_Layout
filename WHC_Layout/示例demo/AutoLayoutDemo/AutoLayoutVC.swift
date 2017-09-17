@@ -79,7 +79,7 @@ class AutoLayoutVC: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    func clickStartAnimation(_ sender: UIButton) -> Void {
+    @objc func clickStartAnimation(_ sender: UIButton) -> Void {
         // 动态更新约束
         leftTopLable.whc_RemoveAttrs(.left)     /// 移除旧约束
             .whc_Trailing(0)
