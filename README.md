@@ -26,7 +26,13 @@ Require
 ==============
 * iOS 8.0+ / Mac OS X 10.11+ / tvOS 9.0+
 * Xcode 8.0 or later
-* Swift 3.0+
+* Swift 4.0
+
+- If you want to use swift3.2, please pod WHC_Layout '~> 1.0.9'
+
+Note
+==============
+- When the view call removeFromSuperview()  the view must call whc_ResetConstraints() to clear the cache constraint
 
 Install
 ==============
