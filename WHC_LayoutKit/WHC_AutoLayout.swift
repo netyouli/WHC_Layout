@@ -1252,11 +1252,12 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_WidthAuto() -> WHC_VIEW {
         #if os(iOS) || os(tvOS)
-            if self is UILabel {
-                let selfLabel = self as! UILabel
-                if selfLabel.numberOfLines == 0 {
-                    selfLabel.numberOfLines = 1
+            if let label = self as? UILabel {
+                if label.numberOfLines == 0 {
+                    label.numberOfLines = 1
                 }
+            }else if let stackView = self as? WHC_StackView {
+                stackView.whc_AutoWidth = true
             }
         #endif
         if widthConstraint() != nil ||
@@ -1313,11 +1314,12 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_HeightAuto() -> WHC_VIEW {
         #if os(iOS) || os(tvOS)
-            if self is UILabel {
-                let selfLabel = self as! UILabel
-                if selfLabel.numberOfLines != 0 {
-                    selfLabel.numberOfLines = 0
+            if let label = self as? UILabel {
+                if label.numberOfLines != 0 {
+                    label.numberOfLines = 0
                 }
+            }else if let stackView = self as? WHC_StackView {
+                stackView.whc_AutoHeight = true
             }
         #endif
         if heightConstraint() != nil ||

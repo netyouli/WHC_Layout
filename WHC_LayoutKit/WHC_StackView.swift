@@ -93,9 +93,9 @@ public class WHC_StackView: WHC_VIEW {
     
     fileprivate lazy var lastRowVacantCount = 0
     /// 自动高度
-    public lazy var autoHeight = false
+    public lazy var whc_AutoHeight = false
     /// 自动宽度
-    public lazy var autoWidth = false
+    public lazy var whc_AutoWidth = false
     
     /// StackView列数
     public lazy var whc_Column = 1
@@ -146,18 +146,6 @@ public class WHC_StackView: WHC_VIEW {
             #endif
         }
         return subViews
-    }
-    
-    @discardableResult
-    public func whc_AutoWidth() -> WHC_VIEW {
-        autoWidth = true
-        return self.whc_WidthAuto()
-    }
-    
-    @discardableResult
-    public func whc_AutoHeight() -> WHC_VIEW {
-        autoHeight = true
-        return self.whc_HeightAuto()
     }
     
     public override func awakeFromNib() {
@@ -249,7 +237,7 @@ public class WHC_StackView: WHC_VIEW {
                         if whc_ElementWidthHeightRatio > 0 {
                             view.whc_WidthHeightRatio(whc_ElementWidthHeightRatio)
                         }else {
-                            if autoWidth {
+                            if whc_AutoWidth {
                                 view.whc_WidthAuto()
                             }else {
                                 view.whc_WidthEqual(nextView, ratio: view.whc_WidthWeight / nextView.whc_WidthWeight)
@@ -262,7 +250,7 @@ public class WHC_StackView: WHC_VIEW {
                         if whc_ElementHeightWidthRatio > 0 {
                             view.whc_HeightWidthRatio(whc_ElementHeightWidthRatio)
                         }else {
-                            if autoHeight {
+                            if whc_AutoHeight {
                                 view.whc_HeightAuto()
                             }else {
                                 view.whc_Bottom(whc_Edge.bottom)
@@ -272,17 +260,17 @@ public class WHC_StackView: WHC_VIEW {
                 }else {
                     if whc_SubViewWidth > 0 {
                         view.whc_Width(whc_SubViewWidth)
-                        if autoWidth {
+                        if whc_AutoWidth {
                             view.whc_Right(whc_Edge.right)
                         }
                     }else {
                         if whc_ElementWidthHeightRatio > 0 {
                             view.whc_WidthHeightRatio(whc_ElementWidthHeightRatio)
-                            if autoWidth {
+                            if whc_AutoWidth {
                                 view.whc_Right(whc_Edge.right)
                             }
                         }else {
-                            if autoWidth {
+                            if whc_AutoWidth {
                                 view.whc_WidthAuto()
                             }
                             view.whc_Right(whc_Edge.right)
@@ -290,17 +278,17 @@ public class WHC_StackView: WHC_VIEW {
                     }
                     if whc_SubViewHeight > 0 {
                         view.whc_Height(whc_SubViewHeight)
-                        if autoHeight {
+                        if whc_AutoHeight {
                             view.whc_Bottom(whc_Edge.bottom)
                         }
                     }else {
                         if whc_ElementHeightWidthRatio > 0 {
                             view.whc_HeightWidthRatio(whc_ElementHeightWidthRatio)
-                            if autoHeight {
+                            if whc_AutoHeight {
                                 view.whc_Bottom(whc_Edge.bottom)
                             }
                         }else {
-                            if autoHeight {
+                            if whc_AutoHeight {
                                 view.whc_HeightAuto()
                             }
                             view.whc_Bottom(whc_Edge.bottom)
@@ -339,7 +327,7 @@ public class WHC_StackView: WHC_VIEW {
                         if whc_ElementWidthHeightRatio > 0 {
                             view.whc_WidthHeightRatio(whc_ElementWidthHeightRatio)
                         }else {
-                            if autoWidth {
+                            if whc_AutoWidth {
                                 view.whc_WidthAuto()
                             }else {
                                 view.whc_Right(whc_Edge.right)
@@ -352,7 +340,7 @@ public class WHC_StackView: WHC_VIEW {
                         if whc_ElementHeightWidthRatio > 0 {
                             view.whc_HeightWidthRatio(whc_ElementHeightWidthRatio)
                         }else {
-                            if autoHeight {
+                            if whc_AutoHeight {
                                 view.whc_HeightAuto()
                             }else {
                                 view.whc_HeightEqual(nextView, ratio: view.whc_HeightWeight / nextView.whc_HeightWeight)
@@ -362,17 +350,17 @@ public class WHC_StackView: WHC_VIEW {
                 }else {
                     if whc_SubViewWidth > 0 {
                         view.whc_Width(whc_SubViewWidth)
-                        if autoWidth {
+                        if whc_AutoWidth {
                             view.whc_Right(whc_Edge.right)
                         }
                     }else {
                         if whc_ElementWidthHeightRatio > 0 {
                             view.whc_WidthHeightRatio(whc_ElementWidthHeightRatio)
-                            if autoWidth {
+                            if whc_AutoWidth {
                                 view.whc_Right(whc_Edge.right)
                             }
                         }else {
-                            if autoWidth {
+                            if whc_AutoWidth {
                                 view.whc_WidthAuto()
                             }
                             view.whc_Right(whc_Edge.right)
@@ -380,17 +368,17 @@ public class WHC_StackView: WHC_VIEW {
                     }
                     if whc_SubViewHeight > 0 {
                         view.whc_Height(whc_SubViewHeight)
-                        if autoHeight {
+                        if whc_AutoHeight {
                             view.whc_Bottom(whc_Edge.bottom)
                         }
                     }else {
                         if whc_ElementHeightWidthRatio > 0 {
                             view.whc_HeightWidthRatio(whc_ElementHeightWidthRatio)
-                            if autoHeight {
+                            if whc_AutoHeight {
                                 view.whc_Bottom(whc_Edge.bottom)
                             }
                         }else {
-                            if autoHeight {
+                            if whc_AutoHeight {
                                 view.whc_HeightAuto()
                             }
                             view.whc_Bottom(whc_Edge.bottom)
@@ -488,7 +476,7 @@ public class WHC_StackView: WHC_VIEW {
                             if whc_ElementHeightWidthRatio > 0 {
                                 view.whc_HeightWidthRatio(whc_ElementHeightWidthRatio)
                             }else {
-                                if autoHeight {
+                                if whc_AutoHeight {
                                     view.whc_HeightAuto()
                                 }else {
                                     view.whc_HeightEqual(nextRowView ,
@@ -503,7 +491,7 @@ public class WHC_StackView: WHC_VIEW {
                             if whc_ElementHeightWidthRatio > 0 {
                                 view.whc_HeightWidthRatio(whc_ElementHeightWidthRatio)
                             }else {
-                                if autoHeight {
+                                if whc_AutoHeight {
                                     view.whc_HeightAuto()
                                 }else {
                                     view.whc_Bottom(whc_Edge.bottom)
@@ -518,7 +506,7 @@ public class WHC_StackView: WHC_VIEW {
                             if whc_ElementWidthHeightRatio > 0 {
                                 view.whc_WidthHeightRatio(whc_ElementWidthHeightRatio)
                             }else {
-                                if autoWidth {
+                                if whc_AutoWidth {
                                     view.whc_WidthAuto()
                                 }else {
                                     view.whc_WidthEqual(nextColumnView ,
@@ -533,7 +521,7 @@ public class WHC_StackView: WHC_VIEW {
                             if whc_ElementWidthHeightRatio > 0 {
                                 view.whc_WidthHeightRatio(whc_ElementWidthHeightRatio)
                             }else {
-                                if autoWidth {
+                                if whc_AutoWidth {
                                     view.whc_WidthAuto()
                                 }else {
                                     view.whc_Right(whc_Edge.right)
@@ -548,7 +536,7 @@ public class WHC_StackView: WHC_VIEW {
                 }
                 frontRowView = rowView;
             }
-            if autoWidth {
+            if whc_AutoWidth {
                 let subCount = self.subviews.count
                 if subCount == 0 {return}
                 #if os(iOS) || os(tvOS)
@@ -574,7 +562,7 @@ public class WHC_StackView: WHC_VIEW {
                 rowLastColumnViewMaxXView.whc_Right(whc_Edge.right)
             }
             
-            if autoHeight {
+            if whc_AutoHeight {
                 let subCount = self.subviews.count
                 if subCount == 0 {return}
                 #if os(iOS) || os(tvOS)
