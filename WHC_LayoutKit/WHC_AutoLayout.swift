@@ -27,24 +27,28 @@
 // THE SOFTWARE.
 
 #if os(iOS) || os(tvOS)
-import UIKit
+    import UIKit
 #else
-import AppKit
+    import AppKit
 #endif
 
 
 #if os(iOS) || os(tvOS)
+    public typealias WHC_LayoutRelation = NSLayoutRelation
+    public typealias WHC_LayoutAttribute = NSLayoutAttribute
     public typealias WHC_VIEW = UIView
     public typealias WHC_COLOR = UIColor
     public typealias WHC_LayoutPriority = UILayoutPriority
 #else
+    public typealias WHC_LayoutRelation = NSLayoutConstraint.Relation
+    public typealias WHC_LayoutAttribute = NSLayoutConstraint.Attribute
     public typealias WHC_VIEW = NSView
     public typealias WHC_COLOR = NSColor
-    public typealias WHC_LayoutPriority = NSLayoutPriority
+    public typealias WHC_LayoutPriority = NSLayoutConstraint.Priority
 #endif
 
 extension WHC_VIEW {
-
+    
     fileprivate struct WHC_LayoutAssociatedObjectKey {
         
         static var kAttributeLeft           = "WHCLayoutAttributeLeft"
@@ -133,11 +137,11 @@ extension WHC_VIEW {
     /// - Parameters:
     ///   - attribute: 约束属性
     ///   - mainView: 主视图
-    private func whc_CommonRemoveConstraint(_ attribute: NSLayoutAttribute, mainView: WHC_VIEW!, to: WHC_VIEW!) {
+    private func whc_CommonRemoveConstraint(_ attribute: WHC_LayoutAttribute, mainView: WHC_VIEW!, to: WHC_VIEW!) {
         var constraint: NSLayoutConstraint!
         var view: WHC_VIEW!
         switch (attribute) {
-            case .firstBaseline:
+        case .firstBaseline:
             constraint = self.firstBaselineConstraint()
             if constraint != nil {
                 view = self.whc_MainViewConstraint(constraint)
@@ -387,63 +391,63 @@ extension WHC_VIEW {
     ///   - attr: 约束属性
     ///   - view: 约束视图
     ///   - removeSelf: 是否删除自身约束
-    private func whc_SwitchRemoveAttr(_ attr: NSLayoutAttribute, view: WHC_VIEW!, to: WHC_VIEW!,  removeSelf: Bool) {
+    private func whc_SwitchRemoveAttr(_ attr: WHC_LayoutAttribute, view: WHC_VIEW!, to: WHC_VIEW!,  removeSelf: Bool) {
         #if os(iOS) || os(tvOS)
             switch (attr) {
-                case .leftMargin,
-                     .rightMargin,
-                     .topMargin,
-                     .bottomMargin,
-                     .leadingMargin,
-                     .trailingMargin,
-                     .centerXWithinMargins,
-                     .centerYWithinMargins,
-                    
-                     .firstBaseline,
-                     .lastBaseline,
-                     .centerY,
-                     .centerX,
-                     .trailing,
-                     .leading,
-                     .bottom,
-                     .top,
-                     .right,
-                     .left:
-                    self.whc_CommonRemoveConstraint(attr, mainView: view, to: to)
-                case .width,
-                     .height:
-                    if removeSelf {
-                        self.whc_CommonRemoveConstraint(attr, mainView: self, to: to)
-                    }
-                    self.whc_CommonRemoveConstraint(attr, mainView: view, to: to)
-                default:
-                    break;
+            case .leftMargin,
+                 .rightMargin,
+                 .topMargin,
+                 .bottomMargin,
+                 .leadingMargin,
+                 .trailingMargin,
+                 .centerXWithinMargins,
+                 .centerYWithinMargins,
+                 
+                 .firstBaseline,
+                 .lastBaseline,
+                 .centerY,
+                 .centerX,
+                 .trailing,
+                 .leading,
+                 .bottom,
+                 .top,
+                 .right,
+                 .left:
+                self.whc_CommonRemoveConstraint(attr, mainView: view, to: to)
+            case .width,
+                 .height:
+                if removeSelf {
+                    self.whc_CommonRemoveConstraint(attr, mainView: self, to: to)
+                }
+                self.whc_CommonRemoveConstraint(attr, mainView: view, to: to)
+            default:
+                break;
             }
         #else
             switch (attr) {
-                case .firstBaseline,
-                     .lastBaseline,
-                     .centerY,
-                     .centerX,
-                     .trailing,
-                     .leading,
-                     .bottom,
-                     .top,
-                     .right,
-                     .left:
-                    self.whc_CommonRemoveConstraint(attr, mainView: view, to: to)
-                case .width,
-                     .height:
-                    if removeSelf {
-                        self.whc_CommonRemoveConstraint(attr, mainView: self, to: to)
-                    }
-                    self.whc_CommonRemoveConstraint(attr, mainView: view, to: to)
-                default:
-                    break;
+            case .firstBaseline,
+                 .lastBaseline,
+                 .centerY,
+                 .centerX,
+                 .trailing,
+                 .leading,
+                 .bottom,
+                 .top,
+                 .right,
+                 .left:
+                self.whc_CommonRemoveConstraint(attr, mainView: view, to: to)
+            case .width,
+                 .height:
+                if removeSelf {
+                    self.whc_CommonRemoveConstraint(attr, mainView: self, to: to)
+                }
+                self.whc_CommonRemoveConstraint(attr, mainView: view, to: to)
+            default:
+                break;
             }
-
+            
         #endif
-
+        
     }
     
     
@@ -758,7 +762,7 @@ extension WHC_VIEW {
     ///   - attrs: 约束属性集合
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_RemoveFrom(_ view: WHC_VIEW!, attrs:NSLayoutAttribute ...) -> WHC_VIEW {
+    public func whc_RemoveFrom(_ view: WHC_VIEW!, attrs:WHC_LayoutAttribute ...) -> WHC_VIEW {
         for attr in attrs {
             if attr != .notAnAttribute {
                 self.whc_SwitchRemoveAttr(attr, view: view, to: nil ,removeSelf: false)
@@ -775,7 +779,7 @@ extension WHC_VIEW {
     ///   - attrs: 要移除的集合
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_RemoveTo(_ view: WHC_VIEW!, attrs:NSLayoutAttribute ...) -> WHC_VIEW {
+    public func whc_RemoveTo(_ view: WHC_VIEW!, attrs:WHC_LayoutAttribute ...) -> WHC_VIEW {
         for attr in attrs {
             if attr != .notAnAttribute {
                 self.whc_SwitchRemoveAttr(attr, view: self.superview, to: view ,removeSelf: false)
@@ -789,7 +793,7 @@ extension WHC_VIEW {
     /// - Parameter attrs: 约束属性集合
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_RemoveAttrs(_ attrs: NSLayoutAttribute ...) -> WHC_VIEW {
+    public func whc_RemoveAttrs(_ attrs: WHC_LayoutAttribute ...) -> WHC_VIEW {
         for attr in attrs {
             if attr != .notAnAttribute {
                 self.whc_SwitchRemoveAttr(attr, view: self.superview, to: nil, removeSelf: true)
@@ -812,7 +816,7 @@ extension WHC_VIEW {
             #if os(iOS) || os(tvOS)
                 let priorityRequired = UILayoutPriority.required
             #else
-            let priorityRequired = NSLayoutPriority.required
+                let priorityRequired = NSLayoutConstraint.Priority.required
             #endif
             if constraints!.priority == priorityRequired {
                 if constraints!.secondItem == nil ||
@@ -834,7 +838,7 @@ extension WHC_VIEW {
         return self
     }
     
-    private func whc_HandleConstraintsRelation(_ relation: NSLayoutRelation) -> WHC_VIEW {
+    private func whc_HandleConstraintsRelation(_ relation: WHC_LayoutRelation) -> WHC_VIEW {
         if let constraints = self.currentConstraint, constraints.relation != relation {
             let tmpConstraints = NSLayoutConstraint(item: constraints.firstItem ?? 0, attribute: constraints.firstAttribute, relatedBy: relation, toItem: constraints.secondItem, attribute: constraints.secondAttribute, multiplier: constraints.multiplier, constant: constraints.constant)
             if (constraints.secondItem == nil ||
@@ -882,7 +886,7 @@ extension WHC_VIEW {
         #if os(iOS) || os(tvOS)
             return whc_HandleConstraints(priority: .defaultLow)
         #else
-        return whc_HandleConstraints(priority: .defaultLow)
+            return whc_HandleConstraints(priority: .defaultLow)
         #endif
     }
     
@@ -892,9 +896,9 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_PriorityHigh() -> WHC_VIEW {
         #if os(iOS) || os(tvOS)
-        return whc_HandleConstraints(priority: .defaultHigh)
+            return whc_HandleConstraints(priority: .defaultHigh)
         #else
-        return whc_HandleConstraints(priority: .defaultHigh)
+            return whc_HandleConstraints(priority: .defaultHigh)
         #endif
     }
     
@@ -905,9 +909,9 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_PriorityRequired() -> WHC_VIEW {
         #if os(iOS) || os(tvOS)
-        return whc_HandleConstraints(priority: .required)
+            return whc_HandleConstraints(priority: .required)
         #else
-        return whc_HandleConstraints(priority: .required)
+            return whc_HandleConstraints(priority: .required)
         #endif
     }
     
@@ -917,12 +921,12 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_PriorityFitting() -> WHC_VIEW {
         #if os(iOS) || os(tvOS)
-        return whc_HandleConstraints(priority: .fittingSizeLevel)
+            return whc_HandleConstraints(priority: .fittingSizeLevel)
         #else
-        return whc_HandleConstraints(priority: .fittingSizeCompression)
+            return whc_HandleConstraints(priority: .fittingSizeCompression)
         #endif
     }
-
+    
     /// 设置当前约束的优先级
     ///
     /// - Parameter value: 优先级大小(0-1000)
@@ -951,7 +955,7 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_Left(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
-        var toAttribute = NSLayoutAttribute.right
+        var toAttribute = WHC_LayoutAttribute.right
         if toView.superview == nil {
             toAttribute = .left
         }else if toView.superview !== self.superview {
@@ -977,7 +981,7 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_LeftEqual(_ view: WHC_VIEW, offset: CGFloat) -> WHC_VIEW {
-        var toAttribute = NSLayoutAttribute.left
+        var toAttribute = WHC_LayoutAttribute.left
         return self.constraintWithItem(self, attribute: .left, related: .equal, toItem: view, toAttribute: &toAttribute, multiplier: 1, constant: offset)
     }
     
@@ -998,7 +1002,7 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_Right(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
-        var toAttribute = NSLayoutAttribute.left
+        var toAttribute = WHC_LayoutAttribute.left
         if toView.superview == nil {
             toAttribute = .right
         }else if toView.superview !== self.superview {
@@ -1024,7 +1028,7 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_RightEqual(_ view: WHC_VIEW, offset: CGFloat) -> WHC_VIEW {
-        var toAttribute = NSLayoutAttribute.right
+        var toAttribute = WHC_LayoutAttribute.right
         return self.constraintWithItem(self, attribute: .right, related: .equal, toItem: view, toAttribute: &toAttribute, multiplier: 1, constant: 0.0 - offset)
     }
     
@@ -1045,7 +1049,7 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_Leading(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
-        var toAttribute = NSLayoutAttribute.trailing
+        var toAttribute = WHC_LayoutAttribute.trailing
         if toView.superview == nil {
             toAttribute = .leading
         }else if toView.superview !== self.superview {
@@ -1071,7 +1075,7 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_LeadingEqual(_ view: WHC_VIEW, offset: CGFloat) -> WHC_VIEW {
-        var toAttribute = NSLayoutAttribute.leading
+        var toAttribute = WHC_LayoutAttribute.leading
         return self.constraintWithItem(self, attribute: .leading, related: .equal, toItem: view, toAttribute: &toAttribute, multiplier: 1, constant: offset)
     }
     
@@ -1092,7 +1096,7 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_Trailing(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
-        var toAttribute = NSLayoutAttribute.leading
+        var toAttribute = WHC_LayoutAttribute.leading
         if toView.superview == nil {
             toAttribute = .trailing
         }else if toView.superview !== self.superview {
@@ -1118,7 +1122,7 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_TrailingEqual(_ view: WHC_VIEW, offset: CGFloat) -> WHC_VIEW {
-        var toAttribute = NSLayoutAttribute.trailing
+        var toAttribute = WHC_LayoutAttribute.trailing
         return self.constraintWithItem(self, attribute: .trailing, related: .equal, toItem: view, toAttribute: &toAttribute, multiplier: 1, constant: 0.0 - offset)
     }
     
@@ -1139,7 +1143,7 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_Top(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
-        var toAttribute = NSLayoutAttribute.bottom
+        var toAttribute = WHC_LayoutAttribute.bottom
         if toView.superview == nil {
             toAttribute = .top
         }else if toView.superview !== self.superview {
@@ -1165,7 +1169,7 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_TopEqual(_ view: WHC_VIEW, offset: CGFloat) -> WHC_VIEW {
-        var toAttribute = NSLayoutAttribute.top
+        var toAttribute = WHC_LayoutAttribute.top
         return self.constraintWithItem(self, attribute: .top, related: .equal, toItem: view, toAttribute: &toAttribute, multiplier: 1, constant: offset)
     }
     
@@ -1186,7 +1190,7 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_Bottom(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
-        var toAttribute = NSLayoutAttribute.top
+        var toAttribute = WHC_LayoutAttribute.top
         return self.constraintWithItem(self, attribute: .bottom, related: .equal, toItem: toView, toAttribute: &toAttribute, multiplier: 1, constant: space)
     }
     
@@ -1207,10 +1211,10 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_BottomEqual(_ view: WHC_VIEW, offset: CGFloat) -> WHC_VIEW {
-        var toAttribute = NSLayoutAttribute.bottom
+        var toAttribute = WHC_LayoutAttribute.bottom
         return self.constraintWithItem(self, attribute: .bottom, related: .equal, toItem: view, toAttribute: &toAttribute, multiplier: 1, constant: 0.0 - offset)
     }
-
+    
     
     /// 设置宽度
     ///
@@ -1218,7 +1222,7 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_Width(_ width: CGFloat) -> WHC_VIEW {
-        var toAttribute = NSLayoutAttribute.notAnAttribute
+        var toAttribute = WHC_LayoutAttribute.notAnAttribute
         return self.constraintWithItem(self, attribute: .width, related: .equal, toItem: nil, toAttribute: &toAttribute, multiplier: 0, constant: width)
     }
     
@@ -1248,18 +1252,18 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_WidthAuto() -> WHC_VIEW {
         #if os(iOS) || os(tvOS)
-        if self is UILabel {
-            let selfLabel = self as! UILabel
-            if selfLabel.numberOfLines == 0 {
-                selfLabel.numberOfLines = 1
+            if self is UILabel {
+                let selfLabel = self as! UILabel
+                if selfLabel.numberOfLines == 0 {
+                    selfLabel.numberOfLines = 1
+                }
             }
-        }
         #endif
         if widthConstraint() != nil ||
-           widthLessConstraint() != nil {
-           return whc_Width(0).whc_GreaterOrEqual()
+            widthLessConstraint() != nil {
+            return whc_Width(0).whc_GreaterOrEqual()
         }
-        var toAttribute = NSLayoutAttribute.notAnAttribute
+        var toAttribute = WHC_LayoutAttribute.notAnAttribute
         return self.constraintWithItem(self, attribute: .width, related: .greaterThanOrEqual, toItem: nil, toAttribute: &toAttribute, multiplier: 1, constant: 0)
     }
     
@@ -1269,7 +1273,7 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_HeightWidthRatio(_ ratio: CGFloat) -> WHC_VIEW {
-        var toAttribute = NSLayoutAttribute.width
+        var toAttribute = WHC_LayoutAttribute.width
         return self.constraintWithItem(self, attribute: .height, related: .equal, toItem: self, toAttribute: &toAttribute, multiplier: ratio, constant: 0)
     }
     
@@ -1302,25 +1306,25 @@ extension WHC_VIEW {
     public func whc_HeightEqual(_ view: WHC_VIEW!, ratio: CGFloat) -> WHC_VIEW {
         return self.constraintWithItem(view, attribute: .height, multiplier: ratio, constant: 0)
     }
-
+    
     /// 设置自动高度
     ///
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_HeightAuto() -> WHC_VIEW {
         #if os(iOS) || os(tvOS)
-        if self is UILabel {
-            let selfLabel = self as! UILabel
-            if selfLabel.numberOfLines != 0 {
-                selfLabel.numberOfLines = 0
+            if self is UILabel {
+                let selfLabel = self as! UILabel
+                if selfLabel.numberOfLines != 0 {
+                    selfLabel.numberOfLines = 0
+                }
             }
-        }
         #endif
         if heightConstraint() != nil ||
-           heightLessConstraint() != nil {
-           return whc_Height(0).whc_GreaterOrEqual()
+            heightLessConstraint() != nil {
+            return whc_Height(0).whc_GreaterOrEqual()
         }
-        var toAttribute = NSLayoutAttribute.notAnAttribute
+        var toAttribute = WHC_LayoutAttribute.notAnAttribute
         return self.constraintWithItem(self, attribute: .height, related: .greaterThanOrEqual, toItem: nil, toAttribute: &toAttribute, multiplier: 1, constant: 0)
     }
     
@@ -1330,7 +1334,7 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_WidthHeightRatio(_ ratio: CGFloat) -> WHC_VIEW {
-        var toAttribute = NSLayoutAttribute.height
+        var toAttribute = WHC_LayoutAttribute.height
         return self.constraintWithItem(self, attribute: .width, related: .equal, toItem: self, toAttribute: &toAttribute, multiplier: ratio, constant: 0)
     }
     
@@ -1409,7 +1413,7 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_FirstBaseLine(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
-        var toAttribute = NSLayoutAttribute.lastBaseline
+        var toAttribute = WHC_LayoutAttribute.lastBaseline
         if toView.superview == nil {
             toAttribute = .firstBaseline
         }else if toView.superview !== self.superview {
@@ -1437,7 +1441,7 @@ extension WHC_VIEW {
     public func whc_FirstBaseLineEqual(_ view: WHC_VIEW!, offset: CGFloat) -> WHC_VIEW {
         return self.constraintWithItem(view, attribute: .firstBaseline, constant: offset)
     }
-
+    
     /// 设置底部基线边距(默认相对父视图)
     ///
     /// - Parameter space: 间隙
@@ -1455,7 +1459,7 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_LastBaseLine(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
-        var toAttribute = NSLayoutAttribute.firstBaseline
+        var toAttribute = WHC_LayoutAttribute.firstBaseline
         if toView.superview == nil {
             toAttribute = .lastBaseline
         }else if toView.superview !== self.superview {
@@ -1515,7 +1519,7 @@ extension WHC_VIEW {
     public func whc_CenterEqual(_ view: WHC_VIEW!) -> WHC_VIEW {
         return self.whc_CenterXEqual(view).whc_CenterYEqual(view)
     }
-
+    
     /// 设置frame(默认相对父视图)
     ///
     /// - Parameters:
@@ -1655,18 +1659,18 @@ extension WHC_VIEW {
     
     //MARK: -私有方法-
     
-    fileprivate func setLeftConstraint(_ constraint: NSLayoutConstraint!, relation: NSLayoutRelation) {
+    fileprivate func setLeftConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
-            case .equal:
-                setLeftConstraint(constraint)
-            case .greaterThanOrEqual:
-                setLeftGreaterConstraint(constraint)
-            case .lessThanOrEqual:
-                setLeftLessConstraint(constraint)
+        case .equal:
+            setLeftConstraint(constraint)
+        case .greaterThanOrEqual:
+            setLeftGreaterConstraint(constraint)
+        case .lessThanOrEqual:
+            setLeftLessConstraint(constraint)
         }
     }
     
-    fileprivate func leftConstraint(_ relation: NSLayoutRelation) -> NSLayoutConstraint! {
+    fileprivate func leftConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return leftConstraint()
@@ -1701,7 +1705,7 @@ extension WHC_VIEW {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLeftG) as? NSLayoutConstraint
     }
     
-    fileprivate func setRightConstraint(_ constraint: NSLayoutConstraint!, relation: NSLayoutRelation) {
+    fileprivate func setRightConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setRightConstraint(constraint)
@@ -1712,7 +1716,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func rightConstraint(_ relation: NSLayoutRelation) -> NSLayoutConstraint! {
+    fileprivate func rightConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return rightConstraint()
@@ -1747,7 +1751,7 @@ extension WHC_VIEW {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeRightG) as? NSLayoutConstraint
     }
     
-    fileprivate func setTopConstraint(_ constraint: NSLayoutConstraint!, relation: NSLayoutRelation) {
+    fileprivate func setTopConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setTopConstraint(constraint)
@@ -1758,7 +1762,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func topConstraint(_ relation: NSLayoutRelation) -> NSLayoutConstraint! {
+    fileprivate func topConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return topConstraint()
@@ -1793,7 +1797,7 @@ extension WHC_VIEW {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeTopG) as? NSLayoutConstraint
     }
     
-    fileprivate func setBottomConstraint(_ constraint: NSLayoutConstraint!, relation: NSLayoutRelation) {
+    fileprivate func setBottomConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setBottomConstraint(constraint)
@@ -1804,7 +1808,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func bottomConstraint(_ relation: NSLayoutRelation) -> NSLayoutConstraint! {
+    fileprivate func bottomConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return bottomConstraint()
@@ -1838,8 +1842,8 @@ extension WHC_VIEW {
     fileprivate func bottomGreaterConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeBottomG) as? NSLayoutConstraint
     }
-
-    fileprivate func setLeadingConstraint(_ constraint: NSLayoutConstraint!, relation: NSLayoutRelation) {
+    
+    fileprivate func setLeadingConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setLeadingConstraint(constraint)
@@ -1850,7 +1854,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func leadingConstraint(_ relation: NSLayoutRelation) -> NSLayoutConstraint! {
+    fileprivate func leadingConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return leadingConstraint()
@@ -1885,7 +1889,7 @@ extension WHC_VIEW {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLeadingG) as? NSLayoutConstraint
     }
     
-    fileprivate func setTrailingConstraint(_ constraint: NSLayoutConstraint!, relation: NSLayoutRelation) {
+    fileprivate func setTrailingConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setTrailingConstraint(constraint)
@@ -1896,7 +1900,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func trailingConstraint(_ relation: NSLayoutRelation) -> NSLayoutConstraint! {
+    fileprivate func trailingConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return trailingConstraint()
@@ -1931,7 +1935,7 @@ extension WHC_VIEW {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeTrailingG) as? NSLayoutConstraint
     }
     
-    fileprivate func setWidthConstraint(_ constraint: NSLayoutConstraint!, relation: NSLayoutRelation) {
+    fileprivate func setWidthConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setWidthConstraint(constraint)
@@ -1942,7 +1946,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func widthConstraint(_ relation: NSLayoutRelation) -> NSLayoutConstraint! {
+    fileprivate func widthConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return widthConstraint()
@@ -1978,7 +1982,7 @@ extension WHC_VIEW {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeWidthG) as? NSLayoutConstraint
     }
     
-    fileprivate func setHeightConstraint(_ constraint: NSLayoutConstraint!, relation: NSLayoutRelation) {
+    fileprivate func setHeightConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setHeightConstraint(constraint)
@@ -1989,7 +1993,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func heightConstraint(_ relation: NSLayoutRelation) -> NSLayoutConstraint! {
+    fileprivate func heightConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return heightConstraint()
@@ -2024,7 +2028,7 @@ extension WHC_VIEW {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeHeightG) as? NSLayoutConstraint
     }
     
-    fileprivate func setCenterXConstraint(_ constraint: NSLayoutConstraint!, relation: NSLayoutRelation) {
+    fileprivate func setCenterXConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setCenterXConstraint(constraint)
@@ -2035,7 +2039,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func centerXConstraint(_ relation: NSLayoutRelation) -> NSLayoutConstraint! {
+    fileprivate func centerXConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return centerXConstraint()
@@ -2070,7 +2074,7 @@ extension WHC_VIEW {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeCenterXG) as? NSLayoutConstraint
     }
     
-    fileprivate func setCenterYConstraint(_ constraint: NSLayoutConstraint!, relation: NSLayoutRelation) {
+    fileprivate func setCenterYConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setCenterYConstraint(constraint)
@@ -2081,7 +2085,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func centerYConstraint(_ relation: NSLayoutRelation) -> NSLayoutConstraint! {
+    fileprivate func centerYConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return centerYConstraint()
@@ -2116,7 +2120,7 @@ extension WHC_VIEW {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeCenterYG) as? NSLayoutConstraint
     }
     
-    fileprivate func setLastBaselineConstraint(_ constraint: NSLayoutConstraint!, relation: NSLayoutRelation) {
+    fileprivate func setLastBaselineConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setLastBaselineConstraint(constraint)
@@ -2127,7 +2131,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func lastBaselineConstraint(_ relation: NSLayoutRelation) -> NSLayoutConstraint! {
+    fileprivate func lastBaselineConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return lastBaselineConstraint()
@@ -2162,7 +2166,7 @@ extension WHC_VIEW {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLastBaselineG) as? NSLayoutConstraint
     }
     
-    fileprivate func setFirstBaselineConstraint(_ constraint: NSLayoutConstraint!, relation: NSLayoutRelation) {
+    fileprivate func setFirstBaselineConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setFirstBaselineConstraint(constraint)
@@ -2173,7 +2177,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func firstBaselineConstraint(_ relation: NSLayoutRelation) -> NSLayoutConstraint! {
+    fileprivate func firstBaselineConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return firstBaselineConstraint()
@@ -2209,64 +2213,64 @@ extension WHC_VIEW {
     }
     
     fileprivate func constraintWithItem(_ item: WHC_VIEW!,
-                                    attribute: NSLayoutAttribute,
-                                    constant: CGFloat) -> WHC_VIEW {
+                                        attribute: WHC_LayoutAttribute,
+                                        constant: CGFloat) -> WHC_VIEW {
         var toAttribute = attribute
         return self.constraintWithItem(self,
-                                attribute: attribute,
-                                toItem: item,
-                                toAttribute: &toAttribute,
-                                constant: constant)
+                                       attribute: attribute,
+                                       toItem: item,
+                                       toAttribute: &toAttribute,
+                                       constant: constant)
     }
     
     fileprivate func constraintWithItem(_ item: WHC_VIEW!,
-                                    attribute: NSLayoutAttribute,
-                                    multiplier: CGFloat,
-                                    constant: CGFloat) -> WHC_VIEW {
+                                        attribute: WHC_LayoutAttribute,
+                                        multiplier: CGFloat,
+                                        constant: CGFloat) -> WHC_VIEW {
         var toAttribute = attribute
         return self.constraintWithItem(self,
-                                attribute: attribute,
-                                toItem: item,
-                                toAttribute: &toAttribute ,
-                                multiplier: multiplier,
-                                constant: constant)
-    }
-
-    fileprivate func constraintWithItem(_ item: WHC_VIEW!,
-                                    attribute: NSLayoutAttribute,
-                                    toItem: WHC_VIEW!,
-                              toAttribute: inout NSLayoutAttribute,
-                                    constant: CGFloat) -> WHC_VIEW {
-        return self.constraintWithItem(item,
-                                attribute: attribute,
-                                toItem: toItem,
-                                toAttribute: &toAttribute,
-                                multiplier: 1,
-                                constant: constant)
+                                       attribute: attribute,
+                                       toItem: item,
+                                       toAttribute: &toAttribute ,
+                                       multiplier: multiplier,
+                                       constant: constant)
     }
     
     fileprivate func constraintWithItem(_ item: WHC_VIEW!,
-                                    attribute: NSLayoutAttribute,
-                                    toItem: WHC_VIEW!,
-                              toAttribute: inout NSLayoutAttribute,
-                                    multiplier: CGFloat,
-                                    constant: CGFloat) -> WHC_VIEW {
+                                        attribute: WHC_LayoutAttribute,
+                                        toItem: WHC_VIEW!,
+                                        toAttribute: inout WHC_LayoutAttribute,
+                                        constant: CGFloat) -> WHC_VIEW {
         return self.constraintWithItem(item,
-                                attribute: attribute,
-                                related: .equal,
-                                toItem: toItem,
-                                toAttribute: &toAttribute,
-                                multiplier: multiplier,
-                                constant: constant)
+                                       attribute: attribute,
+                                       toItem: toItem,
+                                       toAttribute: &toAttribute,
+                                       multiplier: 1,
+                                       constant: constant)
     }
-
+    
     fileprivate func constraintWithItem(_ item: WHC_VIEW!,
-                                    attribute: NSLayoutAttribute,
-                                    related: NSLayoutRelation,
-                                    toItem: WHC_VIEW!,
-                              toAttribute: inout NSLayoutAttribute,
-                                    multiplier: CGFloat,
-                                    constant: CGFloat) -> WHC_VIEW {
+                                        attribute: WHC_LayoutAttribute,
+                                        toItem: WHC_VIEW!,
+                                        toAttribute: inout WHC_LayoutAttribute,
+                                        multiplier: CGFloat,
+                                        constant: CGFloat) -> WHC_VIEW {
+        return self.constraintWithItem(item,
+                                       attribute: attribute,
+                                       related: .equal,
+                                       toItem: toItem,
+                                       toAttribute: &toAttribute,
+                                       multiplier: multiplier,
+                                       constant: constant)
+    }
+    
+    fileprivate func constraintWithItem(_ item: WHC_VIEW!,
+                                        attribute: WHC_LayoutAttribute,
+                                        related: WHC_LayoutRelation,
+                                        toItem: WHC_VIEW!,
+                                        toAttribute: inout WHC_LayoutAttribute,
+                                        multiplier: CGFloat,
+                                        constant: CGFloat) -> WHC_VIEW {
         var superView = item.superview
         if toItem != nil {
             if toItem.superview == nil {
@@ -2611,7 +2615,7 @@ extension WHC_VIEW {
         return self
     }
     
-    private func setCacheConstraint(_ constraint: NSLayoutConstraint!, attribute: NSLayoutAttribute, relation: NSLayoutRelation) {
+    private func setCacheConstraint(_ constraint: NSLayoutConstraint!, attribute: WHC_LayoutAttribute, relation: WHC_LayoutRelation) {
         switch (attribute) {
         case .firstBaseline:
             self.setFirstBaselineConstraint(constraint, relation: relation)
@@ -2698,3 +2702,4 @@ extension WHC_VIEW {
     
     #endif
 }
+

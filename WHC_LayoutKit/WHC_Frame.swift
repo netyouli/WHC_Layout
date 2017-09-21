@@ -43,11 +43,11 @@ public extension WHC_VIEW {
     }
     #else
     public var whc_sw: CGFloat {
-        return NSScreen.main() == nil ? 0 : NSScreen.main()!.frame.width
+        return NSScreen.main == nil ? 0 : NSScreen.main!.frame.width
     }
     
     public var whc_sh: CGFloat {
-        return NSScreen.main() == nil ? 0 : NSScreen.main()!.frame.height
+        return NSScreen.main == nil ? 0 : NSScreen.main!.frame.height
     }
     #endif
     
@@ -189,3 +189,4 @@ public extension WHC_VIEW {
         }
     }
 }
+
