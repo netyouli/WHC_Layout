@@ -813,11 +813,7 @@ extension WHC_VIEW {
     private func whc_HandleConstraints(priority: WHC_LayoutPriority) -> WHC_VIEW {
         let constraints = self.currentConstraint
         if constraints != nil && constraints!.priority != priority {
-            #if os(iOS) || os(tvOS)
-                let priorityRequired = UILayoutPriority.required
-            #else
-                let priorityRequired = NSLayoutConstraint.Priority.required
-            #endif
+            let priorityRequired = WHC_LayoutPriority.required
             if constraints!.priority == priorityRequired {
                 if constraints!.secondItem == nil ||
                     constraints!.secondAttribute == .notAnAttribute {
