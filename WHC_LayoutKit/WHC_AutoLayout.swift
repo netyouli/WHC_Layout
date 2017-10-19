@@ -121,8 +121,8 @@ extension WHC_VIEW {
             }else {
                 let firstItem = constraint.firstItem as! WHC_VIEW
                 let secondItem = constraint.secondItem as! WHC_VIEW
-                if firstItem.superview === secondItem.superview {
-                    view = firstItem.superview
+                if let sameSuperView = sameSuperview(view1: firstItem, view2: secondItem) {
+                    view = sameSuperView
                 }else {
                     view = secondItem
                 }
@@ -952,9 +952,7 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_Left(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
         var toAttribute = WHC_LayoutAttribute.right
-        if toView.superview == nil {
-            toAttribute = .left
-        }else if toView.superview !== self.superview {
+        if sameSuperview(view1: toView, view2: self) == nil {
             toAttribute = .left
         }
         return self.constraintWithItem(self, attribute: .left, related: .equal, toItem: toView, toAttribute: &toAttribute, multiplier: 1, constant: space)
@@ -999,9 +997,7 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_Right(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
         var toAttribute = WHC_LayoutAttribute.left
-        if toView.superview == nil {
-            toAttribute = .right
-        }else if toView.superview !== self.superview {
+        if sameSuperview(view1: toView, view2: self) == nil {
             toAttribute = .right
         }
         return self.constraintWithItem(self, attribute: .right, related: .equal, toItem: toView, toAttribute: &toAttribute, multiplier: 1, constant: 0 - space)
@@ -1046,9 +1042,7 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_Leading(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
         var toAttribute = WHC_LayoutAttribute.trailing
-        if toView.superview == nil {
-            toAttribute = .leading
-        }else if toView.superview !== self.superview {
+        if sameSuperview(view1: toView, view2: self) == nil {
             toAttribute = .leading
         }
         return self.constraintWithItem(self, attribute: .leading, related: .equal, toItem: toView, toAttribute: &toAttribute, multiplier: 1, constant: space)
@@ -1093,9 +1087,7 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_Trailing(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
         var toAttribute = WHC_LayoutAttribute.leading
-        if toView.superview == nil {
-            toAttribute = .trailing
-        }else if toView.superview !== self.superview {
+        if sameSuperview(view1: toView, view2: self) == nil {
             toAttribute = .trailing
         }
         return self.constraintWithItem(self, attribute: .trailing, related: .equal, toItem: toView, toAttribute: &toAttribute, multiplier: 1, constant: 0 - space)
@@ -1140,9 +1132,7 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_Top(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
         var toAttribute = WHC_LayoutAttribute.bottom
-        if toView.superview == nil {
-            toAttribute = .top
-        }else if toView.superview !== self.superview {
+        if sameSuperview(view1: toView, view2: self) == nil {
             toAttribute = .top
         }
         return self.constraintWithItem(self, attribute: .top, related: .equal, toItem: toView, toAttribute: &toAttribute, multiplier: 1, constant: space)
@@ -1412,9 +1402,7 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_FirstBaseLine(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
         var toAttribute = WHC_LayoutAttribute.lastBaseline
-        if toView.superview == nil {
-            toAttribute = .firstBaseline
-        }else if toView.superview !== self.superview {
+        if sameSuperview(view1: toView, view2: self) == nil {
             toAttribute = .firstBaseline
         }
         return self.constraintWithItem(self, attribute: .firstBaseline, related: .equal, toItem: toView, toAttribute: &toAttribute, multiplier: 1, constant: 0 - space)
@@ -1458,9 +1446,7 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_LastBaseLine(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
         var toAttribute = WHC_LayoutAttribute.firstBaseline
-        if toView.superview == nil {
-            toAttribute = .lastBaseline
-        }else if toView.superview !== self.superview {
+        if sameSuperview(view1: toView, view2: self) == nil {
             toAttribute = .lastBaseline
         }
         return self.constraintWithItem(self, attribute: .lastBaseline, related: .equal, toItem: toView, toAttribute: &toAttribute, multiplier: 1, constant: 0 - space)
@@ -2273,7 +2259,9 @@ extension WHC_VIEW {
         if toItem != nil {
             if toItem.superview == nil {
                 superView = toItem
-            }else if toItem.superview !== item.superview {
+            }else if let sameSuperview = sameSuperview(view1: toItem, view2: item) {
+                superView = sameSuperview
+            }else {
                 superView = toItem
             }
         }else {
@@ -2611,6 +2599,53 @@ extension WHC_VIEW {
         superView!.addConstraint(constraint)
         self.currentConstraint = constraint
         return self
+    }
+    
+    fileprivate func sameSuperview(view1: WHC_VIEW?, view2: WHC_VIEW?) -> WHC_VIEW? {
+        var sameSuperview: WHC_VIEW?
+        var tempToItem = view1
+        var tempItem = view2
+        if tempToItem != nil && tempItem != nil {
+            if let superv = tempToItem?.superview, superv === tempItem {
+                return sameSuperview
+            }
+            if let superv = tempItem?.superview, superv === tempToItem {
+                return sameSuperview
+            }
+        }
+        let checkSameSuperview: ((WHC_VIEW, WHC_VIEW) -> Bool) = {(tmpSuperview, singleView) in
+            var tmpSingleView: WHC_VIEW? = singleView
+            while let tempSingleSuperview = tmpSingleView?.superview {
+                if tmpSuperview === tempSingleSuperview {
+                    return true
+                }else {
+                    tmpSingleView = tempSingleSuperview
+                }
+            }
+            return false
+        }
+        while let toItemSuperview = tempToItem?.superview,
+            let itemSuperview = tempItem?.superview  {
+                if toItemSuperview === itemSuperview {
+                    sameSuperview = toItemSuperview
+                    break
+                }else {
+                    tempToItem = toItemSuperview
+                    tempItem = itemSuperview
+                    if tempToItem?.superview == nil && tempItem?.superview != nil {
+                        if checkSameSuperview(tempToItem!, tempItem!) {
+                            sameSuperview = tempToItem
+                            break
+                        }
+                    }else if tempToItem?.superview != nil && tempItem?.superview == nil {
+                        if checkSameSuperview(tempItem!, tempToItem!) {
+                            sameSuperview = tempItem
+                            break
+                        }
+                    }
+                }
+        }
+        return sameSuperview
     }
     
     private func setCacheConstraint(_ constraint: NSLayoutConstraint!, attribute: WHC_LayoutAttribute, relation: WHC_LayoutRelation) {
