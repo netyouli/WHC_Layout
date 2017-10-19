@@ -35,6 +35,7 @@ Require
 Note
 ==============
 - When the view call **removeFromSuperview()**  the view must call **whc_ResetConstraints()** to clear the cache constraint
+- Swift4 + has abandoned the **initialize** class method, and if you need to use the automatic computing UITableViewCell height, you can call **UITableview.whc_initconfig ()** in the AppDelegate initialization method.
 
 Install
 ==============
