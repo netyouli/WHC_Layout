@@ -11,6 +11,8 @@
 
 **Objective-c version** 👉 [WHC_AutoLayout](https://github.com/netyouli/WHC_AutoLayoutKit)
 
+**bug修复：修复孙子层视图之间约束报错bug**
+
 Introduce
 ==============
 -  Adopt chain layout Api calls convenient
