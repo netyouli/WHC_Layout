@@ -33,7 +33,7 @@ class ModityXibVC: UIViewController {
         let txt = UILabel()
         self.view.addSubview(txt)
         txt.whc_Left(10)
-        .whc_Width(100)
+        .whc_Width(200)
         .whc_LessOrEqual()
         .whc_Width(50)
         .whc_GreaterOrEqual()

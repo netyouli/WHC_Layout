@@ -811,24 +811,19 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     private func whc_HandleConstraints(priority: WHC_LayoutPriority) -> WHC_VIEW {
-        let constraints = self.currentConstraint
-        if constraints != nil && constraints!.priority != priority {
-            let priorityRequired = WHC_LayoutPriority.required
-            if constraints!.priority == priorityRequired {
-                if constraints!.secondItem == nil ||
-                    constraints!.secondAttribute == .notAnAttribute {
-                    self.removeConstraint(constraints!)
-                    constraints!.priority = priority
-                    self.addConstraint(constraints!)
-                }else {
-                    if self.superview != nil {
-                        self.superview!.removeConstraint(constraints!)
-                        constraints!.priority = priority
-                        self.superview!.addConstraint(constraints!)
-                    }
+        if let constraints = self.currentConstraint, constraints.priority != priority {
+            if constraints.priority == WHC_LayoutPriority.required {
+                if let mainView = whc_MainViewConstraint(constraints) {
+                    let tmpConstraints = NSLayoutConstraint(item: constraints.firstItem!, attribute: constraints.firstAttribute, relatedBy: constraints.relation, toItem: constraints.secondItem, attribute: constraints.secondAttribute, multiplier: constraints.multiplier, constant: constraints.constant)
+                    tmpConstraints.priority = priority
+                    mainView.removeConstraint(constraints)
+                    mainView.addConstraint(tmpConstraints)
+                    self.currentConstraint = tmpConstraints
+                    self.setCacheConstraint(nil, attribute: constraints.firstAttribute, relation: constraints.relation)
+                    self.setCacheConstraint(tmpConstraints, attribute: tmpConstraints.firstAttribute, relation: tmpConstraints.relation)
                 }
-            }else if constraints != nil {
-                constraints!.priority = priority
+            }else {
+                constraints.priority = priority
             }
         }
         return self
@@ -837,21 +832,12 @@ extension WHC_VIEW {
     private func whc_HandleConstraintsRelation(_ relation: WHC_LayoutRelation) -> WHC_VIEW {
         if let constraints = self.currentConstraint, constraints.relation != relation {
             let tmpConstraints = NSLayoutConstraint(item: constraints.firstItem ?? 0, attribute: constraints.firstAttribute, relatedBy: relation, toItem: constraints.secondItem, attribute: constraints.secondAttribute, multiplier: constraints.multiplier, constant: constraints.constant)
-            if (constraints.secondItem == nil ||
-                constraints.secondAttribute == .notAnAttribute) {
-                self.removeConstraint(constraints)
+            if let mainView = whc_MainViewConstraint(constraints) {
+                mainView.removeConstraint(constraints)
                 self.setCacheConstraint(nil, attribute: constraints.firstAttribute, relation: constraints.relation)
-                self.addConstraint(tmpConstraints)
+                mainView.addConstraint(tmpConstraints)
                 self.setCacheConstraint(tmpConstraints, attribute: tmpConstraints.firstAttribute, relation: tmpConstraints.relation)
                 self.currentConstraint = tmpConstraints
-            }else {
-                if self.superview != nil {
-                    self.superview?.removeConstraint(constraints)
-                    self.setCacheConstraint(nil, attribute: constraints.firstAttribute, relation: constraints.relation)
-                    self.superview?.addConstraint(tmpConstraints)
-                    self.setCacheConstraint(tmpConstraints, attribute: tmpConstraints.firstAttribute, relation: tmpConstraints.relation)
-                    self.currentConstraint = tmpConstraints
-                }
             }
         }
         return self
@@ -932,7 +918,7 @@ extension WHC_VIEW {
         return whc_HandleConstraints(priority: WHC_LayoutPriority(Float(value)))
     }
     
-    //MARK: -自动布局公开接口api-
+    //MARK: -自动布局公开接口api -
     
     /// 设置左边距(默认相对父视图)
     ///
