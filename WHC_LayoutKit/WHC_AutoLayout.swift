@@ -2593,10 +2593,10 @@ extension WHC_VIEW {
         var tempItem = view2
         if tempToItem != nil && tempItem != nil {
             if let superv = tempToItem?.superview, superv === tempItem {
-                return sameSuperview
+                return superv
             }
             if let superv = tempItem?.superview, superv === tempToItem {
-                return sameSuperview
+                return superv
             }
         }
         let checkSameSuperview: ((WHC_VIEW, WHC_VIEW) -> Bool) = {(tmpSuperview, singleView) in
