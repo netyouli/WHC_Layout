@@ -49,7 +49,7 @@
 
 extension WHC_VIEW {
     
-    fileprivate struct WHC_LayoutAssociatedObjectKey {
+    private struct WHC_LayoutAssociatedObjectKey {
         
         static var kAttributeLeft           = "WHCLayoutAttributeLeft"
         static var kAttributeLeftL          = "WHCLayoutAttributeLeftL"
@@ -92,7 +92,7 @@ extension WHC_VIEW {
     }
     
     /// 当前添加的约束对象
-    fileprivate var currentConstraint: NSLayoutConstraint! {
+    private var currentConstraint: NSLayoutConstraint! {
         set {
             objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kCurrentConstraints, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
@@ -117,11 +117,20 @@ extension WHC_VIEW {
         if constraint != nil {
             if constraint.secondAttribute == .notAnAttribute ||
                 constraint.secondItem == nil {
-                view = constraint.firstItem as! WHC_VIEW
+                if let v = constraint.firstItem as? WHC_VIEW {
+                    view = v
+                }
+            }else if constraint.firstAttribute == .notAnAttribute ||
+                constraint.firstItem == nil {
+                if let v = constraint.secondItem as? WHC_VIEW {
+                    view = v
+                }
             }else {
-                let firstItem = constraint.firstItem as! WHC_VIEW
-                let secondItem = constraint.secondItem as! WHC_VIEW
-                if let sameSuperView = sameSuperview(view1: firstItem, view2: secondItem) {
+                let firstItem = constraint.firstItem as? WHC_VIEW
+                let secondItem = constraint.secondItem as? WHC_VIEW
+                if let sameSuperView = mainSuperView(view1: secondItem, view2: firstItem) {
+                    view = sameSuperView
+                }else if let sameSuperView = mainSuperView(view1: firstItem, view2: secondItem) {
                     view = sameSuperView
                 }else {
                     view = secondItem
@@ -138,250 +147,137 @@ extension WHC_VIEW {
     ///   - attribute: 约束属性
     ///   - mainView: 主视图
     private func whc_CommonRemoveConstraint(_ attribute: WHC_LayoutAttribute, mainView: WHC_VIEW!, to: WHC_VIEW!) {
-        var constraint: NSLayoutConstraint!
-        var view: WHC_VIEW!
         switch (attribute) {
         case .firstBaseline:
-            constraint = self.firstBaselineConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setFirstBaselineConstraint(nil)
+            if let constraint = self.firstBaselineConstraint() {
+                removeCache(constraint: constraint).setFirstBaselineConstraint(nil)
             }
-            constraint = self.firstBaselineLessConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setFirstBaselineLessConstraint(nil)
+            if let constraint = self.firstBaselineLessConstraint() {
+                removeCache(constraint: constraint).setFirstBaselineLessConstraint(nil)
             }
-            constraint = self.firstBaselineGreaterConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setFirstBaselineGreaterConstraint(nil)
+            if let constraint = self.firstBaselineGreaterConstraint() {
+                removeCache(constraint: constraint).setFirstBaselineGreaterConstraint(nil)
             }
         case .lastBaseline:
-            constraint = self.lastBaselineConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setLastBaselineConstraint(nil)
+            if let constraint = self.lastBaselineConstraint() {
+                removeCache(constraint: constraint).setLastBaselineConstraint(nil)
             }
-            constraint = self.lastBaselineLessConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setLastBaselineLessConstraint(nil)
+            if let constraint = self.lastBaselineLessConstraint() {
+                removeCache(constraint: constraint).setLastBaselineLessConstraint(nil)
             }
-            constraint = self.lastBaselineGreaterConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setLastBaselineGreaterConstraint(nil)
+            if let constraint = self.lastBaselineGreaterConstraint() {
+                removeCache(constraint: constraint).setLastBaselineGreaterConstraint(nil)
             }
         case .centerY:
-            constraint = self.centerYConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setCenterYConstraint(nil)
+            if let constraint = self.centerYConstraint() {
+                removeCache(constraint: constraint).setCenterYConstraint(nil)
             }
-            constraint = self.centerYLessConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setCenterYLessConstraint(nil)
+            if let constraint = self.centerYLessConstraint() {
+                removeCache(constraint: constraint).setCenterYLessConstraint(nil)
             }
-            constraint = self.centerYGreaterConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setCenterYGreaterConstraint(nil)
+            if let constraint = self.centerYGreaterConstraint() {
+                removeCache(constraint: constraint).setCenterYGreaterConstraint(nil)
             }
         case .centerX:
-            constraint = self.centerXConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setCenterXConstraint(nil)
+            if let constraint = self.centerXConstraint() {
+                removeCache(constraint: constraint).setCenterXConstraint(nil)
             }
-            constraint = self.centerXLessConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setCenterXLessConstraint(nil)
+            if let constraint = self.centerXLessConstraint() {
+                removeCache(constraint: constraint).setCenterXLessConstraint(nil)
             }
-            constraint = self.centerXGreaterConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setCenterXGreaterConstraint(nil)
+            if let constraint = self.centerXGreaterConstraint() {
+                removeCache(constraint: constraint).setCenterXGreaterConstraint(nil)
             }
         case .trailing:
-            constraint = self.trailingConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setTrailingConstraint(nil)
+            if let constraint = self.trailingConstraint() {
+                removeCache(constraint: constraint).setTrailingConstraint(nil)
             }
-            constraint = self.trailingLessConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setTrailingLessConstraint(nil)
+            if let constraint = self.trailingLessConstraint() {
+                removeCache(constraint: constraint).setTrailingLessConstraint(nil)
             }
-            constraint = self.trailingGreaterConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setTrailingGreaterConstraint(nil)
+            if let constraint = self.trailingGreaterConstraint() {
+                removeCache(constraint: constraint).setTrailingGreaterConstraint(nil)
             }
         case .leading:
-            constraint = self.leadingConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setLeadingConstraint(nil)
+            if let constraint = self.leadingConstraint() {
+                removeCache(constraint: constraint).setLeadingConstraint(nil)
             }
-            constraint = self.leadingLessConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setLeadingLessConstraint(nil)
+            if let constraint = self.leadingLessConstraint() {
+                removeCache(constraint: constraint).setLeadingLessConstraint(nil)
             }
-            constraint = self.leadingGreaterConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setLeadingGreaterConstraint(nil)
+            if let constraint = self.leadingGreaterConstraint() {
+                removeCache(constraint: constraint).setLeadingGreaterConstraint(nil)
             }
         case .bottom:
-            constraint = self.bottomConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setBottomConstraint(nil)
+            if let constraint = self.bottomConstraint() {
+                removeCache(constraint: constraint).setBottomConstraint(nil)
             }
-            constraint = self.bottomLessConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setBottomLessConstraint(nil)
+            if let constraint = self.bottomLessConstraint() {
+                removeCache(constraint: constraint).setBottomLessConstraint(nil)
             }
-            constraint = self.bottomGreaterConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setBottomGreaterConstraint(nil)
+            if let constraint = self.bottomGreaterConstraint() {
+                removeCache(constraint: constraint).setBottomGreaterConstraint(nil)
             }
         case .top:
-            constraint = self.topConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setTopConstraint(nil)
+            if let constraint = self.topConstraint() {
+                removeCache(constraint: constraint).setTopConstraint(nil)
             }
-            constraint = self.topLessConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setTopLessConstraint(nil)
+            if let constraint = self.topLessConstraint() {
+                removeCache(constraint: constraint).setTopLessConstraint(nil)
             }
-            constraint = self.topGreaterConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setTopGreaterConstraint(nil)
+            if let constraint = self.topGreaterConstraint() {
+                removeCache(constraint: constraint).setTopGreaterConstraint(nil)
             }
         case .right:
-            constraint = self.rightConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setRightConstraint(nil)
+            if let constraint = self.rightConstraint() {
+                removeCache(constraint: constraint).setRightConstraint(nil)
             }
-            constraint = self.rightLessConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setRightLessConstraint(nil)
+            if let constraint = self.rightLessConstraint() {
+                removeCache(constraint: constraint).setRightLessConstraint(nil)
             }
-            constraint = self.rightGreaterConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setRightGreaterConstraint(nil)
+            if let constraint = self.rightGreaterConstraint() {
+                removeCache(constraint: constraint).setRightGreaterConstraint(nil)
             }
         case .left:
-            constraint = self.leftConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setLeftConstraint(nil)
+            if let constraint = self.leftConstraint() {
+                removeCache(constraint: constraint).setLeftConstraint(nil)
             }
-            constraint = self.leftLessConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setLeftLessConstraint(nil)
+            if let constraint = self.leftLessConstraint() {
+                removeCache(constraint: constraint).setLeftLessConstraint(nil)
             }
-            constraint = self.leftGreaterConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setLeftGreaterConstraint(nil)
+            if let constraint = self.leftGreaterConstraint() {
+                removeCache(constraint: constraint).setLeftGreaterConstraint(nil)
             }
         case .width:
-            constraint = self.widthConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setWidthConstraint(nil)
+            if let constraint = self.widthConstraint() {
+                removeCache(constraint: constraint).setWidthConstraint(nil)
             }
-            constraint = self.widthLessConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setWidthLessConstraint(nil)
+            if let constraint = self.widthLessConstraint() {
+                removeCache(constraint: constraint).setWidthLessConstraint(nil)
             }
-            constraint = self.widthGreaterConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setWidthGreaterConstraint(nil)
+            if let constraint = self.widthGreaterConstraint() {
+                removeCache(constraint: constraint).setWidthGreaterConstraint(nil)
             }
         case .height:
-            constraint = self.heightConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setHeightConstraint(nil)
+            if let constraint = self.heightConstraint() {
+                removeCache(constraint: constraint).setHeightConstraint(nil)
             }
-            constraint = self.heightLessConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setHeightLessConstraint(nil)
+            if let constraint = self.heightLessConstraint() {
+                removeCache(constraint: constraint).setHeightLessConstraint(nil)
             }
-            constraint = self.heightGreaterConstraint()
-            if constraint != nil {
-                view = self.whc_MainViewConstraint(constraint)
-                view?.removeConstraint(constraint)
-                self.setHeightGreaterConstraint(nil)
+            if let constraint = self.heightGreaterConstraint() {
+                removeCache(constraint: constraint).setHeightGreaterConstraint(nil)
             }
         default:
             break;
         }
-        if mainView != nil {
-            let constraints = mainView.constraints
-            for constraint in constraints {
-                if let linkView = (to != nil ? to : mainView) {
-                    if (constraint.firstItem === self && constraint.firstAttribute == attribute && (constraint.secondItem === linkView || constraint.secondItem == nil)) || (constraint.firstItem === linkView && constraint.secondItem === self && constraint.secondAttribute == attribute) {
-                        mainView.removeConstraint(constraint)
-                    }
+        mainView?.constraints.forEach({ (constraint) in
+            if let linkView = (to != nil ? to : mainView) {
+                if (constraint.firstItem === self && constraint.firstAttribute == attribute && (constraint.secondItem === linkView || constraint.secondItem == nil)) || (constraint.firstItem === linkView && constraint.secondItem === self && constraint.secondAttribute == attribute) {
+                    mainView.removeConstraint(constraint)
                 }
             }
-        }
+        })
     }
     
     
@@ -456,271 +352,135 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_ResetConstraints() -> WHC_VIEW {
-        func getMainView(_ constraint: NSLayoutConstraint!) -> WHC_VIEW! {
-            var view: WHC_VIEW!
-            if constraint != nil &&
-                constraint.secondAttribute != .notAnAttribute &&
-                constraint.secondItem != nil {
-                let firstItem = constraint.firstItem as! WHC_VIEW
-                let secondItem = constraint.secondItem as! WHC_VIEW
-                if firstItem.superview === secondItem.superview {
-                    view = firstItem.superview
-                }else {
-                    view = secondItem
-                }
-            }
-            return view
+        if let constraint = self.firstBaselineConstraint() {
+            removeCache(constraint: constraint).setFirstBaselineConstraint(nil)
         }
-        var constraint = self.firstBaselineConstraint()
-        var mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setFirstBaselineConstraint(nil)
+        if let constraint = self.firstBaselineLessConstraint() {
+            removeCache(constraint: constraint).setFirstBaselineLessConstraint(nil)
+        }
+        if let constraint = self.firstBaselineGreaterConstraint() {
+            removeCache(constraint: constraint).setFirstBaselineGreaterConstraint(nil)
         }
         
-        constraint = self.firstBaselineLessConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setFirstBaselineLessConstraint(nil)
+        
+        if let constraint = self.lastBaselineConstraint() {
+            removeCache(constraint: constraint).setLastBaselineConstraint(nil)
+        }
+        if let constraint = self.lastBaselineLessConstraint() {
+            removeCache(constraint: constraint).setLastBaselineLessConstraint(nil)
+        }
+        if let constraint = self.lastBaselineGreaterConstraint() {
+            removeCache(constraint: constraint).setLastBaselineGreaterConstraint(nil)
         }
         
-        constraint = self.firstBaselineGreaterConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setFirstBaselineGreaterConstraint(nil)
+        
+        if let constraint = self.centerYConstraint() {
+            removeCache(constraint: constraint).setCenterYConstraint(nil)
+        }
+        if let constraint = self.centerYLessConstraint() {
+            removeCache(constraint: constraint).setCenterYLessConstraint(nil)
+        }
+        if let constraint = self.centerYGreaterConstraint() {
+            removeCache(constraint: constraint).setCenterYGreaterConstraint(nil)
         }
         
-        constraint = self.lastBaselineConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setLastBaselineConstraint(nil)
+        
+        if let constraint = self.centerXConstraint() {
+            removeCache(constraint: constraint).setCenterXConstraint(nil)
+        }
+        if let constraint = self.centerXLessConstraint() {
+            removeCache(constraint: constraint).setCenterXLessConstraint(nil)
+        }
+        if let constraint = self.centerXGreaterConstraint() {
+            removeCache(constraint: constraint).setCenterXGreaterConstraint(nil)
         }
         
-        constraint = self.lastBaselineLessConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setLastBaselineLessConstraint(nil)
+        
+        if let constraint = self.trailingConstraint() {
+            removeCache(constraint: constraint).setTrailingConstraint(nil)
+        }
+        if let constraint = self.trailingLessConstraint() {
+            removeCache(constraint: constraint).setTrailingLessConstraint(nil)
+        }
+        if let constraint = self.trailingGreaterConstraint() {
+            removeCache(constraint: constraint).setTrailingGreaterConstraint(nil)
         }
         
-        constraint = self.lastBaselineGreaterConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setLastBaselineGreaterConstraint(nil)
+        
+        if let constraint = self.leadingConstraint() {
+            removeCache(constraint: constraint).setLeadingConstraint(nil)
+        }
+        if let constraint = self.leadingLessConstraint() {
+            removeCache(constraint: constraint).setLeadingLessConstraint(nil)
+        }
+        if let constraint = self.leadingGreaterConstraint() {
+            removeCache(constraint: constraint).setLeadingGreaterConstraint(nil)
         }
         
-        constraint = self.centerYConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setCenterYConstraint(nil)
+        
+        if let constraint = self.bottomConstraint() {
+            removeCache(constraint: constraint).setBottomConstraint(nil)
+        }
+        if let constraint = self.bottomLessConstraint() {
+            removeCache(constraint: constraint).setBottomLessConstraint(nil)
+        }
+        if let constraint = self.bottomGreaterConstraint() {
+            removeCache(constraint: constraint).setBottomGreaterConstraint(nil)
         }
         
-        constraint = self.centerYLessConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setCenterYLessConstraint(nil)
+        
+        if let constraint = self.topConstraint() {
+            removeCache(constraint: constraint).setTopConstraint(nil)
+        }
+        if let constraint = self.topLessConstraint() {
+            removeCache(constraint: constraint).setTopLessConstraint(nil)
+        }
+        if let constraint = self.topGreaterConstraint() {
+            removeCache(constraint: constraint).setTopGreaterConstraint(nil)
         }
         
-        constraint = self.centerYGreaterConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setCenterYGreaterConstraint(nil)
+        
+        if let constraint = self.rightConstraint() {
+            removeCache(constraint: constraint).setRightConstraint(nil)
+        }
+        if let constraint = self.rightLessConstraint() {
+            removeCache(constraint: constraint).setRightLessConstraint(nil)
+        }
+        if let constraint = self.rightGreaterConstraint() {
+            removeCache(constraint: constraint).setRightGreaterConstraint(nil)
+        }
+
+        
+        if let constraint = self.leftConstraint() {
+            removeCache(constraint: constraint).setLeftConstraint(nil)
+        }
+        if let constraint = self.leftLessConstraint() {
+            removeCache(constraint: constraint).setLeftLessConstraint(nil)
+        }
+        if let constraint = self.leftGreaterConstraint() {
+            removeCache(constraint: constraint).setLeftGreaterConstraint(nil)
         }
         
-        constraint = self.centerXConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setCenterXConstraint(nil)
+        
+        if let constraint = self.widthConstraint() {
+            removeCache(constraint: constraint).setWidthConstraint(nil)
+        }
+        if let constraint = self.widthLessConstraint() {
+            removeCache(constraint: constraint).setWidthLessConstraint(nil)
+        }
+        if let constraint = self.widthGreaterConstraint() {
+            removeCache(constraint: constraint).setWidthGreaterConstraint(nil)
         }
         
-        constraint = self.centerXLessConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setCenterXLessConstraint(nil)
-        }
         
-        constraint = self.centerXGreaterConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setCenterXGreaterConstraint(nil)
+        if let constraint = self.heightConstraint() {
+            removeCache(constraint: constraint).setHeightConstraint(nil)
         }
-        
-        constraint = self.trailingConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setTrailingConstraint(nil)
+        if let constraint = self.heightLessConstraint() {
+            removeCache(constraint: constraint).setHeightLessConstraint(nil)
         }
-        
-        constraint = self.trailingLessConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setTrailingLessConstraint(nil)
-        }
-        
-        constraint = self.trailingGreaterConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setTrailingGreaterConstraint(nil)
-        }
-        
-        constraint = self.leadingConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setLeadingConstraint(nil)
-        }
-        
-        constraint = self.leadingLessConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setLeadingLessConstraint(nil)
-        }
-        
-        constraint = self.leadingGreaterConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setLeadingGreaterConstraint(nil)
-        }
-        
-        constraint = self.bottomConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setBottomConstraint(nil)
-        }
-        
-        constraint = self.bottomLessConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setBottomLessConstraint(nil)
-        }
-        
-        constraint = self.bottomGreaterConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setBottomGreaterConstraint(nil)
-        }
-        
-        constraint = self.topConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setTopConstraint(nil)
-        }
-        
-        constraint = self.topLessConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setTopLessConstraint(nil)
-        }
-        
-        constraint = self.topGreaterConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setTopGreaterConstraint(nil)
-        }
-        
-        constraint = self.rightConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setRightConstraint(nil)
-        }
-        
-        constraint = self.rightLessConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setRightLessConstraint(nil)
-        }
-        
-        constraint = self.rightGreaterConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setRightGreaterConstraint(nil)
-        }
-        
-        constraint = self.leftConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setLeftConstraint(nil)
-        }
-        
-        constraint = self.leftLessConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setLeftLessConstraint(nil)
-        }
-        
-        constraint = self.leftGreaterConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setLeftGreaterConstraint(nil)
-        }
-        
-        constraint = self.widthConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setWidthConstraint(nil)
-        }
-        
-        constraint = self.widthLessConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setWidthLessConstraint(nil)
-        }
-        
-        constraint = self.widthGreaterConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setWidthGreaterConstraint(nil)
-        }
-        
-        constraint = self.heightConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setHeightConstraint(nil)
-        }
-        
-        constraint = self.heightLessConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setHeightLessConstraint(nil)
-        }
-        
-        constraint = self.heightGreaterConstraint()
-        mainView = getMainView(constraint)
-        if mainView != nil {
-            mainView!.removeConstraint(constraint!)
-            self.setHeightGreaterConstraint(nil)
+        if let constraint = self.heightGreaterConstraint() {
+            removeCache(constraint: constraint).setHeightGreaterConstraint(nil)
         }
         return self
     }
@@ -938,7 +698,7 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_Left(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
         var toAttribute = WHC_LayoutAttribute.right
-        if sameSuperview(view1: toView, view2: self) == nil {
+        if !sameSuperview(view1: toView, view2: self).1 {
             toAttribute = .left
         }
         return self.constraintWithItem(self, attribute: .left, related: .equal, toItem: toView, toAttribute: &toAttribute, multiplier: 1, constant: space)
@@ -983,7 +743,7 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_Right(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
         var toAttribute = WHC_LayoutAttribute.left
-        if sameSuperview(view1: toView, view2: self) == nil {
+        if !sameSuperview(view1: toView, view2: self).1 {
             toAttribute = .right
         }
         return self.constraintWithItem(self, attribute: .right, related: .equal, toItem: toView, toAttribute: &toAttribute, multiplier: 1, constant: 0 - space)
@@ -1028,7 +788,7 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_Leading(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
         var toAttribute = WHC_LayoutAttribute.trailing
-        if sameSuperview(view1: toView, view2: self) == nil {
+        if !sameSuperview(view1: toView, view2: self).1 {
             toAttribute = .leading
         }
         return self.constraintWithItem(self, attribute: .leading, related: .equal, toItem: toView, toAttribute: &toAttribute, multiplier: 1, constant: space)
@@ -1073,7 +833,7 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_Trailing(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
         var toAttribute = WHC_LayoutAttribute.leading
-        if sameSuperview(view1: toView, view2: self) == nil {
+        if !sameSuperview(view1: toView, view2: self).1 {
             toAttribute = .trailing
         }
         return self.constraintWithItem(self, attribute: .trailing, related: .equal, toItem: toView, toAttribute: &toAttribute, multiplier: 1, constant: 0 - space)
@@ -1118,7 +878,7 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_Top(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
         var toAttribute = WHC_LayoutAttribute.bottom
-        if sameSuperview(view1: toView, view2: self) == nil {
+        if !sameSuperview(view1: toView, view2: self).1 {
             toAttribute = .top
         }
         return self.constraintWithItem(self, attribute: .top, related: .equal, toItem: toView, toAttribute: &toAttribute, multiplier: 1, constant: space)
@@ -1388,7 +1148,7 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_FirstBaseLine(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
         var toAttribute = WHC_LayoutAttribute.lastBaseline
-        if sameSuperview(view1: toView, view2: self) == nil {
+        if !sameSuperview(view1: toView, view2: self).1 {
             toAttribute = .firstBaseline
         }
         return self.constraintWithItem(self, attribute: .firstBaseline, related: .equal, toItem: toView, toAttribute: &toAttribute, multiplier: 1, constant: 0 - space)
@@ -1432,7 +1192,7 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_LastBaseLine(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
         var toAttribute = WHC_LayoutAttribute.firstBaseline
-        if sameSuperview(view1: toView, view2: self) == nil {
+        if !sameSuperview(view1: toView, view2: self).1 {
             toAttribute = .lastBaseline
         }
         return self.constraintWithItem(self, attribute: .lastBaseline, related: .equal, toItem: toView, toAttribute: &toAttribute, multiplier: 1, constant: 0 - space)
@@ -1629,7 +1389,7 @@ extension WHC_VIEW {
     
     //MARK: -私有方法-
     
-    fileprivate func setLeftConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
+    private func setLeftConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setLeftConstraint(constraint)
@@ -1640,7 +1400,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func leftConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
+    private func leftConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return leftConstraint()
@@ -1651,31 +1411,31 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func setLeftConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setLeftConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLeft, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func leftConstraint() -> NSLayoutConstraint! {
+    private func leftConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLeft) as? NSLayoutConstraint
     }
     
-    fileprivate func setLeftLessConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setLeftLessConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLeftL, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func leftLessConstraint() -> NSLayoutConstraint! {
+    private func leftLessConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLeftL) as? NSLayoutConstraint
     }
     
-    fileprivate func setLeftGreaterConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setLeftGreaterConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLeftG, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func leftGreaterConstraint() -> NSLayoutConstraint! {
+    private func leftGreaterConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLeftG) as? NSLayoutConstraint
     }
     
-    fileprivate func setRightConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
+    private func setRightConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setRightConstraint(constraint)
@@ -1686,7 +1446,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func rightConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
+    private func rightConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return rightConstraint()
@@ -1697,31 +1457,31 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func setRightConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setRightConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeRight, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func rightConstraint() -> NSLayoutConstraint! {
+    private func rightConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeRight) as? NSLayoutConstraint
     }
     
-    fileprivate func setRightLessConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setRightLessConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeRightL, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func rightLessConstraint() -> NSLayoutConstraint! {
+    private func rightLessConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeRightL) as? NSLayoutConstraint
     }
     
-    fileprivate func setRightGreaterConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setRightGreaterConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeRightG, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func rightGreaterConstraint() -> NSLayoutConstraint! {
+    private func rightGreaterConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeRightG) as? NSLayoutConstraint
     }
     
-    fileprivate func setTopConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
+    private func setTopConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setTopConstraint(constraint)
@@ -1732,7 +1492,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func topConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
+    private func topConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return topConstraint()
@@ -1743,31 +1503,31 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func setTopConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setTopConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeTop, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func topConstraint() -> NSLayoutConstraint! {
+    private func topConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeTop) as? NSLayoutConstraint
     }
     
-    fileprivate func setTopLessConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setTopLessConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeTopL, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func topLessConstraint() -> NSLayoutConstraint! {
+    private func topLessConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeTopL) as? NSLayoutConstraint
     }
     
-    fileprivate func setTopGreaterConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setTopGreaterConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeTopG, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func topGreaterConstraint() -> NSLayoutConstraint! {
+    private func topGreaterConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeTopG) as? NSLayoutConstraint
     }
     
-    fileprivate func setBottomConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
+    private func setBottomConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setBottomConstraint(constraint)
@@ -1778,7 +1538,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func bottomConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
+    private func bottomConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return bottomConstraint()
@@ -1789,31 +1549,31 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func setBottomConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setBottomConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeBottom, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func bottomConstraint() -> NSLayoutConstraint! {
+    private func bottomConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeBottom) as? NSLayoutConstraint
     }
     
-    fileprivate func setBottomLessConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setBottomLessConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeBottomL, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func bottomLessConstraint() -> NSLayoutConstraint! {
+    private func bottomLessConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeBottomL) as? NSLayoutConstraint
     }
     
-    fileprivate func setBottomGreaterConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setBottomGreaterConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeBottomG, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func bottomGreaterConstraint() -> NSLayoutConstraint! {
+    private func bottomGreaterConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeBottomG) as? NSLayoutConstraint
     }
     
-    fileprivate func setLeadingConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
+    private func setLeadingConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setLeadingConstraint(constraint)
@@ -1824,7 +1584,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func leadingConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
+    private func leadingConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return leadingConstraint()
@@ -1835,31 +1595,31 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func setLeadingConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setLeadingConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLeading, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func leadingConstraint() -> NSLayoutConstraint! {
+    private func leadingConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLeading) as? NSLayoutConstraint
     }
     
-    fileprivate func setLeadingLessConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setLeadingLessConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLeadingL, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func leadingLessConstraint() -> NSLayoutConstraint! {
+    private func leadingLessConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLeadingL) as? NSLayoutConstraint
     }
     
-    fileprivate func setLeadingGreaterConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setLeadingGreaterConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLeadingG, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func leadingGreaterConstraint() -> NSLayoutConstraint! {
+    private func leadingGreaterConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLeadingG) as? NSLayoutConstraint
     }
     
-    fileprivate func setTrailingConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
+    private func setTrailingConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setTrailingConstraint(constraint)
@@ -1870,7 +1630,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func trailingConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
+    private func trailingConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return trailingConstraint()
@@ -1881,31 +1641,31 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func setTrailingConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setTrailingConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeTrailing, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func trailingConstraint() -> NSLayoutConstraint! {
+    private func trailingConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeTrailing) as? NSLayoutConstraint
     }
     
-    fileprivate func setTrailingLessConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setTrailingLessConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeTrailingL, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func trailingLessConstraint() -> NSLayoutConstraint! {
+    private func trailingLessConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeTrailingL) as? NSLayoutConstraint
     }
     
-    fileprivate func setTrailingGreaterConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setTrailingGreaterConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeTrailingG, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func trailingGreaterConstraint() -> NSLayoutConstraint! {
+    private func trailingGreaterConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeTrailingG) as? NSLayoutConstraint
     }
     
-    fileprivate func setWidthConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
+    private func setWidthConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setWidthConstraint(constraint)
@@ -1916,7 +1676,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func widthConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
+    private func widthConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return widthConstraint()
@@ -1928,31 +1688,31 @@ extension WHC_VIEW {
         
     }
     
-    fileprivate func setWidthConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setWidthConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeWidth, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func widthConstraint() -> NSLayoutConstraint! {
+    private func widthConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeWidth) as? NSLayoutConstraint
     }
     
-    fileprivate func setWidthLessConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setWidthLessConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeWidthL, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func widthLessConstraint() -> NSLayoutConstraint! {
+    private func widthLessConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeWidthL) as? NSLayoutConstraint
     }
     
-    fileprivate func setWidthGreaterConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setWidthGreaterConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeWidthG, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func widthGreaterConstraint() -> NSLayoutConstraint! {
+    private func widthGreaterConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeWidthG) as? NSLayoutConstraint
     }
     
-    fileprivate func setHeightConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
+    private func setHeightConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setHeightConstraint(constraint)
@@ -1963,7 +1723,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func heightConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
+    private func heightConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return heightConstraint()
@@ -1974,31 +1734,31 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func setHeightConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setHeightConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeHeight, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func heightConstraint() -> NSLayoutConstraint! {
+    private func heightConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeHeight) as? NSLayoutConstraint
     }
     
-    fileprivate func setHeightLessConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setHeightLessConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeHeightL, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func heightLessConstraint() -> NSLayoutConstraint! {
+    private func heightLessConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeHeightL) as? NSLayoutConstraint
     }
     
-    fileprivate func setHeightGreaterConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setHeightGreaterConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeHeightG, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func heightGreaterConstraint() -> NSLayoutConstraint! {
+    private func heightGreaterConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeHeightG) as? NSLayoutConstraint
     }
     
-    fileprivate func setCenterXConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
+    private func setCenterXConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setCenterXConstraint(constraint)
@@ -2009,7 +1769,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func centerXConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
+    private func centerXConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return centerXConstraint()
@@ -2020,31 +1780,31 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func setCenterXConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setCenterXConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeCenterX, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func centerXConstraint() -> NSLayoutConstraint! {
+    private func centerXConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeCenterX) as? NSLayoutConstraint
     }
     
-    fileprivate func setCenterXLessConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setCenterXLessConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeCenterXL, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func centerXLessConstraint() -> NSLayoutConstraint! {
+    private func centerXLessConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeCenterXL) as? NSLayoutConstraint
     }
     
-    fileprivate func setCenterXGreaterConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setCenterXGreaterConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeCenterXG, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func centerXGreaterConstraint() -> NSLayoutConstraint! {
+    private func centerXGreaterConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeCenterXG) as? NSLayoutConstraint
     }
     
-    fileprivate func setCenterYConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
+    private func setCenterYConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setCenterYConstraint(constraint)
@@ -2055,7 +1815,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func centerYConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
+    private func centerYConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return centerYConstraint()
@@ -2066,31 +1826,31 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func setCenterYConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setCenterYConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeCenterY, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func centerYConstraint() -> NSLayoutConstraint! {
+    private func centerYConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeCenterY) as? NSLayoutConstraint
     }
     
-    fileprivate func setCenterYLessConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setCenterYLessConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeCenterYL, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func centerYLessConstraint() -> NSLayoutConstraint! {
+    private func centerYLessConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeCenterYL) as? NSLayoutConstraint
     }
     
-    fileprivate func setCenterYGreaterConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setCenterYGreaterConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeCenterYG, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func centerYGreaterConstraint() -> NSLayoutConstraint! {
+    private func centerYGreaterConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeCenterYG) as? NSLayoutConstraint
     }
     
-    fileprivate func setLastBaselineConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
+    private func setLastBaselineConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setLastBaselineConstraint(constraint)
@@ -2101,7 +1861,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func lastBaselineConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
+    private func lastBaselineConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return lastBaselineConstraint()
@@ -2112,31 +1872,31 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func setLastBaselineConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setLastBaselineConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLastBaseline, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func lastBaselineConstraint() -> NSLayoutConstraint! {
+    private func lastBaselineConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLastBaseline) as? NSLayoutConstraint
     }
     
-    fileprivate func setLastBaselineLessConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setLastBaselineLessConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLastBaselineL, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func lastBaselineLessConstraint() -> NSLayoutConstraint! {
+    private func lastBaselineLessConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLastBaselineL) as? NSLayoutConstraint
     }
     
-    fileprivate func setLastBaselineGreaterConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setLastBaselineGreaterConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLastBaselineG, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func lastBaselineGreaterConstraint() -> NSLayoutConstraint! {
+    private func lastBaselineGreaterConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeLastBaselineG) as? NSLayoutConstraint
     }
     
-    fileprivate func setFirstBaselineConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
+    private func setFirstBaselineConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
         case .equal:
             setFirstBaselineConstraint(constraint)
@@ -2147,7 +1907,7 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func firstBaselineConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
+    private func firstBaselineConstraint(_ relation: WHC_LayoutRelation) -> NSLayoutConstraint! {
         switch relation {
         case .equal:
             return firstBaselineConstraint()
@@ -2158,33 +1918,33 @@ extension WHC_VIEW {
         }
     }
     
-    fileprivate func setFirstBaselineConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setFirstBaselineConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeFirstBaseline, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func firstBaselineConstraint() -> NSLayoutConstraint! {
+    private func firstBaselineConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeFirstBaseline) as? NSLayoutConstraint
     }
     
-    fileprivate func setFirstBaselineLessConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setFirstBaselineLessConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeFirstBaselineL, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func firstBaselineLessConstraint() -> NSLayoutConstraint! {
+    private func firstBaselineLessConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeFirstBaselineL) as? NSLayoutConstraint
     }
     
-    fileprivate func setFirstBaselineGreaterConstraint(_ constraint: NSLayoutConstraint!) {
+    private func setFirstBaselineGreaterConstraint(_ constraint: NSLayoutConstraint!) {
         objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeFirstBaselineG, constraint, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
     
-    fileprivate func firstBaselineGreaterConstraint() -> NSLayoutConstraint! {
+    private func firstBaselineGreaterConstraint() -> NSLayoutConstraint! {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeFirstBaselineG) as? NSLayoutConstraint
     }
     
-    fileprivate func constraintWithItem(_ item: WHC_VIEW!,
-                                        attribute: WHC_LayoutAttribute,
-                                        constant: CGFloat) -> WHC_VIEW {
+    private func constraintWithItem(_ item: WHC_VIEW!,
+                                    attribute: WHC_LayoutAttribute,
+                                    constant: CGFloat) -> WHC_VIEW {
         var toAttribute = attribute
         return self.constraintWithItem(self,
                                        attribute: attribute,
@@ -2193,10 +1953,10 @@ extension WHC_VIEW {
                                        constant: constant)
     }
     
-    fileprivate func constraintWithItem(_ item: WHC_VIEW!,
-                                        attribute: WHC_LayoutAttribute,
-                                        multiplier: CGFloat,
-                                        constant: CGFloat) -> WHC_VIEW {
+    private func constraintWithItem(_ item: WHC_VIEW!,
+                                    attribute: WHC_LayoutAttribute,
+                                    multiplier: CGFloat,
+                                    constant: CGFloat) -> WHC_VIEW {
         var toAttribute = attribute
         return self.constraintWithItem(self,
                                        attribute: attribute,
@@ -2206,11 +1966,11 @@ extension WHC_VIEW {
                                        constant: constant)
     }
     
-    fileprivate func constraintWithItem(_ item: WHC_VIEW!,
-                                        attribute: WHC_LayoutAttribute,
-                                        toItem: WHC_VIEW!,
-                                        toAttribute: inout WHC_LayoutAttribute,
-                                        constant: CGFloat) -> WHC_VIEW {
+    private func constraintWithItem(_ item: WHC_VIEW!,
+                                    attribute: WHC_LayoutAttribute,
+                                    toItem: WHC_VIEW!,
+                                    toAttribute: inout WHC_LayoutAttribute,
+                                    constant: CGFloat) -> WHC_VIEW {
         return self.constraintWithItem(item,
                                        attribute: attribute,
                                        toItem: toItem,
@@ -2219,12 +1979,12 @@ extension WHC_VIEW {
                                        constant: constant)
     }
     
-    fileprivate func constraintWithItem(_ item: WHC_VIEW!,
-                                        attribute: WHC_LayoutAttribute,
-                                        toItem: WHC_VIEW!,
-                                        toAttribute: inout WHC_LayoutAttribute,
-                                        multiplier: CGFloat,
-                                        constant: CGFloat) -> WHC_VIEW {
+    private func constraintWithItem(_ item: WHC_VIEW!,
+                                    attribute: WHC_LayoutAttribute,
+                                    toItem: WHC_VIEW!,
+                                    toAttribute: inout WHC_LayoutAttribute,
+                                    multiplier: CGFloat,
+                                    constant: CGFloat) -> WHC_VIEW {
         return self.constraintWithItem(item,
                                        attribute: attribute,
                                        related: .equal,
@@ -2234,341 +1994,256 @@ extension WHC_VIEW {
                                        constant: constant)
     }
     
-    fileprivate func constraintWithItem(_ item: WHC_VIEW!,
-                                        attribute: WHC_LayoutAttribute,
-                                        related: WHC_LayoutRelation,
-                                        toItem: WHC_VIEW!,
-                                        toAttribute: inout WHC_LayoutAttribute,
-                                        multiplier: CGFloat,
-                                        constant: CGFloat) -> WHC_VIEW {
-        var superView = item.superview
-        if toItem != nil {
-            if toItem.superview == nil {
-                superView = toItem
-            }else if let sameSuperview = sameSuperview(view1: toItem, view2: item) {
-                superView = sameSuperview
-            }else {
-                superView = toItem
-            }
-        }else {
-            superView = item
+    private func constraintWithItem(_ item: WHC_VIEW!,
+                                    attribute: WHC_LayoutAttribute,
+                                    related: WHC_LayoutRelation,
+                                    toItem: WHC_VIEW!,
+                                    toAttribute: inout WHC_LayoutAttribute,
+                                    multiplier: CGFloat,
+                                    constant: CGFloat) -> WHC_VIEW {
+        let superView = mainSuperView(view1: toItem, view2: item)
+        if superView == nil {
+            return self
+        }
+        var firstAttribute = attribute
+        if toItem == nil {
             toAttribute = .notAnAttribute
+        }else if item == nil {
+            firstAttribute = .notAnAttribute
         }
         if self.translatesAutoresizingMaskIntoConstraints {
             self.translatesAutoresizingMaskIntoConstraints = false
         }
-        if ((item?.translatesAutoresizingMaskIntoConstraints) != nil) {
-            item.translatesAutoresizingMaskIntoConstraints = false
-        }
-        
-        switch attribute {
+        item?.translatesAutoresizingMaskIntoConstraints = false
+        switch firstAttribute {
         case .left:
-            var leading = self.leadingConstraint()
-            if leading != nil {
-                superView!.removeConstraint(leading!)
-                self.setLeadingConstraint(nil)
+            if let leading = self.leadingConstraint() {
+                removeCache(constraint: leading).setLeadingConstraint(nil)
             }
-            leading = self.leadingLessConstraint()
-            if leading != nil {
-                superView!.removeConstraint(leading!)
-                self.setLeadingLessConstraint(nil)
+            if let leading = self.leadingLessConstraint() {
+                removeCache(constraint: leading).setLeadingLessConstraint(nil)
             }
-            leading = self.leadingGreaterConstraint()
-            if leading != nil {
-                superView!.removeConstraint(leading!)
-                self.setLeadingGreaterConstraint(nil)
+            if let leading = self.leadingGreaterConstraint() {
+                removeCache(constraint: leading).setLeadingGreaterConstraint(nil)
             }
-            let left = self.leftConstraint(related)
-            if left != nil {
-                if (left!.firstAttribute == attribute &&
-                    left!.secondAttribute == toAttribute &&
-                    left!.firstItem === item &&
-                    left!.secondItem === toItem &&
-                    left!.relation == related &&
-                    left!.multiplier == multiplier) {
-                    left!.constant = constant
+            if let left = self.leftConstraint(related) {
+                if (left.firstAttribute == firstAttribute &&
+                    left.secondAttribute == toAttribute &&
+                    left.firstItem === item &&
+                    left.secondItem === toItem &&
+                    left.relation == related &&
+                    left.multiplier == multiplier) {
+                    left.constant = constant
                     return self
                 }
-                superView!.removeConstraint(left!)
-                self.setLeftConstraint(nil, relation: related)
+                removeCache(constraint: left).setLeftConstraint(nil, relation: related)
             }
         case .right:
-            var trailing = self.trailingConstraint()
-            if trailing != nil {
-                superView!.removeConstraint(trailing!)
-                self.setTrailingConstraint(nil)
+            if let trailing = self.trailingConstraint() {
+                removeCache(constraint: trailing).setTrailingConstraint(nil)
             }
-            trailing = self.trailingLessConstraint()
-            if trailing != nil {
-                superView!.removeConstraint(trailing!)
-                self.setTrailingLessConstraint(nil)
+            if let trailing = self.trailingLessConstraint() {
+                removeCache(constraint: trailing).setTrailingLessConstraint(nil)
             }
-            trailing = self.trailingGreaterConstraint()
-            if trailing != nil {
-                superView!.removeConstraint(trailing!)
-                self.setTrailingGreaterConstraint(nil)
+            if let trailing = self.trailingGreaterConstraint() {
+                removeCache(constraint: trailing).setTrailingGreaterConstraint(nil)
             }
-            let right = self.rightConstraint(related)
-            if right != nil {
-                if (right!.firstAttribute == attribute &&
-                    right!.secondAttribute == toAttribute &&
-                    right!.firstItem === item &&
-                    right!.secondItem === toItem &&
-                    right!.relation == related &&
-                    right!.multiplier == multiplier) {
-                    right!.constant = constant
+            
+            if let right = self.rightConstraint(related) {
+                if (right.firstAttribute == firstAttribute &&
+                    right.secondAttribute == toAttribute &&
+                    right.firstItem === item &&
+                    right.secondItem === toItem &&
+                    right.relation == related &&
+                    right.multiplier == multiplier) {
+                    right.constant = constant
                     return self
                 }
-                superView!.removeConstraint(right!)
-                self.setRightConstraint(nil, relation: related)
+                removeCache(constraint: right).setRightConstraint(nil, relation: related)
             }
         case .top:
-            var firstBaseline = self.firstBaselineConstraint()
-            if firstBaseline != nil {
-                superView!.removeConstraint(firstBaseline!)
-                self.setFirstBaselineConstraint(nil)
+            if let firstBaseline = self.firstBaselineConstraint() {
+                removeCache(constraint: firstBaseline).setFirstBaselineConstraint(nil)
             }
-            firstBaseline = self.firstBaselineLessConstraint()
-            if firstBaseline != nil {
-                superView!.removeConstraint(firstBaseline!)
-                self.setFirstBaselineLessConstraint(nil)
+            if let firstBaseline = self.firstBaselineLessConstraint() {
+                removeCache(constraint: firstBaseline).setFirstBaselineLessConstraint(nil)
             }
-            firstBaseline = self.firstBaselineGreaterConstraint()
-            if firstBaseline != nil {
-                superView!.removeConstraint(firstBaseline!)
-                self.setFirstBaselineGreaterConstraint(nil)
+            if let firstBaseline = self.firstBaselineGreaterConstraint() {
+                removeCache(constraint: firstBaseline).setFirstBaselineGreaterConstraint(nil)
             }
-            let top = self.topConstraint(related)
-            if top != nil {
-                if (top!.firstAttribute == attribute &&
-                    top!.secondAttribute == toAttribute &&
-                    top!.firstItem === item &&
-                    top!.secondItem === toItem &&
-                    top!.relation == related &&
-                    top!.multiplier == multiplier) {
-                    top!.constant = constant
+            if let top = self.topConstraint(related) {
+                if (top.firstAttribute == firstAttribute &&
+                    top.secondAttribute == toAttribute &&
+                    top.firstItem === item &&
+                    top.secondItem === toItem &&
+                    top.relation == related &&
+                    top.multiplier == multiplier) {
+                    top.constant = constant
                     return self
                 }
-                superView!.removeConstraint(top!)
-                self.setTopConstraint(nil, relation: related)
+                removeCache(constraint: top).setTopConstraint(nil, relation: related)
             }
         case .bottom:
-            var lastBaseline = self.lastBaselineConstraint()
-            if lastBaseline != nil {
-                superView!.removeConstraint(lastBaseline!)
-                self.setLastBaselineConstraint(nil)
+            if let lastBaseline = self.lastBaselineConstraint() {
+                removeCache(constraint: lastBaseline).setLastBaselineConstraint(nil)
             }
-            lastBaseline = self.lastBaselineLessConstraint()
-            if lastBaseline != nil {
-                superView!.removeConstraint(lastBaseline!)
-                self.setLastBaselineLessConstraint(nil)
+            if let lastBaseline = self.lastBaselineLessConstraint() {
+                removeCache(constraint: lastBaseline).setLastBaselineLessConstraint(nil)
             }
-            lastBaseline = self.lastBaselineGreaterConstraint()
-            if lastBaseline != nil {
-                superView!.removeConstraint(lastBaseline!)
-                self.setLastBaselineGreaterConstraint(nil)
+            if let lastBaseline = self.lastBaselineGreaterConstraint() {
+                removeCache(constraint: lastBaseline).setLastBaselineGreaterConstraint(nil)
             }
-            let bottom = self.bottomConstraint(related)
-            if bottom != nil {
-                if (bottom!.firstAttribute == attribute &&
-                    bottom!.secondAttribute == toAttribute &&
-                    bottom!.firstItem === item &&
-                    bottom!.secondItem === toItem &&
-                    bottom!.relation == related &&
-                    bottom!.multiplier == multiplier) {
-                    bottom!.constant = constant
+            if let bottom = self.bottomConstraint(related) {
+                if (bottom.firstAttribute == firstAttribute &&
+                    bottom.secondAttribute == toAttribute &&
+                    bottom.firstItem === item &&
+                    bottom.secondItem === toItem &&
+                    bottom.relation == related &&
+                    bottom.multiplier == multiplier) {
+                    bottom.constant = constant
                     return self
                 }
-                superView!.removeConstraint(bottom!)
-                self.setBottomConstraint(nil, relation: related)
+                removeCache(constraint: bottom).setBottomConstraint(nil, relation: related)
             }
         case .leading:
-            var left = self.leftConstraint()
-            if left != nil {
-                superView!.removeConstraint(left!)
-                self.setLeftConstraint(nil)
+            if let left = self.leftConstraint() {
+                removeCache(constraint: left).setLeftConstraint(nil)
             }
-            left = self.leftLessConstraint()
-            if left != nil {
-                superView!.removeConstraint(left!)
-                self.setLeftLessConstraint(nil)
+            if let left = self.leftLessConstraint() {
+                removeCache(constraint: left).setLeftLessConstraint(nil)
             }
-            left = self.leftGreaterConstraint()
-            if left != nil {
-                superView!.removeConstraint(left!)
-                self.setLeftGreaterConstraint(nil)
+            if let left = self.leftGreaterConstraint() {
+                removeCache(constraint: left).setLeftGreaterConstraint(nil)
             }
-            let leading = self.leadingConstraint(related)
-            if leading != nil {
-                if (leading!.firstAttribute == attribute &&
-                    leading!.secondAttribute == toAttribute &&
-                    leading!.firstItem === item &&
-                    leading!.secondItem === toItem &&
-                    leading!.relation == related &&
-                    leading!.multiplier == multiplier) {
-                    leading!.constant = constant
+            if let leading = self.leadingConstraint(related) {
+                if (leading.firstAttribute == firstAttribute &&
+                    leading.secondAttribute == toAttribute &&
+                    leading.firstItem === item &&
+                    leading.secondItem === toItem &&
+                    leading.relation == related &&
+                    leading.multiplier == multiplier) {
+                    leading.constant = constant
                     return self
                 }
-                superView!.removeConstraint(leading!)
-                self.setLeadingConstraint(nil, relation: related)
+                removeCache(constraint: leading).setLeadingConstraint(nil, relation: related)
             }
         case .trailing:
-            var right = self.rightConstraint()
-            if right != nil {
-                superView!.removeConstraint(right!)
-                self.setRightConstraint(nil)
+            if let right = self.rightConstraint() {
+                removeCache(constraint: right).setRightConstraint(nil)
             }
-            right = self.rightLessConstraint()
-            if right != nil {
-                superView!.removeConstraint(right!)
-                self.setRightLessConstraint(nil)
+            if let right = self.rightLessConstraint() {
+                removeCache(constraint: right).setRightLessConstraint(nil)
             }
-            right = self.rightGreaterConstraint()
-            if right != nil {
-                superView!.removeConstraint(right!)
-                self.setRightGreaterConstraint(nil)
+            if let right = self.rightGreaterConstraint() {
+                removeCache(constraint: right).setRightGreaterConstraint(nil)
             }
-            let trailing = self.trailingConstraint(related)
-            if trailing != nil {
-                if (trailing!.firstAttribute == attribute &&
-                    trailing!.secondAttribute == toAttribute &&
-                    trailing!.firstItem === item &&
-                    trailing!.secondItem === toItem &&
-                    trailing!.relation == related &&
-                    trailing!.multiplier == multiplier) {
-                    trailing!.constant = constant
+            if let trailing = self.trailingConstraint(related) {
+                if (trailing.firstAttribute == firstAttribute &&
+                    trailing.secondAttribute == toAttribute &&
+                    trailing.firstItem === item &&
+                    trailing.secondItem === toItem &&
+                    trailing.relation == related &&
+                    trailing.multiplier == multiplier) {
+                    trailing.constant = constant
                     return self
                 }
-                superView!.removeConstraint(trailing!)
-                self.setTrailingConstraint(nil, relation: related)
+                removeCache(constraint: trailing).setTrailingConstraint(nil, relation: related)
             }
         case .width:
-            let width = self.widthConstraint(related)
-            if width != nil {
-                if (width!.firstAttribute == attribute &&
-                    width!.secondAttribute == toAttribute &&
-                    width!.firstItem === item &&
-                    width!.secondItem === toItem &&
-                    width!.relation == related &&
-                    width!.multiplier == multiplier) {
-                    width!.constant = constant
+            if let width = self.widthConstraint(related) {
+                if (width.firstAttribute == firstAttribute &&
+                    width.secondAttribute == toAttribute &&
+                    width.firstItem === item &&
+                    width.secondItem === toItem &&
+                    width.relation == related &&
+                    width.multiplier == multiplier) {
+                    width.constant = constant
                     return self
                 }
-                if width!.secondAttribute != .notAnAttribute {
-                    superView!.removeConstraint(width!)
-                }else {
-                    self.removeConstraint(width!)
-                }
-                self.setWidthConstraint(nil, relation: related)
+                removeCache(constraint: width).setWidthConstraint(nil, relation: related)
             }
         case .height:
-            let height = self.heightConstraint(related)
-            if height != nil {
-                if (height!.firstAttribute == attribute &&
-                    height!.secondAttribute == toAttribute &&
-                    height!.firstItem === item &&
-                    height!.secondItem === toItem &&
-                    height!.relation == related &&
-                    height!.multiplier == multiplier) {
-                    height!.constant = constant
+            if let height = self.heightConstraint(related) {
+                if (height.firstAttribute == firstAttribute &&
+                    height.secondAttribute == toAttribute &&
+                    height.firstItem === item &&
+                    height.secondItem === toItem &&
+                    height.relation == related &&
+                    height.multiplier == multiplier) {
+                    height.constant = constant
                     return self
                 }
-                if height!.secondAttribute != .notAnAttribute {
-                    superView!.removeConstraint(height!)
-                }else {
-                    self.removeConstraint(height!)
-                }
-                self.setHeightConstraint(nil, relation: related)
+                removeCache(constraint: height).setHeightConstraint(nil, relation: related)
             }
         case .centerX:
-            let centerX = self.centerXConstraint(related)
-            if centerX != nil {
-                if (centerX!.firstAttribute == attribute &&
-                    centerX!.secondAttribute == toAttribute &&
-                    centerX!.firstItem === item &&
-                    centerX!.secondItem === toItem &&
-                    centerX!.relation == related &&
-                    centerX!.multiplier == multiplier) {
-                    centerX!.constant = constant
+            if let centerX = self.centerXConstraint(related) {
+                if (centerX.firstAttribute == firstAttribute &&
+                    centerX.secondAttribute == toAttribute &&
+                    centerX.firstItem === item &&
+                    centerX.secondItem === toItem &&
+                    centerX.relation == related &&
+                    centerX.multiplier == multiplier) {
+                    centerX.constant = constant
                     return self
                 }
-                superView!.removeConstraint(centerX!)
-                self.setCenterXConstraint(nil, relation: related)
+                removeCache(constraint: centerX).setCenterXConstraint(nil, relation: related)
             }
         case .centerY:
-            let centerY = self.centerYConstraint(related)
-            if centerY != nil {
-                if (centerY!.firstAttribute == attribute &&
-                    centerY!.secondAttribute == toAttribute &&
-                    centerY!.firstItem === item &&
-                    centerY!.secondItem === toItem &&
-                    centerY!.relation == related &&
-                    centerY!.multiplier == multiplier) {
-                    centerY!.constant = constant
+            if let centerY = self.centerYConstraint(related) {
+                if (centerY.firstAttribute == firstAttribute &&
+                    centerY.secondAttribute == toAttribute &&
+                    centerY.firstItem === item &&
+                    centerY.secondItem === toItem &&
+                    centerY.relation == related &&
+                    centerY.multiplier == multiplier) {
+                    centerY.constant = constant
                     return self
                 }
-                superView!.removeConstraint(centerY!)
-                self.setCenterYConstraint(nil, relation: related)
+                removeCache(constraint: centerY).setCenterYConstraint(nil, relation: related)
             }
         case .lastBaseline:
-            var bottom = self.bottomConstraint()
-            if bottom != nil {
-                superView!.removeConstraint(bottom!)
-                self.setBottomConstraint(nil)
+            if let bottom = self.bottomConstraint() {
+                removeCache(constraint: bottom).setBottomConstraint(nil)
             }
-            bottom = self.bottomLessConstraint()
-            if bottom != nil {
-                superView!.removeConstraint(bottom!)
-                self.setBottomLessConstraint(nil)
+            if let bottom = self.bottomLessConstraint() {
+                removeCache(constraint: bottom).setBottomLessConstraint(nil)
             }
-            bottom = self.bottomGreaterConstraint()
-            if bottom != nil {
-                superView!.removeConstraint(bottom!)
-                self.setBottomGreaterConstraint(nil)
+            if let bottom = self.bottomGreaterConstraint() {
+                removeCache(constraint: bottom).setBottomGreaterConstraint(nil)
             }
-            let lastBaseline = self.lastBaselineConstraint(related)
-            if lastBaseline != nil {
-                if (lastBaseline!.firstAttribute == attribute &&
-                    lastBaseline!.secondAttribute == toAttribute &&
-                    lastBaseline!.firstItem === item &&
-                    lastBaseline!.secondItem === toItem &&
-                    lastBaseline!.relation == related &&
-                    lastBaseline!.multiplier == multiplier) {
-                    lastBaseline!.constant = constant
+            if let lastBaseline = self.lastBaselineConstraint(related) {
+                if (lastBaseline.firstAttribute == firstAttribute &&
+                    lastBaseline.secondAttribute == toAttribute &&
+                    lastBaseline.firstItem === item &&
+                    lastBaseline.secondItem === toItem &&
+                    lastBaseline.relation == related &&
+                    lastBaseline.multiplier == multiplier) {
+                    lastBaseline.constant = constant
                     return self
                 }
-                superView!.removeConstraint(lastBaseline!)
-                self.setLastBaselineConstraint(nil, relation: related)
+                removeCache(constraint: lastBaseline).setLastBaselineConstraint(nil, relation: related)
             }
         case .firstBaseline:
-            var top = self.topConstraint()
-            if top != nil {
-                superView!.removeConstraint(top!)
-                self.setTopConstraint(nil)
+            if let top = self.topConstraint() {
+                removeCache(constraint: top).setTopConstraint(nil)
             }
-            top = self.topLessConstraint()
-            if top != nil {
-                superView!.removeConstraint(top!)
-                self.setTopLessConstraint(nil)
+            if let top = self.topLessConstraint() {
+                removeCache(constraint: top).setTopLessConstraint(nil)
             }
-            top = self.topGreaterConstraint()
-            if top != nil {
-                superView!.removeConstraint(top!)
-                self.setTopGreaterConstraint(nil)
+            if let top = self.topGreaterConstraint() {
+                removeCache(constraint: top).setTopGreaterConstraint(nil)
             }
-            let firstBaseline = self.firstBaselineConstraint(related)
-            if firstBaseline != nil {
-                if (firstBaseline!.firstAttribute == attribute &&
-                    firstBaseline!.secondAttribute == toAttribute &&
-                    firstBaseline!.firstItem === item &&
-                    firstBaseline!.secondItem === toItem &&
-                    firstBaseline!.relation == related &&
-                    firstBaseline!.multiplier == multiplier) {
-                    firstBaseline!.constant = constant
+            if let firstBaseline = self.firstBaselineConstraint(related) {
+                if (firstBaseline.firstAttribute == firstAttribute &&
+                    firstBaseline.secondAttribute == toAttribute &&
+                    firstBaseline.firstItem === item &&
+                    firstBaseline.secondItem === toItem &&
+                    firstBaseline.relation == related &&
+                    firstBaseline.multiplier == multiplier) {
+                    firstBaseline.constant = constant
                     return self
                 }
-                superView!.removeConstraint(firstBaseline!)
-                self.setFirstBaselineConstraint(nil, relation: related)
+                removeCache(constraint: firstBaseline).setFirstBaselineConstraint(nil, relation: related)
             }
         default:
             break
@@ -2587,16 +2262,74 @@ extension WHC_VIEW {
         return self
     }
     
-    fileprivate func sameSuperview(view1: WHC_VIEW?, view2: WHC_VIEW?) -> WHC_VIEW? {
-        var sameSuperview: WHC_VIEW?
+    @discardableResult
+    private func removeCache(constraint: NSLayoutConstraint?) -> WHC_VIEW {
+        whc_MainViewConstraint(constraint)?.removeConstraint(constraint!)
+        return self
+    }
+    
+    private func mainSuperView(view1: WHC_VIEW?, view2: WHC_VIEW?) -> WHC_VIEW? {
+        if view1 == nil && view2 != nil {
+            return view2
+        }
+        if view1 != nil && view2 == nil {
+            return view1
+        }
+        if view1 == nil && view2 == nil {
+            return nil
+        }
+        if view1!.superview != nil && view2!.superview == nil {
+            return view2
+        }
+        if view1!.superview == nil && view2!.superview != nil {
+            return view1
+        }
+        if let mainView = sameSuperview(view1: view1, view2: view2).0 {
+            return mainView
+        }else if let mainView = sameSuperview(view1: view2, view2: view1).0 {
+            return mainView
+        }
+        return nil
+    }
+    
+    private func checkSubSuperView(superv: WHC_VIEW?, subv: WHC_VIEW?) -> WHC_VIEW? {
+        var superView: WHC_VIEW?
+        if let spv = superv, let sbv = subv {
+            func scanSubv(_ subvs: [WHC_VIEW]?) -> WHC_VIEW? {
+                var superView: WHC_VIEW?
+                if let tmpsubvs = subvs, !tmpsubvs.isEmpty {
+                    tmpsubvs.forEach({ (sbvspv) in
+                        if sbvspv === sbv {
+                            superView = sbvspv
+                            return
+                        }
+                    })
+                    if superView == nil {
+                        var sumSubv = [WHC_VIEW]()
+                        tmpsubvs.forEach({ (sv) in
+                            sumSubv.append(contentsOf: sv.subviews)
+                        })
+                        superView = scanSubv(sumSubv)
+                    }
+                }
+                return superView
+            }
+            if scanSubv([spv]) != nil {
+                superView = spv
+            }
+        }
+        return superView
+    }
+    
+    private func sameSuperview(view1: WHC_VIEW?, view2: WHC_VIEW?) -> (WHC_VIEW?, Bool) {
         var tempToItem = view1
         var tempItem = view2
         if tempToItem != nil && tempItem != nil {
-            if let superv = tempToItem?.superview, superv === tempItem {
-                return superv
+            if checkSubSuperView(superv: view1, subv: view2) != nil {
+                return (view1, false)
             }
-            if let superv = tempItem?.superview, superv === tempToItem {
-                return superv
+            if checkSubSuperView(superv: view2, subv: view1) != nil {
+                return (view2, false)
             }
         }
         let checkSameSuperview: ((WHC_VIEW, WHC_VIEW) -> Bool) = {(tmpSuperview, singleView) in
@@ -2613,25 +2346,22 @@ extension WHC_VIEW {
         while let toItemSuperview = tempToItem?.superview,
             let itemSuperview = tempItem?.superview  {
                 if toItemSuperview === itemSuperview {
-                    sameSuperview = toItemSuperview
-                    break
+                    return (toItemSuperview, true)
                 }else {
                     tempToItem = toItemSuperview
                     tempItem = itemSuperview
                     if tempToItem?.superview == nil && tempItem?.superview != nil {
                         if checkSameSuperview(tempToItem!, tempItem!) {
-                            sameSuperview = tempToItem
-                            break
+                            return (tempToItem, true)
                         }
                     }else if tempToItem?.superview != nil && tempItem?.superview == nil {
                         if checkSameSuperview(tempItem!, tempToItem!) {
-                            sameSuperview = tempItem
-                            break
+                            return (tempItem, true)
                         }
                     }
                 }
         }
-        return sameSuperview
+        return (nil, false)
     }
     
     private func setCacheConstraint(_ constraint: NSLayoutConstraint!, attribute: WHC_LayoutAttribute, relation: WHC_LayoutRelation) {
@@ -2678,7 +2408,7 @@ extension WHC_VIEW {
         static let kBottomLine = kTopLine + 1
     }
     
-    fileprivate func createLineWithTag(_ lineTag: Int)  -> WHC_Line! {
+    private func createLineWithTag(_ lineTag: Int)  -> WHC_Line! {
         var line: WHC_Line!
         for view in self.subviews {
             if view is WHC_Line && view.tag == lineTag {

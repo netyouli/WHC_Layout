@@ -150,20 +150,22 @@ public class WHC_StackView: WHC_VIEW {
     
     public override func awakeFromNib() {
         super.awakeFromNib()
+        /*
         #if os(iOS) || os(tvOS)
             self.backgroundColor = WHC_COLOR.white
         #else
             self.makeBackingLayer().backgroundColor = WHC_COLOR.white.cgColor
-        #endif
+        #endif*/
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        /*
         #if os(iOS) || os(tvOS)
             self.backgroundColor = WHC_COLOR.white
         #else
             self.makeBackingLayer().backgroundColor = WHC_COLOR.white.cgColor
-        #endif
+        #endif*/
     }
     
     required public init?(coder aDecoder: NSCoder) {

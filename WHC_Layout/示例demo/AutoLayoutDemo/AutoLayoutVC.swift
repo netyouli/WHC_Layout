@@ -15,24 +15,27 @@ import UIKit
 
 class AutoLayoutVC: UIViewController {
     
-    fileprivate let leftTopLable = UILabel()
-    fileprivate let rightTopLable = UILabel()
-    fileprivate let leftBottomLable = UILabel()
-    fileprivate let rightBottomLable = UILabel()
+    private let leftTopLable = UILabel()
+    private let rightTopLable = UILabel()
+    private let leftBottomLable = UILabel()
+    private let rightBottomLable = UILabel()
+    private let backView = UIView()
     
-    fileprivate let button = UIButton()
+    private let button = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.white
         // Do any additional setup after loading the view.
         self.navigationItem.title = "AutoLayout示例"
-        self.view.addSubview(leftTopLable)
-        self.view.addSubview(rightTopLable)
-        self.view.addSubview(leftBottomLable)
-        self.view.addSubview(rightBottomLable)
-        self.view.addSubview(button)
+        self.view.addSubview(backView)
+        backView.addSubview(leftTopLable)
+        backView.addSubview(rightTopLable)
+        backView.addSubview(leftBottomLable)
+        backView.addSubview(rightBottomLable)
+        backView.addSubview(button)
         
+        backView.whc_AutoSize(left: 0, top: 0, right: 0, bottom: 0)
         // 添加约束
         leftTopLable.whc_Left(0)
             .whc_Top(64)
@@ -50,8 +53,12 @@ class AutoLayoutVC: UIViewController {
             .whc_Bottom(0)
             .whc_SizeEqual(leftBottomLable)
         
-        button.whc_Center(0, y: 32, toView: self.view)
-              .whc_WidthEqual(leftTopLable)
+//        button.whc_Center(0, y: 32, toView: self.view)
+//              .whc_WidthEqual(leftTopLable)
+        button.whc_CenterX(0)
+        .whc_Height(100)
+        .whc_BottomEqual(self.view)
+        .whc_Width(100)
         
         leftTopLable.backgroundColor = UIColor.orange
         leftBottomLable.backgroundColor = UIColor.orange

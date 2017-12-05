@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FE5179661FD3FDF7009352DC /* WHC_LayerFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE5179651FD3FDF7009352DC /* WHC_LayerFrame.swift */; };
 		FEE8F32C1E9CC48E00B39B88 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE8F32B1E9CC48E00B39B88 /* AppDelegate.swift */; };
 		FEE8F32E1E9CC48E00B39B88 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE8F32D1E9CC48E00B39B88 /* ViewController.swift */; };
 		FEE8F3331E9CC48F00B39B88 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FEE8F3321E9CC48F00B39B88 /* Assets.xcassets */; };
@@ -24,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FE5179651FD3FDF7009352DC /* WHC_LayerFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WHC_LayerFrame.swift; sourceTree = "<group>"; };
 		FEE8F3281E9CC48E00B39B88 /* WHC_Layout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WHC_Layout.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEE8F32B1E9CC48E00B39B88 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FEE8F32D1E9CC48E00B39B88 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -90,6 +92,7 @@
 				FEE8F33F1E9CC65A00B39B88 /* WHC_AutoLayout.swift */,
 				FEE8F3401E9CC65A00B39B88 /* WHC_Frame.swift */,
 				FEE8F3411E9CC65A00B39B88 /* WHC_StackView.swift */,
+				FE5179651FD3FDF7009352DC /* WHC_LayerFrame.swift */,
 			);
 			path = WHC_LayoutKit;
 			sourceTree = "<group>";
@@ -228,6 +231,7 @@
 				FEE8F3441E9CC65A00B39B88 /* WHC_Frame.swift in Sources */,
 				FEE8F32C1E9CC48E00B39B88 /* AppDelegate.swift in Sources */,
 				FEE8F3551E9CC69700B39B88 /* StackViewVC.swift in Sources */,
+				FE5179661FD3FDF7009352DC /* WHC_LayerFrame.swift in Sources */,
 				FEE8F3531E9CC69700B39B88 /* MyCell.swift in Sources */,
 				FEE8F3431E9CC65A00B39B88 /* WHC_AutoLayout.swift in Sources */,
 				FEE8F3521E9CC69700B39B88 /* AutoCellHeightVC.swift in Sources */,
