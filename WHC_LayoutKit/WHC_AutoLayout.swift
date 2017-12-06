@@ -2001,10 +2001,7 @@ extension WHC_VIEW {
                                     toAttribute: inout WHC_LayoutAttribute,
                                     multiplier: CGFloat,
                                     constant: CGFloat) -> WHC_VIEW {
-        let superView = mainSuperView(view1: toItem, view2: item)
-        if superView == nil {
-            return self
-        }
+        
         var firstAttribute = attribute
         if toItem == nil {
             toAttribute = .notAnAttribute
@@ -2248,7 +2245,10 @@ extension WHC_VIEW {
         default:
             break
         }
-        
+        let superView = mainSuperView(view1: toItem, view2: item)
+        if superView == nil {
+            return self
+        }
         let constraint = NSLayoutConstraint(item: item,
                                             attribute: attribute,
                                             relatedBy: related,
@@ -2294,16 +2294,13 @@ extension WHC_VIEW {
     
     private func checkSubSuperView(superv: WHC_VIEW?, subv: WHC_VIEW?) -> WHC_VIEW? {
         var superView: WHC_VIEW?
-        if let spv = superv, let sbv = subv {
+        if let spv = superv, let sbv = subv, let sbvspv = sbv.superview, spv !== sbv {
             func scanSubv(_ subvs: [WHC_VIEW]?) -> WHC_VIEW? {
                 var superView: WHC_VIEW?
                 if let tmpsubvs = subvs, !tmpsubvs.isEmpty {
-                    tmpsubvs.forEach({ (sbvspv) in
-                        if sbvspv === sbv {
-                            superView = sbvspv
-                            return
-                        }
-                    })
+                    if tmpsubvs.contains(sbvspv) {
+                        superView = sbvspv
+                    }
                     if superView == nil {
                         var sumSubv = [WHC_VIEW]()
                         tmpsubvs.forEach({ (sv) in
