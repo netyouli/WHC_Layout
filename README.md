@@ -13,6 +13,8 @@
 
 **重构布局核心升级基于二叉树层遍历算法搜索约束主视图,对于自动处理跨视图层复杂约束关系更健壮可靠**
 
+**封装集成抗拉和伸抗压缩api支持链式调用**
+
 Introduce
 ==============
 -  Adopt chain layout Api calls convenient
@@ -105,6 +107,11 @@ Modify the view constraint for low priority right
 ```swift
 view.whc_Right(10)
     .whc_PriorityLow()
+```
+
+```swift
+view.whc_Right(10)
+.whc_PriorityLow()
 ```
 
 ## One line of code calculation cell height

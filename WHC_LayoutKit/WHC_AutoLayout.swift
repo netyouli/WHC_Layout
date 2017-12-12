@@ -39,12 +39,14 @@
     public typealias WHC_VIEW = UIView
     public typealias WHC_COLOR = UIColor
     public typealias WHC_LayoutPriority = UILayoutPriority
+    public typealias WHC_ConstraintAxis = UILayoutConstraintAxis
 #else
     public typealias WHC_LayoutRelation = NSLayoutConstraint.Relation
     public typealias WHC_LayoutAttribute = NSLayoutConstraint.Attribute
     public typealias WHC_VIEW = NSView
     public typealias WHC_COLOR = NSColor
     public typealias WHC_LayoutPriority = NSLayoutConstraint.Priority
+    public typealias WHC_ConstraintAxis = NSLayoutConstraint.Orientation
 #endif
 
 extension WHC_VIEW {
@@ -449,7 +451,7 @@ extension WHC_VIEW {
         if let constraint = self.rightGreaterConstraint() {
             removeCache(constraint: constraint).setRightGreaterConstraint(nil)
         }
-
+        
         
         if let constraint = self.leftConstraint() {
             removeCache(constraint: constraint).setLeftConstraint(nil)
@@ -676,6 +678,32 @@ extension WHC_VIEW {
     @discardableResult
     public func whc_Priority(_ value: CGFloat) -> WHC_VIEW {
         return whc_HandleConstraints(priority: WHC_LayoutPriority(Float(value)))
+    }
+    
+    
+    /// 设置视图抗拉伸优先级（优先级越高越不容易被拉伸）
+    ///
+    /// - Parameters:
+    ///   - priority: 优先级大小默认 251
+    ///   - axix: 拉伸方向
+    /// - Returns: 当前视图
+    @discardableResult
+    public func whc_ContentHuggingPriority(_ priority: WHC_LayoutPriority, for axix: WHC_ConstraintAxis) -> WHC_VIEW {
+        self.setContentHuggingPriority(priority, for: axix)
+        return self
+    }
+    
+    
+    /// 设置视图抗压缩优先级（优先级越高越不容易被压缩）
+    ///
+    /// - Parameters:
+    ///   - priority: 优先级大小 750
+    ///   - axix: 压缩方向
+    /// - Returns: 当前视图
+    @discardableResult
+    public func whc_ContentCompressionResistancePriority(_ priority: WHC_LayoutPriority, for axix: WHC_ConstraintAxis) -> WHC_VIEW {
+        self.setContentCompressionResistancePriority(priority, for: axix)
+        return self
     }
     
     //MARK: -自动布局公开接口api -
@@ -2325,9 +2353,6 @@ extension WHC_VIEW {
             if checkSubSuperView(superv: view1, subv: view2) != nil {
                 return (view1, false)
             }
-            if checkSubSuperView(superv: view2, subv: view1) != nil {
-                return (view2, false)
-            }
         }
         let checkSameSuperview: ((WHC_VIEW, WHC_VIEW) -> Bool) = {(tmpSuperview, singleView) in
             var tmpSingleView: WHC_VIEW? = singleView
@@ -2357,6 +2382,11 @@ extension WHC_VIEW {
                         }
                     }
                 }
+        }
+        if tempToItem != nil && tempItem != nil {
+            if checkSubSuperView(superv: view2, subv: view1) != nil {
+                return (view2, false)
+            }
         }
         return (nil, false)
     }
