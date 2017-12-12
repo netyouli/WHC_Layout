@@ -110,8 +110,13 @@ view.whc_Right(10)
 ```
 
 ```swift
-view.whc_Right(10)
-.whc_PriorityLow()
+// The higher the priority, the less likely to be stretched
+// 设置抗拉伸优先级,优先级越高越不容易被拉伸
+label.whc_ContentHuggingPriority(.defaultLow, for: .horizontal)
+
+// 设置抗压缩优先级,优先级越高越不容易被压缩
+// Compression priority, the higher the priority the less easy to be compressed
+label.whc_ContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 ```
 
 ## One line of code calculation cell height
