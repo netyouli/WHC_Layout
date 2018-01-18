@@ -3,7 +3,7 @@
 
 ![Build Status](https://api.travis-ci.org/netyouli/WHC_Layout.svg?branch=master)
 [![Pod Version](http://img.shields.io/cocoapods/v/WHC_Layout.svg?style=flat)](http://cocoadocs.org/docsets/WHC_Layout/)
-[![Platform](https://img.shields.io/cocoapods/p/SnapKit.svg?style=flat)](https://github.com/SnapKit/SnapKit)
+[![Platform](https://img.shields.io/cocoapods/p/WHC_Layout.svg?style=flat)](https://github.com/netyouli/WHC_Layout)
 [![Pod License](http://img.shields.io/cocoapods/l/WHC_Layout.svg?style=flat)](https://opensource.org/licenses/MIT)
 
 -  iOS and Mac OS X platforms currently in use the fastest the simplest development to build the UI layout automatically open source library, strong dynamic layout constraint handling capacity
@@ -11,9 +11,11 @@
 
 **Objective-c version** 👉 [WHC_AutoLayout](https://github.com/netyouli/WHC_AutoLayoutKit)
 
+**添加UILayoutGuide，safeAreaLayoutGuide约束支持**
+
 **重构布局核心升级基于二叉树层遍历算法搜索约束主视图,对于自动处理跨视图层复杂约束关系更健壮可靠**
 
-**封装集成抗拉和伸抗压缩api支持链式调用**
+**封装集成抗拉伸和抗压缩api支持链式调用**
 
 Introduce
 ==============
@@ -45,6 +47,23 @@ Install
 
 Usage
 ==============
+
+## UILayoutGuide，safeAreaLayoutGuide
+```Swift4
+let guide = UILayoutGuide()
+let view = UIView()
+
+guide.whc_Left(10)
+.whc_Top(0, toView: self.view.safeAreaLayoutGuide)
+.whc_Right(10)
+.whc_Height(30)
+
+view.whc_Left(10)
+.whc_Right(10)
+.whc_Top(0, toView: guide)
+.whc_Height(50)
+
+```
 
 ## Automatic height view
 ![](https://github.com/netyouli/WHC_Layout/blob/master/Gif/autoHeight.gif)
