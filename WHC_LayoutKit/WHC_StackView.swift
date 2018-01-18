@@ -46,7 +46,7 @@ fileprivate struct WHC_StackViewAssociatedObjectKey {
     static var kFieldBottomPadding     = "fieldBottomPadding"
 }
 
-extension WHC_VIEW {
+extension WHC_CLASS_VIEW {
     /// 宽度权重
     public var whc_WidthWeight: CGFloat {
         set {
@@ -87,9 +87,9 @@ public enum WHC_LayoutOrientationOptions {
     case all
 }
 
-public class WHC_StackView: WHC_VIEW {
-    fileprivate class WHC_StackViewLineView: WHC_VIEW {}
-    fileprivate class WHC_VacntView: WHC_VIEW {}
+public class WHC_StackView: WHC_CLASS_VIEW {
+    fileprivate class WHC_StackViewLineView: WHC_CLASS_VIEW {}
+    fileprivate class WHC_VacntView: WHC_CLASS_VIEW {}
     
     fileprivate lazy var lastRowVacantCount = 0
     /// 自动高度
@@ -132,8 +132,8 @@ public class WHC_StackView: WHC_VIEW {
     /// 设置分割线的颜色
     public lazy var whc_SegmentLineColor = WHC_COLOR(white: 0.9, alpha: 1.0)
     /// 子视图集合
-    public var whc_SubViews: [WHC_VIEW] {
-        var subViews = [WHC_VIEW]()
+    public var whc_SubViews: [WHC_CLASS_VIEW] {
+        var subViews = [WHC_CLASS_VIEW]()
         self.subviews.forEach { (v) in
             #if os(iOS) || os(tvOS)
             if !(v is WHC_Line) && !(v is WHC_VacntView) {
@@ -210,12 +210,12 @@ public class WHC_StackView: WHC_VIEW {
         var currentSubViews = self.subviews
         var count = currentSubViews.count
         if count == 0 {return}
-        var toView: WHC_VIEW!
+        var toView: WHC_CLASS_VIEW!
         switch whc_Orientation {
         case .horizontal: /// 横向布局
             for i in 0 ..< count {
                 let view = currentSubViews[i]
-                let nextView: WHC_VIEW! = i < count - 1 ? currentSubViews[i + 1] : nil
+                let nextView: WHC_CLASS_VIEW! = i < count - 1 ? currentSubViews[i + 1] : nil
                 if i == 0 {
                     view.whc_Left(whc_Edge.left)
                 }else {
@@ -305,7 +305,7 @@ public class WHC_StackView: WHC_VIEW {
         case .vertical: /// 垂直布局
             for i in 0 ..< count {
                 let view = currentSubViews[i];
-                let nextView: WHC_VIEW! = i < count - 1 ? currentSubViews[i + 1] : nil;
+                let nextView: WHC_CLASS_VIEW! = i < count - 1 ? currentSubViews[i + 1] : nil;
                 if i == 0 {
                     view.whc_Top(whc_Edge.top)
                 }else {
@@ -417,12 +417,12 @@ public class WHC_StackView: WHC_VIEW {
                 currentSubViews = self.subviews
                 count = currentSubViews.count
             }
-            var frontRowView: WHC_VIEW!
-            var frontColumnView: WHC_VIEW!
+            var frontRowView: WHC_CLASS_VIEW!
+            var frontColumnView: WHC_CLASS_VIEW!
             
             var columnLineView: WHC_StackViewLineView!
             for row in 0 ..< rowCount {
-                var nextRowView: WHC_VIEW!
+                var nextRowView: WHC_CLASS_VIEW!
                 let rowView = currentSubViews[row * self.whc_Column]
                 let nextRow = (row + 1) * self.whc_Column
                 if nextRow < count {
@@ -440,7 +440,7 @@ public class WHC_StackView: WHC_VIEW {
                 for column in 0 ..< whc_Column {
                     index = row * self.whc_Column + column
                     let view  = currentSubViews[index]
-                    var nextColumnView: WHC_VIEW!
+                    var nextColumnView: WHC_CLASS_VIEW!
                     if column > 0 && whc_SegmentLineSize > 0.0 {
                         columnLineView = makeLine()
                         self.addSubview(columnLineView)
@@ -547,7 +547,7 @@ public class WHC_StackView: WHC_VIEW {
                     self.makeBackingLayer().layoutIfNeeded()
                 #endif
                 var rowLastColumnViewMaxX: CGFloat = 0
-                var rowLastColumnViewMaxXView: WHC_VIEW!
+                var rowLastColumnViewMaxXView: WHC_CLASS_VIEW!
                 for r in 0 ..< subCount {
                     let index = r
                     let maxWidthView = subviews[index]
@@ -573,7 +573,7 @@ public class WHC_StackView: WHC_VIEW {
                     self.makeBackingLayer().layoutIfNeeded()
                 #endif
                 var columnLastRowViewMaxY: CGFloat = 0
-                var columnLastRowViewMaxYView: WHC_VIEW!
+                var columnLastRowViewMaxYView: WHC_CLASS_VIEW!
                 for r in 0 ..< subCount {
                     let index = r
                     let maxHeightView = subviews[index]

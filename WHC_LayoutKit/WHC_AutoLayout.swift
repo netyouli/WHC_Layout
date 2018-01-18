@@ -32,66 +32,148 @@
     import AppKit
 #endif
 
+private struct WHC_LayoutAssociatedObjectKey {
+    
+    static var kAttributeLeft           = "WHCLayoutAttributeLeft"
+    static var kAttributeLeftL          = "WHCLayoutAttributeLeftL"
+    static var kAttributeLeftG          = "WHCLayoutAttributeLeftG"
+    static var kAttributeRight          = "WHCLayoutAttributeRight"
+    static var kAttributeRightL         = "WHCLayoutAttributeRightL"
+    static var kAttributeRightG         = "WHCLayoutAttributeRightG"
+    static var kAttributeTop            = "WHCLayoutAttributeTop"
+    static var kAttributeTopG           = "WHCLayoutAttributeTopG"
+    static var kAttributeTopL           = "WHCLayoutAttributeTopL"
+    static var kAttributeBottom         = "WHCLayoutAttributeBottom"
+    static var kAttributeBottomG        = "WHCLayoutAttributeBottomG"
+    static var kAttributeBottomL        = "WHCLayoutAttributeBottomL"
+    static var kAttributeLeading        = "WHCLayoutAttributeLeading"
+    static var kAttributeLeadingG       = "WHCLayoutAttributeLeadingG"
+    static var kAttributeLeadingL       = "WHCLayoutAttributeLeadingL"
+    static var kAttributeTrailing       = "WHCLayoutAttributeTrailing"
+    static var kAttributeTrailingG      = "WHCLayoutAttributeTrailingG"
+    static var kAttributeTrailingL      = "WHCLayoutAttributeTrailingL"
+    static var kAttributeWidth          = "WHCLayoutAttributeWidth"
+    static var kAttributeWidthG         = "WHCLayoutAttributeWidthG"
+    static var kAttributeWidthL         = "WHCLayoutAttributeWidthL"
+    static var kAttributeHeight         = "WHCLayoutAttributeHeight"
+    static var kAttributeHeightG        = "WHCLayoutAttributeHeightG"
+    static var kAttributeHeightL        = "WHCLayoutAttributeHeightL"
+    static var kAttributeCenterX        = "WHCLayoutAttributeCenterX"
+    static var kAttributeCenterXG       = "WHCLayoutAttributeCenterXG"
+    static var kAttributeCenterXL       = "WHCLayoutAttributeCenterXL"
+    static var kAttributeCenterY        = "WHCLayoutAttributeCenterY"
+    static var kAttributeCenterYG       = "WHCLayoutAttributeCenterYG"
+    static var kAttributeCenterYL       = "WHCLayoutAttributeCenterYL"
+    static var kAttributeLastBaselineG  = "WHCLayoutAttributeLastBaselineG"
+    static var kAttributeLastBaselineL  = "WHCLayoutAttributeLastBaselineL"
+    static var kAttributeLastBaseline   = "WHCLayoutAttributeLastBaseline"
+    static var kAttributeFirstBaseline  = "WHCLayoutAttributeFirstBaseline"
+    static var kAttributeFirstBaselineL = "WHCLayoutAttributeFirstBaselineL"
+    static var kAttributeFirstBaselineG = "WHCLayoutAttributeFirstBaselineG"
+    
+    static var kCurrentConstraints     = "kCurrentConstraints"
+}
 
-#if os(iOS) || os(tvOS)
-    public typealias WHC_LayoutRelation = NSLayoutRelation
-    public typealias WHC_LayoutAttribute = NSLayoutAttribute
-    public typealias WHC_VIEW = UIView
-    public typealias WHC_COLOR = UIColor
-    public typealias WHC_LayoutPriority = UILayoutPriority
-    public typealias WHC_ConstraintAxis = UILayoutConstraintAxis
-#else
-    public typealias WHC_LayoutRelation = NSLayoutConstraint.Relation
-    public typealias WHC_LayoutAttribute = NSLayoutConstraint.Attribute
-    public typealias WHC_VIEW = NSView
-    public typealias WHC_COLOR = NSColor
-    public typealias WHC_LayoutPriority = NSLayoutConstraint.Priority
-    public typealias WHC_ConstraintAxis = NSLayoutConstraint.Orientation
-#endif
+public protocol WHC_VIEW: AnyObject {
+    associatedtype SELF
+}
+
+
+@available(iOS 9.0, *)
+extension WHC_CLASS_LGUIDE: WHC_VIEW {
+    public typealias SELF = WHC_CLASS_LGUIDE
+}
+
+extension WHC_CLASS_VIEW: WHC_VIEW {
+    public typealias SELF = WHC_CLASS_VIEW
+    
+    
+    /// 设置视图抗拉伸优先级（优先级越高越不容易被拉伸）
+    ///
+    /// - Parameters:
+    ///   - priority: 优先级大小默认 251
+    ///   - axix: 拉伸方向
+    /// - Returns: 当前视图
+    @discardableResult
+    public func whc_ContentHuggingPriority(_ priority: WHC_LayoutPriority, for axix: WHC_ConstraintAxis) -> Self {
+        self.setContentHuggingPriority(priority, for: axix)
+        return self
+    }
+    
+    
+    /// 设置视图抗压缩优先级（优先级越高越不容易被压缩）
+    ///
+    /// - Parameters:
+    ///   - priority: 优先级大小 750
+    ///   - axix: 压缩方向
+    /// - Returns: 当前视图
+    @discardableResult
+    public func whc_ContentCompressionResistancePriority(_ priority: WHC_LayoutPriority, for axix: WHC_ConstraintAxis) -> Self {
+        self.setContentCompressionResistancePriority(priority, for: axix)
+        return self
+    }
+    
+    
+    #if os(iOS) || os(tvOS)
+    
+    class WHC_Line: WHC_CLASS_VIEW {
+        
+    }
+    
+    struct WHC_Tag {
+        static let kLeftLine = 100000
+        static let kRightLine = kLeftLine + 1
+        static let kTopLine = kRightLine + 1
+        static let kBottomLine = kTopLine + 1
+    }
+    
+    private func createLineWithTag(_ lineTag: Int)  -> WHC_Line! {
+        var line: WHC_Line!
+        for view in self.subviews {
+            if view is WHC_Line && view.tag == lineTag {
+                line = view as! WHC_Line
+                break
+            }
+        }
+        if line == nil {
+            line = WHC_Line()
+            line.tag = lineTag
+            self.addSubview(line)
+        }
+        return line
+    }
+    
+    //MARK: -自动添加底部线和顶部线-
+    @discardableResult
+    public func whc_AddBottomLine(_ height: CGFloat, color: WHC_COLOR) -> SELF {
+        return self.whc_AddBottomLine(height, color: color, marge: 0)
+    }
+    
+    @discardableResult
+    public func whc_AddBottomLine(_ height: CGFloat, color: WHC_COLOR, marge: CGFloat) -> SELF {
+        let line = self.createLineWithTag(WHC_Tag.kBottomLine)
+        line?.backgroundColor = color
+        line!.whc_Right(marge).whc_Left(marge).whc_Height(height).whc_Bottom(0)
+        return self
+    }
+    
+    @discardableResult
+    public func whc_AddTopLine(_ height: CGFloat, color: WHC_COLOR) -> SELF {
+        return self.whc_AddTopLine(height, color: color, marge: 0)
+    }
+    
+    @discardableResult
+    public func whc_AddTopLine(_ height: CGFloat, color: WHC_COLOR, marge: CGFloat) -> SELF {
+        let line = self.createLineWithTag(WHC_Tag.kTopLine)
+        line?.backgroundColor = color
+        line!.whc_Right(marge).whc_Left(marge).whc_Height(height).whc_Top(0)
+        return self
+    }
+    
+    #endif
+}
 
 extension WHC_VIEW {
-    
-    private struct WHC_LayoutAssociatedObjectKey {
-        
-        static var kAttributeLeft           = "WHCLayoutAttributeLeft"
-        static var kAttributeLeftL          = "WHCLayoutAttributeLeftL"
-        static var kAttributeLeftG          = "WHCLayoutAttributeLeftG"
-        static var kAttributeRight          = "WHCLayoutAttributeRight"
-        static var kAttributeRightL         = "WHCLayoutAttributeRightL"
-        static var kAttributeRightG         = "WHCLayoutAttributeRightG"
-        static var kAttributeTop            = "WHCLayoutAttributeTop"
-        static var kAttributeTopG           = "WHCLayoutAttributeTopG"
-        static var kAttributeTopL           = "WHCLayoutAttributeTopL"
-        static var kAttributeBottom         = "WHCLayoutAttributeBottom"
-        static var kAttributeBottomG        = "WHCLayoutAttributeBottomG"
-        static var kAttributeBottomL        = "WHCLayoutAttributeBottomL"
-        static var kAttributeLeading        = "WHCLayoutAttributeLeading"
-        static var kAttributeLeadingG       = "WHCLayoutAttributeLeadingG"
-        static var kAttributeLeadingL       = "WHCLayoutAttributeLeadingL"
-        static var kAttributeTrailing       = "WHCLayoutAttributeTrailing"
-        static var kAttributeTrailingG      = "WHCLayoutAttributeTrailingG"
-        static var kAttributeTrailingL      = "WHCLayoutAttributeTrailingL"
-        static var kAttributeWidth          = "WHCLayoutAttributeWidth"
-        static var kAttributeWidthG         = "WHCLayoutAttributeWidthG"
-        static var kAttributeWidthL         = "WHCLayoutAttributeWidthL"
-        static var kAttributeHeight         = "WHCLayoutAttributeHeight"
-        static var kAttributeHeightG        = "WHCLayoutAttributeHeightG"
-        static var kAttributeHeightL        = "WHCLayoutAttributeHeightL"
-        static var kAttributeCenterX        = "WHCLayoutAttributeCenterX"
-        static var kAttributeCenterXG       = "WHCLayoutAttributeCenterXG"
-        static var kAttributeCenterXL       = "WHCLayoutAttributeCenterXL"
-        static var kAttributeCenterY        = "WHCLayoutAttributeCenterY"
-        static var kAttributeCenterYG       = "WHCLayoutAttributeCenterYG"
-        static var kAttributeCenterYL       = "WHCLayoutAttributeCenterYL"
-        static var kAttributeLastBaselineG  = "WHCLayoutAttributeLastBaselineG"
-        static var kAttributeLastBaselineL  = "WHCLayoutAttributeLastBaselineL"
-        static var kAttributeLastBaseline   = "WHCLayoutAttributeLastBaseline"
-        static var kAttributeFirstBaseline  = "WHCLayoutAttributeFirstBaseline"
-        static var kAttributeFirstBaselineL = "WHCLayoutAttributeFirstBaselineL"
-        static var kAttributeFirstBaselineG = "WHCLayoutAttributeFirstBaselineG"
-        
-        static var kCurrentConstraints     = "kCurrentConstraints"
-    }
     
     /// 当前添加的约束对象
     private var currentConstraint: NSLayoutConstraint! {
@@ -114,28 +196,44 @@ extension WHC_VIEW {
     ///
     /// - Parameter constraint: 约束对象
     /// - Returns: 返回约束对象视图
-    private func whc_MainViewConstraint(_ constraint: NSLayoutConstraint!) -> WHC_VIEW! {
-        var view: WHC_VIEW!
+    private func whc_MainViewConstraint(_ constraint: NSLayoutConstraint!) -> WHC_CLASS_VIEW? {
+        var view: WHC_CLASS_VIEW?
         if constraint != nil {
             if constraint.secondAttribute == .notAnAttribute ||
                 constraint.secondItem == nil {
-                if let v = constraint.firstItem as? WHC_VIEW {
-                    view = v
+                if #available(iOS 9.0, *) {
+                    if let v = constraint.firstItem as? WHC_CLASS_VIEW {
+                        view = v
+                    }else if let g = constraint.firstItem as? WHC_CLASS_LGUIDE {
+                        view = g.owningView
+                    }
+                } else {
+                    if let v = constraint.firstItem as? WHC_CLASS_VIEW {
+                        view = v
+                    }
                 }
             }else if constraint.firstAttribute == .notAnAttribute ||
                 constraint.firstItem == nil {
-                if let v = constraint.secondItem as? WHC_VIEW {
-                    view = v
+                if #available(iOS 9.0, *) {
+                    if let v = constraint.secondItem as? WHC_CLASS_VIEW {
+                        view = v
+                    }else if let g = constraint.secondItem as? WHC_CLASS_LGUIDE {
+                        view = g.owningView
+                    }
+                }else {
+                    if let v = constraint.secondItem as? WHC_CLASS_VIEW {
+                        view = v
+                    }
                 }
             }else {
-                let firstItem = constraint.firstItem as? WHC_VIEW
-                let secondItem = constraint.secondItem as? WHC_VIEW
+                let firstItem = constraint.firstItem
+                let secondItem = constraint.secondItem
                 if let sameSuperView = mainSuperView(view1: secondItem, view2: firstItem) {
                     view = sameSuperView
                 }else if let sameSuperView = mainSuperView(view1: firstItem, view2: secondItem) {
                     view = sameSuperView
                 }else {
-                    view = secondItem
+                    view = secondItem as? WHC_CLASS_VIEW
                 }
             }
         }
@@ -148,7 +246,7 @@ extension WHC_VIEW {
     /// - Parameters:
     ///   - attribute: 约束属性
     ///   - mainView: 主视图
-    private func whc_CommonRemoveConstraint(_ attribute: WHC_LayoutAttribute, mainView: WHC_VIEW!, to: WHC_VIEW!) {
+    private func whc_CommonRemoveConstraint(_ attribute: WHC_LayoutAttribute, mainView: AnyObject?, to: AnyObject?) {
         switch (attribute) {
         case .firstBaseline:
             if let constraint = self.firstBaselineConstraint() {
@@ -273,10 +371,28 @@ extension WHC_VIEW {
         default:
             break;
         }
-        mainView?.constraints.forEach({ (constraint) in
+        var mView: WHC_CLASS_VIEW?
+        if #available(iOS 9.0, *) {
+            switch mainView {
+            case let main as WHC_CLASS_VIEW:
+                mView = main
+            case let main as WHC_CLASS_LGUIDE:
+                mView = main.owningView
+            default:()
+            }
+        } else {
+            // Fallback on earlier versions
+            switch mainView {
+            case let main as WHC_CLASS_VIEW:
+                mView = main
+            default:()
+            }
+        }
+        
+        mView?.constraints.forEach({ (constraint) in
             if let linkView = (to != nil ? to : mainView) {
                 if (constraint.firstItem === self && constraint.firstAttribute == attribute && (constraint.secondItem === linkView || constraint.secondItem == nil)) || (constraint.firstItem === linkView && constraint.secondItem === self && constraint.secondAttribute == attribute) {
-                    mainView.removeConstraint(constraint)
+                    mView?.removeConstraint(constraint)
                 }
             }
         })
@@ -289,7 +405,7 @@ extension WHC_VIEW {
     ///   - attr: 约束属性
     ///   - view: 约束视图
     ///   - removeSelf: 是否删除自身约束
-    private func whc_SwitchRemoveAttr(_ attr: WHC_LayoutAttribute, view: WHC_VIEW!, to: WHC_VIEW!,  removeSelf: Bool) {
+    private func whc_SwitchRemoveAttr(_ attr: WHC_LayoutAttribute, view: AnyObject?, to: AnyObject?,  removeSelf: Bool) {
         #if os(iOS) || os(tvOS)
             switch (attr) {
             case .leftMargin,
@@ -353,7 +469,7 @@ extension WHC_VIEW {
     ///
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_ResetConstraints() -> WHC_VIEW {
+    public func whc_ResetConstraints() -> Self {
         if let constraint = self.firstBaselineConstraint() {
             removeCache(constraint: constraint).setFirstBaselineConstraint(nil)
         }
@@ -492,22 +608,34 @@ extension WHC_VIEW {
     ///
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_ClearConstraints() -> WHC_VIEW {
+    public func whc_ClearConstraints() -> Self {
         autoreleasepool {
-            var constraints = self.constraints
-            for constraint in constraints {
-                if constraint.firstItem === self &&
-                    constraint.secondAttribute == .notAnAttribute {
-                    self.removeConstraint(constraint)
-                }
-            }
-            let superView = self.superview
-            if superView != nil {
-                constraints = superView!.constraints
+            if let sv = owningview() {
+                var constraints = sv.constraints
                 for constraint in constraints {
-                    if constraint.firstItem === self ||
-                        constraint.secondItem === self {
-                        superView!.removeConstraint(constraint)
+                    if constraint.firstItem === self &&
+                        constraint.secondAttribute == .notAnAttribute {
+                        sv.removeConstraint(constraint)
+                    }
+                }
+            
+                var superView: WHC_CLASS_VIEW?
+                if #available(iOS 9.0, *) {
+                    if let g = guide() {
+                        superView = g.owningView
+                    }else {
+                        superView = sv.superview
+                    }
+                }else {
+                    superView = sv.superview
+                }
+                if let sview = superView {
+                    constraints = sview.constraints
+                    for constraint in constraints {
+                        if constraint.firstItem === self ||
+                            constraint.secondItem === self {
+                            sview.removeConstraint(constraint)
+                        }
                     }
                 }
             }
@@ -524,7 +652,7 @@ extension WHC_VIEW {
     ///   - attrs: 约束属性集合
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_RemoveFrom(_ view: WHC_VIEW!, attrs:WHC_LayoutAttribute ...) -> WHC_VIEW {
+    public func whc_RemoveFrom(_ view: AnyObject?, attrs:WHC_LayoutAttribute ...) -> Self {
         for attr in attrs {
             if attr != .notAnAttribute {
                 self.whc_SwitchRemoveAttr(attr, view: view, to: nil ,removeSelf: false)
@@ -541,10 +669,10 @@ extension WHC_VIEW {
     ///   - attrs: 要移除的集合
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_RemoveTo(_ view: WHC_VIEW!, attrs:WHC_LayoutAttribute ...) -> WHC_VIEW {
+    public func whc_RemoveTo(_ view: AnyObject?, attrs:WHC_LayoutAttribute ...) -> Self {
         for attr in attrs {
             if attr != .notAnAttribute {
-                self.whc_SwitchRemoveAttr(attr, view: self.superview, to: view ,removeSelf: false)
+                self.whc_SwitchRemoveAttr(attr, view: superview() , to: view ,removeSelf: false)
             }
         }
         return self
@@ -555,10 +683,10 @@ extension WHC_VIEW {
     /// - Parameter attrs: 约束属性集合
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_RemoveAttrs(_ attrs: WHC_LayoutAttribute ...) -> WHC_VIEW {
+    public func whc_RemoveAttrs(_ attrs: WHC_LayoutAttribute ...) -> Self {
         for attr in attrs {
             if attr != .notAnAttribute {
-                self.whc_SwitchRemoveAttr(attr, view: self.superview, to: nil, removeSelf: true)
+                self.whc_SwitchRemoveAttr(attr, view: superview(), to: nil, removeSelf: true)
             }
         }
         return self
@@ -572,7 +700,7 @@ extension WHC_VIEW {
     /// - Parameter priority: 约束优先级
     /// - Returns: 返回当前视图
     @discardableResult
-    private func whc_HandleConstraints(priority: WHC_LayoutPriority) -> WHC_VIEW {
+    private func whc_HandleConstraints(priority: WHC_LayoutPriority) -> Self {
         if let constraints = self.currentConstraint, constraints.priority != priority {
             if constraints.priority == WHC_LayoutPriority.required {
                 if let mainView = whc_MainViewConstraint(constraints) {
@@ -591,7 +719,7 @@ extension WHC_VIEW {
         return self
     }
     
-    private func whc_HandleConstraintsRelation(_ relation: WHC_LayoutRelation) -> WHC_VIEW {
+    private func whc_HandleConstraintsRelation(_ relation: WHC_LayoutRelation) -> Self {
         if let constraints = self.currentConstraint, constraints.relation != relation {
             let tmpConstraints = NSLayoutConstraint(item: constraints.firstItem ?? 0, attribute: constraints.firstAttribute, relatedBy: relation, toItem: constraints.secondItem, attribute: constraints.secondAttribute, multiplier: constraints.multiplier, constant: constraints.constant)
             if let mainView = whc_MainViewConstraint(constraints) {
@@ -610,7 +738,7 @@ extension WHC_VIEW {
     ///
     /// - Returns: 当前视图
     @discardableResult
-    public func whc_LessOrEqual() -> WHC_VIEW {
+    public func whc_LessOrEqual() -> Self {
         return whc_HandleConstraintsRelation(.lessThanOrEqual)
     }
     
@@ -618,7 +746,7 @@ extension WHC_VIEW {
     ///
     /// - Returns: 当前视图
     @discardableResult
-    public func whc_GreaterOrEqual() -> WHC_VIEW {
+    public func whc_GreaterOrEqual() -> Self {
         return whc_HandleConstraintsRelation(.greaterThanOrEqual)
     }
     
@@ -626,24 +754,16 @@ extension WHC_VIEW {
     ///
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_PriorityLow() -> WHC_VIEW {
-        #if os(iOS) || os(tvOS)
-            return whc_HandleConstraints(priority: .defaultLow)
-        #else
-            return whc_HandleConstraints(priority: .defaultLow)
-        #endif
+    public func whc_PriorityLow() -> Self {
+        return whc_HandleConstraints(priority: .defaultLow)
     }
     
     /// 设置当前约束的高优先级
     ///
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_PriorityHigh() -> WHC_VIEW {
-        #if os(iOS) || os(tvOS)
-            return whc_HandleConstraints(priority: .defaultHigh)
-        #else
-            return whc_HandleConstraints(priority: .defaultHigh)
-        #endif
+    public func whc_PriorityHigh() -> Self {
+        return whc_HandleConstraints(priority: .defaultHigh)
     }
     
     
@@ -651,19 +771,15 @@ extension WHC_VIEW {
     ///
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_PriorityRequired() -> WHC_VIEW {
-        #if os(iOS) || os(tvOS)
-            return whc_HandleConstraints(priority: .required)
-        #else
-            return whc_HandleConstraints(priority: .required)
-        #endif
+    public func whc_PriorityRequired() -> Self {
+        return whc_HandleConstraints(priority: .required)
     }
     
     /// 设置当前约束的合适优先级
     ///
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_PriorityFitting() -> WHC_VIEW {
+    public func whc_PriorityFitting() -> Self {
         #if os(iOS) || os(tvOS)
             return whc_HandleConstraints(priority: .fittingSizeLevel)
         #else
@@ -676,34 +792,8 @@ extension WHC_VIEW {
     /// - Parameter value: 优先级大小(0-1000)
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Priority(_ value: CGFloat) -> WHC_VIEW {
+    public func whc_Priority(_ value: CGFloat) -> Self {
         return whc_HandleConstraints(priority: WHC_LayoutPriority(Float(value)))
-    }
-    
-    
-    /// 设置视图抗拉伸优先级（优先级越高越不容易被拉伸）
-    ///
-    /// - Parameters:
-    ///   - priority: 优先级大小默认 251
-    ///   - axix: 拉伸方向
-    /// - Returns: 当前视图
-    @discardableResult
-    public func whc_ContentHuggingPriority(_ priority: WHC_LayoutPriority, for axix: WHC_ConstraintAxis) -> WHC_VIEW {
-        self.setContentHuggingPriority(priority, for: axix)
-        return self
-    }
-    
-    
-    /// 设置视图抗压缩优先级（优先级越高越不容易被压缩）
-    ///
-    /// - Parameters:
-    ///   - priority: 优先级大小 750
-    ///   - axix: 压缩方向
-    /// - Returns: 当前视图
-    @discardableResult
-    public func whc_ContentCompressionResistancePriority(_ priority: WHC_LayoutPriority, for axix: WHC_ConstraintAxis) -> WHC_VIEW {
-        self.setContentCompressionResistancePriority(priority, for: axix)
-        return self
     }
     
     //MARK: -自动布局公开接口api -
@@ -713,8 +803,8 @@ extension WHC_VIEW {
     /// - Parameter space: 左边距
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Left(_ space: CGFloat) -> WHC_VIEW {
-        return self.constraintWithItem(self.superview, attribute: .left, constant: space)
+    public func whc_Left(_ space: CGFloat) -> Self {
+        return self.constraintWithItem(superview(), attribute: .left, constant: space)
     }
     
     /// 设置左边距与指定视图
@@ -724,7 +814,7 @@ extension WHC_VIEW {
     ///   - toView: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Left(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_Left(_ space: CGFloat, toView: AnyObject?) -> Self {
         var toAttribute = WHC_LayoutAttribute.right
         if !sameSuperview(view1: toView, view2: self).1 {
             toAttribute = .left
@@ -737,7 +827,7 @@ extension WHC_VIEW {
     /// - Parameter view: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_LeftEqual(_ view: WHC_VIEW) -> WHC_VIEW {
+    public func whc_LeftEqual(_ view: AnyObject?) -> Self {
         return self.whc_LeftEqual(view, offset: 0)
     }
     
@@ -748,7 +838,7 @@ extension WHC_VIEW {
     ///   - offset: 偏移量
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_LeftEqual(_ view: WHC_VIEW, offset: CGFloat) -> WHC_VIEW {
+    public func whc_LeftEqual(_ view: AnyObject?, offset: CGFloat) -> Self {
         var toAttribute = WHC_LayoutAttribute.left
         return self.constraintWithItem(self, attribute: .left, related: .equal, toItem: view, toAttribute: &toAttribute, multiplier: 1, constant: offset)
     }
@@ -758,8 +848,8 @@ extension WHC_VIEW {
     /// - Parameter space: 右边距
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Right(_ space: CGFloat) -> WHC_VIEW {
-        return self.constraintWithItem(self.superview, attribute: .right, constant: 0 - space)
+    public func whc_Right(_ space: CGFloat) -> Self {
+        return self.constraintWithItem(superview(), attribute: .right, constant: 0 - space)
     }
     
     /// 设置右边距与指定视图
@@ -769,7 +859,7 @@ extension WHC_VIEW {
     ///   - toView: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Right(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_Right(_ space: CGFloat, toView: AnyObject?) -> Self {
         var toAttribute = WHC_LayoutAttribute.left
         if !sameSuperview(view1: toView, view2: self).1 {
             toAttribute = .right
@@ -782,7 +872,7 @@ extension WHC_VIEW {
     /// - Parameter view: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_RightEqual(_ view: WHC_VIEW) -> WHC_VIEW {
+    public func whc_RightEqual(_ view: AnyObject?) -> Self {
         return self.whc_RightEqual(view, offset: 0)
     }
     
@@ -793,7 +883,7 @@ extension WHC_VIEW {
     ///   - offset: 偏移量
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_RightEqual(_ view: WHC_VIEW, offset: CGFloat) -> WHC_VIEW {
+    public func whc_RightEqual(_ view: AnyObject?, offset: CGFloat) -> Self {
         var toAttribute = WHC_LayoutAttribute.right
         return self.constraintWithItem(self, attribute: .right, related: .equal, toItem: view, toAttribute: &toAttribute, multiplier: 1, constant: 0.0 - offset)
     }
@@ -803,8 +893,8 @@ extension WHC_VIEW {
     /// - Parameter space: 左边距
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Leading(_ space: CGFloat) -> WHC_VIEW {
-        return self.constraintWithItem(self.superview, attribute: .leading, constant: space)
+    public func whc_Leading(_ space: CGFloat) -> Self {
+        return self.constraintWithItem(superview(), attribute: .leading, constant: space)
     }
     
     /// 设置左边距与指定视图
@@ -814,7 +904,7 @@ extension WHC_VIEW {
     ///   - toView: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Leading(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_Leading(_ space: CGFloat, toView: AnyObject?) -> Self {
         var toAttribute = WHC_LayoutAttribute.trailing
         if !sameSuperview(view1: toView, view2: self).1 {
             toAttribute = .leading
@@ -827,7 +917,7 @@ extension WHC_VIEW {
     /// - Parameter view: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_LeadingEqual(_ view: WHC_VIEW) -> WHC_VIEW {
+    public func whc_LeadingEqual(_ view: AnyObject?) -> Self {
         return self.whc_LeadingEqual(view, offset: 0)
     }
     
@@ -838,7 +928,7 @@ extension WHC_VIEW {
     ///   - offset: 偏移量
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_LeadingEqual(_ view: WHC_VIEW, offset: CGFloat) -> WHC_VIEW {
+    public func whc_LeadingEqual(_ view: AnyObject?, offset: CGFloat) -> Self {
         var toAttribute = WHC_LayoutAttribute.leading
         return self.constraintWithItem(self, attribute: .leading, related: .equal, toItem: view, toAttribute: &toAttribute, multiplier: 1, constant: offset)
     }
@@ -848,8 +938,8 @@ extension WHC_VIEW {
     /// - Parameter space: 右边距
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Trailing(_ space: CGFloat) -> WHC_VIEW {
-        return self.constraintWithItem(self.superview, attribute: .trailing, constant: 0.0 - space)
+    public func whc_Trailing(_ space: CGFloat) -> Self {
+        return self.constraintWithItem(superview(), attribute: .trailing, constant: 0.0 - space)
     }
     
     /// 设置右间距与指定视图
@@ -859,7 +949,7 @@ extension WHC_VIEW {
     ///   - toView: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Trailing(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_Trailing(_ space: CGFloat, toView: AnyObject?) -> Self {
         var toAttribute = WHC_LayoutAttribute.leading
         if !sameSuperview(view1: toView, view2: self).1 {
             toAttribute = .trailing
@@ -872,7 +962,7 @@ extension WHC_VIEW {
     /// - Parameter view: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_TrailingEqual(_ view: WHC_VIEW) -> WHC_VIEW {
+    public func whc_TrailingEqual(_ view: AnyObject?) -> Self {
         return self.whc_TrailingEqual(view, offset: 0)
     }
     
@@ -883,7 +973,7 @@ extension WHC_VIEW {
     ///   - offset: 偏移量
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_TrailingEqual(_ view: WHC_VIEW, offset: CGFloat) -> WHC_VIEW {
+    public func whc_TrailingEqual(_ view: AnyObject?, offset: CGFloat) -> Self {
         var toAttribute = WHC_LayoutAttribute.trailing
         return self.constraintWithItem(self, attribute: .trailing, related: .equal, toItem: view, toAttribute: &toAttribute, multiplier: 1, constant: 0.0 - offset)
     }
@@ -893,8 +983,8 @@ extension WHC_VIEW {
     /// - Parameter space: 顶边距
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Top(_ space: CGFloat) -> WHC_VIEW {
-        return self.constraintWithItem(self.superview, attribute: .top, constant: space)
+    public func whc_Top(_ space: CGFloat) -> Self {
+        return self.constraintWithItem(superview(), attribute: .top, constant: space)
     }
     
     /// 设置顶边距与指定视图
@@ -904,7 +994,7 @@ extension WHC_VIEW {
     ///   - toView: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Top(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_Top(_ space: CGFloat, toView: AnyObject?) -> Self {
         var toAttribute = WHC_LayoutAttribute.bottom
         if !sameSuperview(view1: toView, view2: self).1 {
             toAttribute = .top
@@ -917,7 +1007,7 @@ extension WHC_VIEW {
     /// - Parameter view: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_TopEqual(_ view: WHC_VIEW) -> WHC_VIEW {
+    public func whc_TopEqual(_ view: AnyObject?) -> Self {
         return self.whc_TopEqual(view, offset: 0)
     }
     
@@ -928,7 +1018,7 @@ extension WHC_VIEW {
     ///   - offset: 偏移量
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_TopEqual(_ view: WHC_VIEW, offset: CGFloat) -> WHC_VIEW {
+    public func whc_TopEqual(_ view: AnyObject?, offset: CGFloat) -> Self {
         var toAttribute = WHC_LayoutAttribute.top
         return self.constraintWithItem(self, attribute: .top, related: .equal, toItem: view, toAttribute: &toAttribute, multiplier: 1, constant: offset)
     }
@@ -938,8 +1028,8 @@ extension WHC_VIEW {
     /// - Parameter space: 底边距
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Bottom(_ space: CGFloat) -> WHC_VIEW {
-        return self.constraintWithItem(self.superview, attribute: .bottom, constant: 0 - space)
+    public func whc_Bottom(_ space: CGFloat) -> Self {
+        return self.constraintWithItem(superview(), attribute: .bottom, constant: 0 - space)
     }
     
     /// 设置底边距与指定视图
@@ -949,7 +1039,7 @@ extension WHC_VIEW {
     ///   - toView: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Bottom(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_Bottom(_ space: CGFloat, toView: AnyObject?) -> Self {
         var toAttribute = WHC_LayoutAttribute.top
         return self.constraintWithItem(self, attribute: .bottom, related: .equal, toItem: toView, toAttribute: &toAttribute, multiplier: 1, constant: space)
     }
@@ -959,7 +1049,7 @@ extension WHC_VIEW {
     /// - Parameter view: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_BottomEqual(_ view: WHC_VIEW) -> WHC_VIEW {
+    public func whc_BottomEqual(_ view: AnyObject?) -> Self {
         return self.whc_BottomEqual(view, offset: 0)
     }
     
@@ -970,7 +1060,7 @@ extension WHC_VIEW {
     ///   - offset: 偏移量
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_BottomEqual(_ view: WHC_VIEW, offset: CGFloat) -> WHC_VIEW {
+    public func whc_BottomEqual(_ view: AnyObject?, offset: CGFloat) -> Self {
         var toAttribute = WHC_LayoutAttribute.bottom
         return self.constraintWithItem(self, attribute: .bottom, related: .equal, toItem: view, toAttribute: &toAttribute, multiplier: 1, constant: 0.0 - offset)
     }
@@ -981,7 +1071,7 @@ extension WHC_VIEW {
     /// - Parameter width: 宽度
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Width(_ width: CGFloat) -> WHC_VIEW {
+    public func whc_Width(_ width: CGFloat) -> Self {
         var toAttribute = WHC_LayoutAttribute.notAnAttribute
         return self.constraintWithItem(self, attribute: .width, related: .equal, toItem: nil, toAttribute: &toAttribute, multiplier: 0, constant: width)
     }
@@ -991,7 +1081,7 @@ extension WHC_VIEW {
     /// - Parameter view: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_WidthEqual(_ view: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_WidthEqual(_ view: AnyObject?) -> Self {
         return self.constraintWithItem(view, attribute: .width, constant: 0)
     }
     
@@ -1002,7 +1092,7 @@ extension WHC_VIEW {
     ///   - ratio: 比例
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_WidthEqual(_ view: WHC_VIEW!, ratio: CGFloat) -> WHC_VIEW {
+    public func whc_WidthEqual(_ view: AnyObject?, ratio: CGFloat) -> Self {
         return self.constraintWithItem(view, attribute: .width, multiplier: ratio, constant: 0)
     }
     
@@ -1010,7 +1100,7 @@ extension WHC_VIEW {
     ///
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_WidthAuto() -> WHC_VIEW {
+    public func whc_WidthAuto() -> Self {
         #if os(iOS) || os(tvOS)
             if let label = self as? UILabel {
                 if label.numberOfLines == 0 {
@@ -1033,7 +1123,7 @@ extension WHC_VIEW {
     /// - Parameter ratio: 比例
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_HeightWidthRatio(_ ratio: CGFloat) -> WHC_VIEW {
+    public func whc_HeightWidthRatio(_ ratio: CGFloat) -> Self {
         var toAttribute = WHC_LayoutAttribute.width
         return self.constraintWithItem(self, attribute: .height, related: .equal, toItem: self, toAttribute: &toAttribute, multiplier: ratio, constant: 0)
     }
@@ -1043,7 +1133,7 @@ extension WHC_VIEW {
     /// - Parameter height: 高度
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Height(_ height: CGFloat) -> WHC_VIEW {
+    public func whc_Height(_ height: CGFloat) -> Self {
         return self.constraintWithItem(nil, attribute: .height, constant: height)
     }
     
@@ -1052,7 +1142,7 @@ extension WHC_VIEW {
     /// - Parameter view: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_HeightEqual(_ view: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_HeightEqual(_ view: AnyObject?) -> Self {
         return self.constraintWithItem(view, attribute: .height, constant: 0)
     }
     
@@ -1064,7 +1154,7 @@ extension WHC_VIEW {
     ///   - ratio: 比例
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_HeightEqual(_ view: WHC_VIEW!, ratio: CGFloat) -> WHC_VIEW {
+    public func whc_HeightEqual(_ view: AnyObject?, ratio: CGFloat) -> Self {
         return self.constraintWithItem(view, attribute: .height, multiplier: ratio, constant: 0)
     }
     
@@ -1072,7 +1162,7 @@ extension WHC_VIEW {
     ///
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_HeightAuto() -> WHC_VIEW {
+    public func whc_HeightAuto() -> Self {
         #if os(iOS) || os(tvOS)
             if let label = self as? UILabel {
                 if label.numberOfLines != 0 {
@@ -1095,7 +1185,7 @@ extension WHC_VIEW {
     /// - Parameter ratio: 比例
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_WidthHeightRatio(_ ratio: CGFloat) -> WHC_VIEW {
+    public func whc_WidthHeightRatio(_ ratio: CGFloat) -> Self {
         var toAttribute = WHC_LayoutAttribute.height
         return self.constraintWithItem(self, attribute: .width, related: .equal, toItem: self, toAttribute: &toAttribute, multiplier: ratio, constant: 0)
     }
@@ -1105,8 +1195,8 @@ extension WHC_VIEW {
     /// - Parameter x: 中心x偏移量（0与父视图中心x重合）
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_CenterX(_ x: CGFloat) -> WHC_VIEW {
-        return self.constraintWithItem(self.superview, attribute: .centerX, constant: x)
+    public func whc_CenterX(_ x: CGFloat) -> Self {
+        return self.constraintWithItem(superview(), attribute: .centerX, constant: x)
     }
     
     /// 设置中心x相等与指定视图
@@ -1114,7 +1204,7 @@ extension WHC_VIEW {
     /// - Parameter view: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_CenterXEqual(_ view: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_CenterXEqual(_ view: AnyObject?) -> Self {
         return self.constraintWithItem(view, attribute: .centerX, constant: 0)
     }
     
@@ -1125,7 +1215,7 @@ extension WHC_VIEW {
     ///   - toView: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_CenterX(_ x: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_CenterX(_ x: CGFloat, toView: AnyObject?) -> Self {
         return self.constraintWithItem(toView, attribute: .centerX, constant: x)
     }
     
@@ -1134,8 +1224,8 @@ extension WHC_VIEW {
     /// - Parameter y: 中心y坐标偏移量（0与父视图重合）
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_CenterY(_ y: CGFloat) -> WHC_VIEW {
-        return self.constraintWithItem(self.superview, attribute: .centerY, constant: y)
+    public func whc_CenterY(_ y: CGFloat) -> Self {
+        return self.constraintWithItem(superview(), attribute: .centerY, constant: y)
     }
     
     /// 设置中心y相等与指定视图
@@ -1143,7 +1233,7 @@ extension WHC_VIEW {
     /// - Parameter view: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_CenterYEqual(_ view: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_CenterYEqual(_ view: AnyObject?) -> Self {
         return self.constraintWithItem(view, attribute: .centerY, constant: 0)
     }
     
@@ -1154,7 +1244,7 @@ extension WHC_VIEW {
     ///   - toView: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_CenterY(_ y: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_CenterY(_ y: CGFloat, toView: AnyObject?) -> Self {
         return self.constraintWithItem(toView, attribute: .centerY, constant: y)
     }
     
@@ -1163,8 +1253,8 @@ extension WHC_VIEW {
     /// - Parameter space: 顶部基线边距
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_FirstBaseLine(_ space: CGFloat) -> WHC_VIEW {
-        return self.constraintWithItem(self.superview, attribute: .firstBaseline, constant: 0 - space)
+    public func whc_FirstBaseLine(_ space: CGFloat) -> Self {
+        return self.constraintWithItem(superview(), attribute: .firstBaseline, constant: 0 - space)
     }
     
     /// 设置顶部基线边距与指定视图
@@ -1174,7 +1264,7 @@ extension WHC_VIEW {
     ///   - toView: 指定视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_FirstBaseLine(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_FirstBaseLine(_ space: CGFloat, toView: AnyObject?) -> Self {
         var toAttribute = WHC_LayoutAttribute.lastBaseline
         if !sameSuperview(view1: toView, view2: self).1 {
             toAttribute = .firstBaseline
@@ -1187,7 +1277,7 @@ extension WHC_VIEW {
     /// - Parameter view: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_FirstBaseLineEqual(_ view: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_FirstBaseLineEqual(_ view: AnyObject?) -> Self {
         return self.whc_FirstBaseLineEqual(view, offset: 0)
     }
     
@@ -1198,7 +1288,7 @@ extension WHC_VIEW {
     ///   - offset: 偏移量
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_FirstBaseLineEqual(_ view: WHC_VIEW!, offset: CGFloat) -> WHC_VIEW {
+    public func whc_FirstBaseLineEqual(_ view: AnyObject?, offset: CGFloat) -> Self {
         return self.constraintWithItem(view, attribute: .firstBaseline, constant: offset)
     }
     
@@ -1207,8 +1297,8 @@ extension WHC_VIEW {
     /// - Parameter space: 间隙
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_LastBaseLine(_ space: CGFloat) -> WHC_VIEW {
-        return self.constraintWithItem(self.superview, attribute: .lastBaseline, constant: 0 - space)
+    public func whc_LastBaseLine(_ space: CGFloat) -> Self {
+        return self.constraintWithItem(superview(), attribute: .lastBaseline, constant: 0 - space)
     }
     
     /// 设置底部基线边距与指定视图
@@ -1218,7 +1308,7 @@ extension WHC_VIEW {
     ///   - toView: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_LastBaseLine(_ space: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_LastBaseLine(_ space: CGFloat, toView: AnyObject?) -> Self {
         var toAttribute = WHC_LayoutAttribute.firstBaseline
         if !sameSuperview(view1: toView, view2: self).1 {
             toAttribute = .lastBaseline
@@ -1231,7 +1321,7 @@ extension WHC_VIEW {
     /// - Parameter view: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_LastBaseLineEqual(_ view: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_LastBaseLineEqual(_ view: AnyObject?) -> Self {
         return self.whc_LastBaseLineEqual(view, offset: 0)
     }
     
@@ -1242,7 +1332,7 @@ extension WHC_VIEW {
     ///   - offset: 偏移量
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_LastBaseLineEqual(_ view: WHC_VIEW!, offset: CGFloat) -> WHC_VIEW {
+    public func whc_LastBaseLineEqual(_ view: AnyObject?, offset: CGFloat) -> Self {
         return self.constraintWithItem(view, attribute: .lastBaseline, constant: 0.0 - offset)
     }
     
@@ -1253,7 +1343,7 @@ extension WHC_VIEW {
     ///   - y: 中心y偏移量
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Center(_ x: CGFloat, y: CGFloat) -> WHC_VIEW {
+    public func whc_Center(_ x: CGFloat, y: CGFloat) -> Self {
         return self.whc_CenterX(x).whc_CenterY(y)
     }
     
@@ -1265,7 +1355,7 @@ extension WHC_VIEW {
     ///   - toView: 指定视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Center(_ x: CGFloat, y: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_Center(_ x: CGFloat, y: CGFloat, toView: AnyObject?) -> Self {
         return self.whc_CenterX(x, toView: toView).whc_CenterY(y, toView: toView)
     }
     
@@ -1274,7 +1364,7 @@ extension WHC_VIEW {
     /// - Parameter view: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_CenterEqual(_ view: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_CenterEqual(_ view: AnyObject?) -> Self {
         return self.whc_CenterXEqual(view).whc_CenterYEqual(view)
     }
     
@@ -1287,7 +1377,7 @@ extension WHC_VIEW {
     ///   - height: 高度
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Frame(_ left: CGFloat, top: CGFloat, width: CGFloat, height: CGFloat) -> WHC_VIEW {
+    public func whc_Frame(_ left: CGFloat, top: CGFloat, width: CGFloat, height: CGFloat) -> Self {
         return self.whc_Left(left).whc_Top(top).whc_Width(width).whc_Height(height)
     }
     
@@ -1301,7 +1391,7 @@ extension WHC_VIEW {
     ///   - toView: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Frame(_ left: CGFloat, top: CGFloat, width: CGFloat, height: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_Frame(_ left: CGFloat, top: CGFloat, width: CGFloat, height: CGFloat, toView: AnyObject?) -> Self {
         return self.whc_Left(left, toView: toView).whc_Top(top, toView: toView).whc_Width(width).whc_Height(height)
     }
     
@@ -1310,7 +1400,7 @@ extension WHC_VIEW {
     ///
     /// - Parameter view: 相对视图
     /// - Returns: 返回当前视图
-    public func whc_FrameEqual(_ view: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_FrameEqual(_ view: AnyObject?) -> Self {
         return self.whc_LeftEqual(view).whc_TopEqual(view).whc_SizeEqual(view)
     }
     
@@ -1321,7 +1411,7 @@ extension WHC_VIEW {
     ///   - height: 高度
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Size(_ width: CGFloat, height: CGFloat) -> WHC_VIEW {
+    public func whc_Size(_ width: CGFloat, height: CGFloat) -> Self {
         return self.whc_Width(width).whc_Height(height)
     }
     
@@ -1330,7 +1420,7 @@ extension WHC_VIEW {
     /// - Parameter view: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_SizeEqual(_ view: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_SizeEqual(_ view: AnyObject?) -> Self {
         return self.whc_WidthEqual(view).whc_HeightEqual(view)
     }
     
@@ -1343,7 +1433,7 @@ extension WHC_VIEW {
     ///   - bottom: 底边距
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_AutoSize(left: CGFloat, top: CGFloat, right: CGFloat, bottom: CGFloat) -> WHC_VIEW {
+    public func whc_AutoSize(left: CGFloat, top: CGFloat, right: CGFloat, bottom: CGFloat) -> Self {
         return self.whc_Left(left).whc_Top(top).whc_Right(right).whc_Bottom(bottom)
     }
     
@@ -1357,7 +1447,7 @@ extension WHC_VIEW {
     ///   - toView: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_AutoSize(left: CGFloat, top: CGFloat, right: CGFloat, bottom: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_AutoSize(left: CGFloat, top: CGFloat, right: CGFloat, bottom: CGFloat, toView: AnyObject?) -> Self {
         return self.whc_Left(left, toView: toView).whc_Top(top, toView: toView).whc_Right(right, toView: toView).whc_Bottom(bottom, toView: toView)
     }
     
@@ -1370,7 +1460,7 @@ extension WHC_VIEW {
     ///   - height: 高度
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_AutoWidth(left: CGFloat, top: CGFloat, right: CGFloat, height: CGFloat) -> WHC_VIEW {
+    public func whc_AutoWidth(left: CGFloat, top: CGFloat, right: CGFloat, height: CGFloat) -> Self {
         return self.whc_Left(left).whc_Top(top).whc_Right(right).whc_Height(height)
     }
     
@@ -1384,7 +1474,7 @@ extension WHC_VIEW {
     ///   - toView: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_AutoWidth(left: CGFloat, top: CGFloat, right: CGFloat, height: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_AutoWidth(left: CGFloat, top: CGFloat, right: CGFloat, height: CGFloat, toView: AnyObject?) -> Self {
         return self.whc_Left(left, toView: toView).whc_Top(top, toView: toView).whc_Right(right, toView: toView).whc_Height(height)
     }
     
@@ -1397,7 +1487,7 @@ extension WHC_VIEW {
     ///   - bottom: 底边距
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_AutoHeight(left: CGFloat, top: CGFloat, width: CGFloat, bottom: CGFloat) -> WHC_VIEW {
+    public func whc_AutoHeight(left: CGFloat, top: CGFloat, width: CGFloat, bottom: CGFloat) -> Self {
         return self.whc_Left(left).whc_Top(top).whc_Width(width).whc_Bottom(bottom)
     }
     
@@ -1411,11 +1501,74 @@ extension WHC_VIEW {
     ///   - toView: 相对视图
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_AutoHeight(left: CGFloat, top: CGFloat, width: CGFloat, bottom: CGFloat, toView: WHC_VIEW!) -> WHC_VIEW {
+    public func whc_AutoHeight(left: CGFloat, top: CGFloat, width: CGFloat, bottom: CGFloat, toView: AnyObject?) -> Self {
         return self.whc_Left(left, toView: toView).whc_Top(top, toView: toView).whc_Width(width).whc_Bottom(bottom, toView: toView)
     }
     
     //MARK: -私有方法-
+    
+    private func superview(_ object: AnyObject? = nil) -> WHC_CLASS_VIEW? {
+        if #available(iOS 9.0, *) {
+            switch object {
+            case let v as WHC_CLASS_VIEW:
+                return v.superview
+            case let g as WHC_CLASS_LGUIDE:
+                return g.owningView
+            default:()
+            }
+            switch self {
+            case let v as WHC_CLASS_VIEW:
+                return v.superview
+            case let g as WHC_CLASS_LGUIDE:
+                return g.owningView
+            default:()
+            }
+        }
+        return view(object)?.superview
+    }
+    
+    private func owningview(_ object: AnyObject? = nil) -> WHC_CLASS_VIEW? {
+        if #available(iOS 9.0, *) {
+            switch object {
+            case let v as WHC_CLASS_VIEW:
+                return v
+            case let g as WHC_CLASS_LGUIDE:
+                return g.owningView
+            default:()
+            }
+            switch self {
+            case let v as WHC_CLASS_VIEW:
+                return v
+            case let g as WHC_CLASS_LGUIDE:
+                return g.owningView
+            default:()
+            }
+        } else {
+            // Fallback on earlier versions
+            if let v = object as? WHC_CLASS_VIEW {
+                return v
+            }
+            if let v = self as? WHC_CLASS_VIEW {
+                return v
+            }
+        }
+        return nil
+    }
+    
+    private func view(_ object: AnyObject? = nil) -> WHC_CLASS_VIEW? {
+        if let v = object as? WHC_CLASS_VIEW {
+            return v
+        }
+        return self as? WHC_CLASS_VIEW
+    }
+    
+    @available(iOS 9.0, *)
+    private func guide(_ object: AnyObject? = nil) -> WHC_CLASS_LGUIDE? {
+        if let g = object as? WHC_CLASS_LGUIDE {
+            return g
+        }
+        return self as? WHC_CLASS_LGUIDE
+    }
     
     private func setLeftConstraint(_ constraint: NSLayoutConstraint!, relation: WHC_LayoutRelation) {
         switch relation {
@@ -1970,9 +2123,9 @@ extension WHC_VIEW {
         return objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kAttributeFirstBaselineG) as? NSLayoutConstraint
     }
     
-    private func constraintWithItem(_ item: WHC_VIEW!,
+    private func constraintWithItem(_ item: AnyObject?,
                                     attribute: WHC_LayoutAttribute,
-                                    constant: CGFloat) -> WHC_VIEW {
+                                    constant: CGFloat) -> Self {
         var toAttribute = attribute
         return self.constraintWithItem(self,
                                        attribute: attribute,
@@ -1981,10 +2134,10 @@ extension WHC_VIEW {
                                        constant: constant)
     }
     
-    private func constraintWithItem(_ item: WHC_VIEW!,
+    private func constraintWithItem(_ item: AnyObject?,
                                     attribute: WHC_LayoutAttribute,
                                     multiplier: CGFloat,
-                                    constant: CGFloat) -> WHC_VIEW {
+                                    constant: CGFloat) -> Self {
         var toAttribute = attribute
         return self.constraintWithItem(self,
                                        attribute: attribute,
@@ -1994,11 +2147,11 @@ extension WHC_VIEW {
                                        constant: constant)
     }
     
-    private func constraintWithItem(_ item: WHC_VIEW!,
+    private func constraintWithItem(_ item: AnyObject?,
                                     attribute: WHC_LayoutAttribute,
-                                    toItem: WHC_VIEW!,
+                                    toItem: AnyObject?,
                                     toAttribute: inout WHC_LayoutAttribute,
-                                    constant: CGFloat) -> WHC_VIEW {
+                                    constant: CGFloat) -> Self {
         return self.constraintWithItem(item,
                                        attribute: attribute,
                                        toItem: toItem,
@@ -2007,12 +2160,12 @@ extension WHC_VIEW {
                                        constant: constant)
     }
     
-    private func constraintWithItem(_ item: WHC_VIEW!,
+    private func constraintWithItem(_ item: AnyObject?,
                                     attribute: WHC_LayoutAttribute,
-                                    toItem: WHC_VIEW!,
+                                    toItem: AnyObject?,
                                     toAttribute: inout WHC_LayoutAttribute,
                                     multiplier: CGFloat,
-                                    constant: CGFloat) -> WHC_VIEW {
+                                    constant: CGFloat) -> Self {
         return self.constraintWithItem(item,
                                        attribute: attribute,
                                        related: .equal,
@@ -2022,13 +2175,13 @@ extension WHC_VIEW {
                                        constant: constant)
     }
     
-    private func constraintWithItem(_ item: WHC_VIEW!,
+    private func constraintWithItem(_ item: AnyObject?,
                                     attribute: WHC_LayoutAttribute,
                                     related: WHC_LayoutRelation,
-                                    toItem: WHC_VIEW!,
+                                    toItem: AnyObject?,
                                     toAttribute: inout WHC_LayoutAttribute,
                                     multiplier: CGFloat,
-                                    constant: CGFloat) -> WHC_VIEW {
+                                    constant: CGFloat) -> Self {
         
         var firstAttribute = attribute
         if toItem == nil {
@@ -2036,10 +2189,14 @@ extension WHC_VIEW {
         }else if item == nil {
             firstAttribute = .notAnAttribute
         }
-        if self.translatesAutoresizingMaskIntoConstraints {
-            self.translatesAutoresizingMaskIntoConstraints = false
+        if let sf = view() {
+            if sf.translatesAutoresizingMaskIntoConstraints {
+                sf.translatesAutoresizingMaskIntoConstraints = false
+            }
         }
-        item?.translatesAutoresizingMaskIntoConstraints = false
+        if let iv = view(item) {
+            iv.translatesAutoresizingMaskIntoConstraints = false
+        }
         switch firstAttribute {
         case .left:
             if let leading = self.leadingConstraint() {
@@ -2273,64 +2430,116 @@ extension WHC_VIEW {
         default:
             break
         }
-        let superView = mainSuperView(view1: toItem, view2: item)
-        if superView == nil {
+        if item == nil {
+            print("约束视图不能为nil")
             return self
         }
-        let constraint = NSLayoutConstraint(item: item,
-                                            attribute: attribute,
-                                            relatedBy: related,
-                                            toItem: toItem,
-                                            attribute: toAttribute,
-                                            multiplier: multiplier,
-                                            constant: constant)
-        setCacheConstraint(constraint, attribute: attribute, relation: related)
-        superView!.addConstraint(constraint)
-        self.currentConstraint = constraint
+        if let superView = mainSuperView(view1: toItem, view2: item) {
+            let constraint = NSLayoutConstraint(item: item!,
+                                                attribute: attribute,
+                                                relatedBy: related,
+                                                toItem: toItem,
+                                                attribute: toAttribute,
+                                                multiplier: multiplier,
+                                                constant: constant)
+            setCacheConstraint(constraint, attribute: attribute, relation: related)
+            superView.addConstraint(constraint)
+            self.currentConstraint = constraint
+        }
         return self
     }
     
     @discardableResult
-    private func removeCache(constraint: NSLayoutConstraint?) -> WHC_VIEW {
+    private func removeCache(constraint: NSLayoutConstraint?) -> Self {
         whc_MainViewConstraint(constraint)?.removeConstraint(constraint!)
         return self
     }
     
-    private func mainSuperView(view1: WHC_VIEW?, view2: WHC_VIEW?) -> WHC_VIEW? {
-        if view1 == nil && view2 != nil {
-            return view2
+    private func mainSuperView(view1: AnyObject?, view2: AnyObject?) -> WHC_CLASS_VIEW? {
+        var isView1 = true
+        var isView2 = true
+        if #available(iOS 9.0, *) {
+            isView1 = !(view1 != nil && view1 is WHC_CLASS_LGUIDE)
+            isView2 = !(view2 != nil && view2 is WHC_CLASS_LGUIDE)
         }
-        if view1 != nil && view2 == nil {
-            return view1
-        }
-        if view1 == nil && view2 == nil {
-            return nil
-        }
-        if view1!.superview != nil && view2!.superview == nil {
-            return view2
-        }
-        if view1!.superview == nil && view2!.superview != nil {
-            return view1
-        }
-        if let mainView = sameSuperview(view1: view1, view2: view2).0 {
-            return mainView
-        }else if let mainView = sameSuperview(view1: view2, view2: view1).0 {
-            return mainView
+        if isView1 && isView2 {
+            if view1 == nil && view2 != nil {
+                return view(view2)
+            }
+            if view1 != nil && view2 == nil {
+                return view(view1)
+            }
+            if view1 == nil && view2 == nil {
+                return nil
+            }
+            if superview(view1) != nil && superview(view2) == nil {
+                return view(view2)
+            }
+            if superview(view1) == nil && superview(view2) != nil {
+                return view(view1)
+            }
+            var data = sameSuperview(view1: view1, view2: view2)
+            if let d1 = data.0 {
+                return d1
+            }else if data.1 && data.0 == nil {
+                return view(view1)
+            }
+            data = sameSuperview(view1: view2, view2: view1)
+            if let d1 = data.0 {
+                return d1
+            }else if data.1 && data.0 == nil {
+                return view(view2)
+            }
+        }else if #available(iOS 9.0, *) {
+            if isView1 && !isView2 {
+                if view1 != nil {
+                    let s_view = view(view1)
+                    let s_guide = guide(view2)
+                    if s_view === s_guide?.owningView {
+                        return s_view
+                    }else {
+                        if s_view?.superview === s_guide?.owningView {
+                            return s_view?.superview
+                        }
+                        return mainSuperView(view1: s_view?.superview, view2: s_guide?.owningView)
+                    }
+                }
+                return owningview(view2);
+            }else if !isView1 && isView2 {
+                if view2 != nil {
+                    let s_view = view(view2)
+                    let s_guide = guide(view1)
+                    if s_view === s_guide?.owningView {
+                        return s_view
+                    }else {
+                        if s_view?.superview === s_guide?.owningView {
+                            return s_view?.superview
+                        }
+                        return mainSuperView(view1: s_view?.superview, view2: s_guide?.owningView)
+                    }
+                }
+                return owningview(view1)
+            }else {
+                if owningview(view1) === owningview(view2) {
+                    return owningview(view1)
+                }
+                return mainSuperView(view1: owningview(view1), view2: owningview(view2))
+            }
         }
         return nil
     }
     
-    private func checkSubSuperView(superv: WHC_VIEW?, subv: WHC_VIEW?) -> WHC_VIEW? {
-        var superView: WHC_VIEW?
+    private func checkSubSuperView(superv: WHC_CLASS_VIEW?, subv: WHC_CLASS_VIEW?) -> WHC_CLASS_VIEW? {
+        var superView: WHC_CLASS_VIEW?
         if let spv = superv, let sbv = subv, let sbvspv = sbv.superview, spv !== sbv {
-            func scanSubv(_ subvs: [WHC_VIEW]?) -> WHC_VIEW? {
-                var superView: WHC_VIEW?
+            func scanSubv(_ subvs: [WHC_CLASS_VIEW]?) -> WHC_CLASS_VIEW? {
+                var superView: WHC_CLASS_VIEW?
                 if let tmpsubvs = subvs, !tmpsubvs.isEmpty {
                     if tmpsubvs.contains(sbvspv) {
                         superView = sbvspv
                     }
                     if superView == nil {
-                        var sumSubv = [WHC_VIEW]()
+                        var sumSubv = [WHC_CLASS_VIEW]()
                         tmpsubvs.forEach({ (sv) in
                             sumSubv.append(contentsOf: sv.subviews)
                         })
@@ -2346,46 +2555,124 @@ extension WHC_VIEW {
         return superView
     }
     
-    private func sameSuperview(view1: WHC_VIEW?, view2: WHC_VIEW?) -> (WHC_VIEW?, Bool) {
-        var tempToItem = view1
-        var tempItem = view2
-        if tempToItem != nil && tempItem != nil {
-            if checkSubSuperView(superv: view1, subv: view2) != nil {
-                return (view1, false)
-            }
+    private func sameSuperview(view1: AnyObject?, view2: AnyObject?) -> (WHC_CLASS_VIEW?, Bool) {
+        var isView1 = true
+        var isView2 = true
+        if #available(iOS 9.0, *) {
+            isView1 = !(view1 != nil && view1 is WHC_CLASS_LGUIDE)
+            isView2 = !(view2 != nil && view2 is WHC_CLASS_LGUIDE)
         }
-        let checkSameSuperview: ((WHC_VIEW, WHC_VIEW) -> Bool) = {(tmpSuperview, singleView) in
-            var tmpSingleView: WHC_VIEW? = singleView
-            while let tempSingleSuperview = tmpSingleView?.superview {
-                if tmpSuperview === tempSingleSuperview {
-                    return true
-                }else {
-                    tmpSingleView = tempSingleSuperview
+        if isView1 && isView2 {
+            var tempToItem = view(view1)
+            var tempItem = view(view2)
+            if let v1 = tempToItem, let v2 = tempItem {
+                if checkSubSuperView(superv: v1, subv: v2) != nil {
+                    return (v1, false)
                 }
             }
-            return false
-        }
-        while let toItemSuperview = tempToItem?.superview,
-            let itemSuperview = tempItem?.superview  {
-                if toItemSuperview === itemSuperview {
-                    return (toItemSuperview, true)
-                }else {
-                    tempToItem = toItemSuperview
-                    tempItem = itemSuperview
-                    if tempToItem?.superview == nil && tempItem?.superview != nil {
-                        if checkSameSuperview(tempToItem!, tempItem!) {
-                            return (tempToItem, true)
-                        }
-                    }else if tempToItem?.superview != nil && tempItem?.superview == nil {
-                        if checkSameSuperview(tempItem!, tempToItem!) {
-                            return (tempItem, true)
-                        }
+            let checkSameSuperview: ((WHC_CLASS_VIEW, WHC_CLASS_VIEW) -> Bool) = {(tmpSuperview, singleView) in
+                var tmpSingleView: WHC_CLASS_VIEW? = singleView
+                while let tempSingleSuperview = tmpSingleView?.superview {
+                    if tmpSuperview === tempSingleSuperview {
+                        return true
+                    }else {
+                        tmpSingleView = tempSingleSuperview
                     }
                 }
-        }
-        if tempToItem != nil && tempItem != nil {
-            if checkSubSuperView(superv: view2, subv: view1) != nil {
-                return (view2, false)
+                return false
+            }
+            while let toItemSuperview = tempToItem?.superview,
+                let itemSuperview = tempItem?.superview  {
+                    if toItemSuperview === itemSuperview {
+                        return (toItemSuperview, true)
+                    }else {
+                        tempToItem = toItemSuperview
+                        tempItem = itemSuperview
+                        if tempToItem?.superview == nil && tempItem?.superview != nil {
+                            if checkSameSuperview(tempToItem!, tempItem!) {
+                                return (tempToItem, true)
+                            }
+                        }else if tempToItem?.superview != nil && tempItem?.superview == nil {
+                            if checkSameSuperview(tempItem!, tempToItem!) {
+                                return (tempItem, true)
+                            }
+                        }
+                    }
+            }
+            if let v1 = view(view1), let v2 = view(view2) {
+                if checkSubSuperView(superv: v2, subv: v1) != nil {
+                    return (v2, false)
+                }
+            }
+        }else if #available(iOS 9.0, *) {
+            if isView1 && !isView2 {
+                if view1 != nil {
+                    let s_view = view(view1)
+                    let s_guide = guide(view2)
+                    if s_view === s_guide?.owningView {
+                        return (s_view, false)
+                    }else {
+                        if s_view?.superview === s_guide?.owningView {
+                            var data: (WHC_CLASS_VIEW?, Bool) = (nil, false)
+                            #if os(iOS) || os(tvOS)
+                                if #available(iOS 11.0, tvOS 11.0, *) {
+                                    data.1 = s_view?.superview?.safeAreaLayoutGuide !== s_guide
+                                }else {
+                                    data.1 = true
+                                }
+                            #else
+                                data.1 = true
+                            #endif
+                            data.0 = s_view?.superview
+                            return data
+                        }
+                        return sameSuperview(view1: s_view?.superview, view2: s_guide?.owningView)
+                    }
+                }
+                return (owningview(view2), false)
+            }else if !isView1 && isView2 {
+                if view2 != nil {
+                    let s_view = view(view2)
+                    let s_guide = guide(view1)
+                    if s_view === s_guide?.owningView {
+                        return (s_view, false)
+                    }else {
+                        if s_view?.superview === s_guide?.owningView {
+                            var data: (WHC_CLASS_VIEW?, Bool) = (nil, false)
+                            #if os(iOS) || os(tvOS)
+                                if #available(iOS 11.0, tvOS 11.0, *) {
+                                    data.1 = s_view?.superview?.safeAreaLayoutGuide !== s_guide
+                                }else {
+                                    data.1 = true
+                                }
+                            #else
+                                data.1 = true
+                            #endif
+                            data.0 = s_view?.superview
+                            return data
+                        }
+                        return sameSuperview(view1: s_view?.superview, view2: s_guide?.owningView)
+                    }
+                }
+                return (owningview(view1), false)
+            }else {
+                var data: (WHC_CLASS_VIEW?, Bool) = (nil, false)
+                if owningview(view1) === owningview(view2) {
+                    data.0 = owningview(view1)
+                    #if os(iOS) || os(tvOS)
+                        if #available(iOS 11.0, tvOS 11.0, *) {
+                            data.1 = !(owningview(view1)?.safeAreaLayoutGuide === guide(view2) ||
+                            owningview(view2)?.safeAreaLayoutGuide === guide(view1))
+                        }else {
+                            data.1 = true
+                        }
+                    #else
+                        data.1 = true
+                    #endif
+                    return data
+                }else {
+                    return sameSuperview(view1: owningview(view1), view2: owningview(view2))
+                }
             }
         }
         return (nil, false)
@@ -2421,61 +2708,5 @@ extension WHC_VIEW {
             break;
         }
     }
-    
-    #if os(iOS) || os(tvOS)
-    
-    class WHC_Line: WHC_VIEW {
-        
-    }
-    
-    struct WHC_Tag {
-        static let kLeftLine = 100000
-        static let kRightLine = kLeftLine + 1
-        static let kTopLine = kRightLine + 1
-        static let kBottomLine = kTopLine + 1
-    }
-    
-    private func createLineWithTag(_ lineTag: Int)  -> WHC_Line! {
-        var line: WHC_Line!
-        for view in self.subviews {
-            if view is WHC_Line && view.tag == lineTag {
-                line = view as! WHC_Line
-                break
-            }
-        }
-        if line == nil {
-            line = WHC_Line()
-            line.tag = lineTag
-            self.addSubview(line)
-        }
-        return line
-    }
-    
-    //MARK: -自动添加底部线和顶部线-
-    @discardableResult
-    public func whc_AddBottomLine(_ height: CGFloat, color: WHC_COLOR) -> WHC_VIEW {
-        return self.whc_AddBottomLine(height, color: color, marge: 0)
-    }
-    
-    @discardableResult
-    public func whc_AddBottomLine(_ height: CGFloat, color: WHC_COLOR, marge: CGFloat) -> WHC_VIEW {
-        let line = self.createLineWithTag(WHC_Tag.kBottomLine)
-        line?.backgroundColor = color
-        return line!.whc_Right(marge).whc_Left(marge).whc_Height(height).whc_Bottom(0)
-    }
-    
-    @discardableResult
-    public func whc_AddTopLine(_ height: CGFloat, color: WHC_COLOR) -> WHC_VIEW {
-        return self.whc_AddTopLine(height, color: color, marge: 0)
-    }
-    
-    @discardableResult
-    public func whc_AddTopLine(_ height: CGFloat, color: WHC_COLOR, marge: CGFloat) -> WHC_VIEW {
-        let line = self.createLineWithTag(WHC_Tag.kTopLine)
-        line?.backgroundColor = color
-        return line!.whc_Right(marge).whc_Left(marge).whc_Height(height).whc_Top(0)
-    }
-    
-    #endif
 }
 

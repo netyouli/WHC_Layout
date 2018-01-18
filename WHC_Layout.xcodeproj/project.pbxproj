@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		FE5179661FD3FDF7009352DC /* WHC_LayerFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE5179651FD3FDF7009352DC /* WHC_LayerFrame.swift */; };
+		FE5E275C2010A48A00B6B5E7 /* WHC_Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE5E275B2010A48A00B6B5E7 /* WHC_Util.swift */; };
+		FE5E275F2010A4A700B6B5E7 /* LayoutGuideVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE5E275E2010A4A700B6B5E7 /* LayoutGuideVC.swift */; };
 		FEE8F32C1E9CC48E00B39B88 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE8F32B1E9CC48E00B39B88 /* AppDelegate.swift */; };
 		FEE8F32E1E9CC48E00B39B88 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE8F32D1E9CC48E00B39B88 /* ViewController.swift */; };
 		FEE8F3331E9CC48F00B39B88 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FEE8F3321E9CC48F00B39B88 /* Assets.xcassets */; };
@@ -26,6 +28,8 @@
 
 /* Begin PBXFileReference section */
 		FE5179651FD3FDF7009352DC /* WHC_LayerFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WHC_LayerFrame.swift; sourceTree = "<group>"; };
+		FE5E275B2010A48A00B6B5E7 /* WHC_Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WHC_Util.swift; sourceTree = "<group>"; };
+		FE5E275E2010A4A700B6B5E7 /* LayoutGuideVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayoutGuideVC.swift; sourceTree = "<group>"; };
 		FEE8F3281E9CC48E00B39B88 /* WHC_Layout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WHC_Layout.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEE8F32B1E9CC48E00B39B88 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FEE8F32D1E9CC48E00B39B88 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -55,6 +59,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FE5E275D2010A4A700B6B5E7 /* UILayoutGuide */ = {
+			isa = PBXGroup;
+			children = (
+				FE5E275E2010A4A700B6B5E7 /* LayoutGuideVC.swift */,
+			);
+			path = UILayoutGuide;
+			sourceTree = "<group>";
+		};
 		FEE8F31F1E9CC48E00B39B88 = {
 			isa = PBXGroup;
 			children = (
@@ -88,6 +100,7 @@
 		FEE8F33D1E9CC65A00B39B88 /* WHC_LayoutKit */ = {
 			isa = PBXGroup;
 			children = (
+				FE5E275B2010A48A00B6B5E7 /* WHC_Util.swift */,
 				FEE8F33E1E9CC65A00B39B88 /* WHC_AutoCellHeight.swift */,
 				FEE8F33F1E9CC65A00B39B88 /* WHC_AutoLayout.swift */,
 				FEE8F3401E9CC65A00B39B88 /* WHC_Frame.swift */,
@@ -100,6 +113,7 @@
 		FEE8F3461E9CC69700B39B88 /* 示例demo */ = {
 			isa = PBXGroup;
 			children = (
+				FE5E275D2010A4A700B6B5E7 /* UILayoutGuide */,
 				FEE8F3471E9CC69700B39B88 /* AutoCellHeightDemo */,
 				FEE8F34A1E9CC69700B39B88 /* AutoLayoutDemo */,
 				FEE8F34C1E9CC69700B39B88 /* UIStackViewDemo */,
@@ -228,10 +242,12 @@
 				FEE8F3421E9CC65A00B39B88 /* WHC_AutoCellHeight.swift in Sources */,
 				FEE8F3561E9CC69700B39B88 /* ModityXibVC.swift in Sources */,
 				FEE8F32E1E9CC48E00B39B88 /* ViewController.swift in Sources */,
+				FE5E275F2010A4A700B6B5E7 /* LayoutGuideVC.swift in Sources */,
 				FEE8F3441E9CC65A00B39B88 /* WHC_Frame.swift in Sources */,
 				FEE8F32C1E9CC48E00B39B88 /* AppDelegate.swift in Sources */,
 				FEE8F3551E9CC69700B39B88 /* StackViewVC.swift in Sources */,
 				FE5179661FD3FDF7009352DC /* WHC_LayerFrame.swift in Sources */,
+				FE5E275C2010A48A00B6B5E7 /* WHC_Util.swift in Sources */,
 				FEE8F3531E9CC69700B39B88 /* MyCell.swift in Sources */,
 				FEE8F3431E9CC65A00B39B88 /* WHC_AutoLayout.swift in Sources */,
 				FEE8F3521E9CC69700B39B88 /* AutoCellHeightVC.swift in Sources */,
@@ -298,7 +314,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -347,7 +363,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
