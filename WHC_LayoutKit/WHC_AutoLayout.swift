@@ -201,30 +201,10 @@ extension WHC_VIEW {
         if constraint != nil {
             if constraint.secondAttribute == .notAnAttribute ||
                 constraint.secondItem == nil {
-                if #available(iOS 9.0, *) {
-                    if let v = constraint.firstItem as? WHC_CLASS_VIEW {
-                        view = v
-                    }else if let g = constraint.firstItem as? WHC_CLASS_LGUIDE {
-                        view = g.owningView
-                    }
-                } else {
-                    if let v = constraint.firstItem as? WHC_CLASS_VIEW {
-                        view = v
-                    }
-                }
+                view = owningview(constraint.firstItem)
             }else if constraint.firstAttribute == .notAnAttribute ||
                 constraint.firstItem == nil {
-                if #available(iOS 9.0, *) {
-                    if let v = constraint.secondItem as? WHC_CLASS_VIEW {
-                        view = v
-                    }else if let g = constraint.secondItem as? WHC_CLASS_LGUIDE {
-                        view = g.owningView
-                    }
-                }else {
-                    if let v = constraint.secondItem as? WHC_CLASS_VIEW {
-                        view = v
-                    }
-                }
+                view = owningview(constraint.secondItem)
             }else {
                 let firstItem = constraint.firstItem
                 let secondItem = constraint.secondItem
@@ -371,31 +351,16 @@ extension WHC_VIEW {
         default:
             break;
         }
-        var mView: WHC_CLASS_VIEW?
-        if #available(iOS 9.0, *) {
-            switch mainView {
-            case let main as WHC_CLASS_VIEW:
-                mView = main
-            case let main as WHC_CLASS_LGUIDE:
-                mView = main.owningView
-            default:()
-            }
-        } else {
-            // Fallback on earlier versions
-            switch mainView {
-            case let main as WHC_CLASS_VIEW:
-                mView = main
-            default:()
-            }
-        }
         
-        mView?.constraints.forEach({ (constraint) in
-            if let linkView = (to != nil ? to : mainView) {
-                if (constraint.firstItem === self && constraint.firstAttribute == attribute && (constraint.secondItem === linkView || constraint.secondItem == nil)) || (constraint.firstItem === linkView && constraint.secondItem === self && constraint.secondAttribute == attribute) {
-                    mView?.removeConstraint(constraint)
+        if let mView = owningview(mainView) {
+            mView.constraints.forEach({ (constraint) in
+                if let linkView = (to != nil ? to : mainView) {
+                    if (constraint.firstItem === self && constraint.firstAttribute == attribute && (constraint.secondItem === linkView || constraint.secondItem == nil)) || (constraint.firstItem === linkView && constraint.secondItem === self && constraint.secondAttribute == attribute) {
+                        mView.removeConstraint(constraint)
+                    }
                 }
-            }
-        })
+            })
+        }
     }
     
     
