@@ -769,9 +769,11 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_Left(_ space: CGFloat) -> Self {
+        #if os(iOS)
         if #available(iOS 11.0, *) {
             return self.whc_LeftEqual(self.superview()?.safeAreaLayoutGuide, offset: space)
         }
+        #endif
         return self.constraintWithItem(superview(), attribute: .left, constant: space)
     }
     
@@ -817,9 +819,11 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_Right(_ space: CGFloat) -> Self {
+        #if os(iOS)
         if #available(iOS 11.0, *) {
             return self.whc_RightEqual(self.superview()?.safeAreaLayoutGuide, offset: space)
         }
+        #endif
         return self.constraintWithItem(superview(), attribute: .right, constant: 0 - space)
     }
     
@@ -865,9 +869,11 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_Leading(_ space: CGFloat) -> Self {
+        #if os(iOS)
         if #available(iOS 11.0, *) {
             return self.whc_LeadingEqual(self.superview()?.safeAreaLayoutGuide, offset: space)
         }
+        #endif
         return self.constraintWithItem(superview(), attribute: .leading, constant: space)
     }
     
@@ -913,9 +919,11 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_Trailing(_ space: CGFloat) -> Self {
+        #if os(iOS)
         if #available(iOS 11.0, *) {
             return self.whc_TrailingEqual(self.superview()?.safeAreaLayoutGuide, offset: space)
         }
+        #endif
         return self.constraintWithItem(superview(), attribute: .trailing, constant: 0.0 - space)
     }
     
@@ -961,9 +969,11 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_Top(_ space: CGFloat) -> Self {
+        #if os(iOS)
         if #available(iOS 11.0, *) {
             return self.whc_TopEqual(self.superview()?.safeAreaLayoutGuide, offset: space)
         }
+        #endif
         return self.constraintWithItem(superview(), attribute: .top, constant: space)
     }
     
@@ -1009,9 +1019,11 @@ extension WHC_VIEW {
     /// - Returns: 返回当前视图
     @discardableResult
     public func whc_Bottom(_ space: CGFloat) -> Self {
+        #if os(iOS)
         if #available(iOS 11.0, *) {
             return self.whc_BottomEqual(self.superview()?.safeAreaLayoutGuide, offset: space)
         }
+        #endif
         return self.constraintWithItem(superview(), attribute: .bottom, constant: 0 - space)
     }
     
