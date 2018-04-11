@@ -11,9 +11,11 @@
 
 **Objective-c version** 👉 [WHC_AutoLayout](https://github.com/netyouli/WHC_AutoLayoutKit)
 
+**api自动支持兼容处理头部齐刘海和底部黑线**
+
 **添加UILayoutGuide，safeAreaLayoutGuide约束支持**
 
-**重构布局核心升级基于二叉树层遍历算法搜索约束主视图,对于自动处理跨视图层复杂约束关系更健壮可靠**
+**重构布局核心升级基于二叉树层遍历算法搜索约束主视图,对于自动处理跨视图层复杂约束关系更健壮从容**
 
 **封装集成抗拉伸和抗压缩api支持链式调用**
 
