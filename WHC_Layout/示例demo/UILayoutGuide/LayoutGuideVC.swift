@@ -24,13 +24,8 @@ class LayoutGuideVC: UIViewController {
         // Do any additional setup after loading the view.
         self.view.backgroundColor = UIColor.white
         make()
-        if #available(iOS 11.0, *) {
-            guide1.whc_Top(0, toView: self.view.safeAreaLayoutGuide)
-        } else {
-            // Fallback on earlier versions
-            guide1.whc_Top(64)
-        }
-        guide1.whc_Left(10)
+        guide1.whc_Top(0)
+        .whc_Left(10)
         .whc_Right(10)
         .whc_Height(30)
         
