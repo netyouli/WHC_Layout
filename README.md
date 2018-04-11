@@ -11,7 +11,7 @@
 
 **Objective-c version** 👉 [WHC_AutoLayout](https://github.com/netyouli/WHC_AutoLayoutKit)
 
-**布局api自动支持兼容处理头部齐刘海和底部黑线**
+**布局api内部自动支持兼容处理iphonex头部齐刘海和底部黑线**
 
 **添加UILayoutGuide，safeAreaLayoutGuide约束支持**
 
