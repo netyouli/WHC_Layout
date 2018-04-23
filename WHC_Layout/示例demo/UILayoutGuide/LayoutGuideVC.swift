@@ -24,14 +24,14 @@ class LayoutGuideVC: UIViewController {
         // Do any additional setup after loading the view.
         self.view.backgroundColor = UIColor.white
         make()
-        guide1.whc_Top(0)
-        .whc_Left(10)
-        .whc_Right(10)
+        guide1.whc_Top(0, true)
+        .whc_Left(10, true)
+        .whc_Right(10, true)
         .whc_Height(30)
         
         view1.whc_Left(10)
         .whc_Top(0, toView: guide1)
-        .whc_Right(10)
+        .whc_Right(0)
         .whc_Height(50)
 
         guide2.whc_Left(10)

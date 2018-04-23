@@ -772,7 +772,7 @@ extension WHC_VIEW {
     public func whc_Left(_ space: CGFloat, _ isSafe: Bool = false) -> Self {
         let sview = superview()
         #if os(iOS)
-            if #available(iOS 11.0, *), let _ = sview?.window, isSafe  {
+            if #available(iOS 11.0, *) , isSafe  {
                 return self.constraintWithItem(sview?.safeAreaLayoutGuide, attribute: .left, constant: space)
             }
         #endif
@@ -824,7 +824,7 @@ extension WHC_VIEW {
     public func whc_Right(_ space: CGFloat, _ isSafe: Bool = false) -> Self {
         let sview = superview()
         #if os(iOS)
-            if #available(iOS 11.0, *), let _ = sview?.window, isSafe  {
+            if #available(iOS 11.0, *) , isSafe  {
                 return self.constraintWithItem(sview?.safeAreaLayoutGuide, attribute: .right, constant: 0 - space)
             }
         #endif
@@ -876,7 +876,7 @@ extension WHC_VIEW {
     public func whc_Leading(_ space: CGFloat, _ isSafe: Bool = false) -> Self {
         let sview = superview()
         #if os(iOS)
-            if #available(iOS 11.0, *), let _ = sview?.window, isSafe  {
+            if #available(iOS 11.0, *) , isSafe  {
                 return self.constraintWithItem(sview?.safeAreaLayoutGuide, attribute: .leading, constant: space)
             }
         #endif
@@ -928,7 +928,7 @@ extension WHC_VIEW {
     public func whc_Trailing(_ space: CGFloat, _ isSafe: Bool = false) -> Self {
         let sview = superview()
         #if os(iOS)
-            if #available(iOS 11.0, *), let _ = sview?.window, isSafe  {
+            if #available(iOS 11.0, *) , isSafe  {
                 return self.constraintWithItem(sview?.safeAreaLayoutGuide, attribute: .trailing, constant: 0.0 - space)
             }
         #endif
@@ -980,7 +980,7 @@ extension WHC_VIEW {
     public func whc_Top(_ space: CGFloat, _ isSafe: Bool = false) -> Self {
         let sview = superview()
         #if os(iOS)
-            if #available(iOS 11.0, *), let _ = sview?.window , isSafe  {
+            if #available(iOS 11.0, *) , isSafe  {
                 return self.constraintWithItem(sview?.safeAreaLayoutGuide, attribute: .top, constant: space)
             }
         #endif
@@ -1032,7 +1032,7 @@ extension WHC_VIEW {
     public func whc_Bottom(_ space: CGFloat, _ isSafe: Bool = false) -> Self {
         let sview = superview()
         #if os(iOS)
-            if #available(iOS 11.0, *), let _ = sview?.window, isSafe  {
+            if #available(iOS 11.0, *) , isSafe  {
                 return self.constraintWithItem(sview?.safeAreaLayoutGuide, attribute: .bottom, constant: 0 - space)
             }
         #endif
