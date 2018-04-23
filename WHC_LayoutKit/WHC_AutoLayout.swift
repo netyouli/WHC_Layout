@@ -583,7 +583,7 @@ extension WHC_VIEW {
                         sv.removeConstraint(constraint)
                     }
                 }
-            
+                
                 var superView: WHC_CLASS_VIEW?
                 if #available(iOS 9.0, *) {
                     if let g = guide() {
@@ -766,15 +766,17 @@ extension WHC_VIEW {
     /// 设置左边距(默认相对父视图)
     ///
     /// - Parameter space: 左边距
+    /// - Parameter isSafe: 是否采用安全边界
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Left(_ space: CGFloat) -> Self {
+    public func whc_Left(_ space: CGFloat, _ isSafe: Bool = false) -> Self {
+        let sview = superview()
         #if os(iOS)
-        if #available(iOS 11.0, *) {
-            return self.whc_LeftEqual(self.superview()?.safeAreaLayoutGuide, offset: space)
-        }
+            if #available(iOS 11.0, *), let _ = sview?.window, isSafe  {
+                return self.constraintWithItem(sview?.safeAreaLayoutGuide, attribute: .left, constant: space)
+            }
         #endif
-        return self.constraintWithItem(superview(), attribute: .left, constant: space)
+        return self.constraintWithItem(sview, attribute: .left, constant: space)
     }
     
     /// 设置左边距与指定视图
@@ -816,15 +818,17 @@ extension WHC_VIEW {
     /// 设置右边距(默认相对父视图)
     ///
     /// - Parameter space: 右边距
+    /// - Parameter isSafe: 是否采用安全边界
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Right(_ space: CGFloat) -> Self {
+    public func whc_Right(_ space: CGFloat, _ isSafe: Bool = false) -> Self {
+        let sview = superview()
         #if os(iOS)
-        if #available(iOS 11.0, *) {
-            return self.whc_RightEqual(self.superview()?.safeAreaLayoutGuide, offset: space)
-        }
+            if #available(iOS 11.0, *), let _ = sview?.window, isSafe  {
+                return self.constraintWithItem(sview?.safeAreaLayoutGuide, attribute: .right, constant: 0 - space)
+            }
         #endif
-        return self.constraintWithItem(superview(), attribute: .right, constant: 0 - space)
+        return self.constraintWithItem(sview, attribute: .right, constant: 0 - space)
     }
     
     /// 设置右边距与指定视图
@@ -866,15 +870,17 @@ extension WHC_VIEW {
     /// 设置左边距(默认相对父视图)
     ///
     /// - Parameter space: 左边距
+    /// - Parameter isSafe: 是否采用安全边界
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Leading(_ space: CGFloat) -> Self {
+    public func whc_Leading(_ space: CGFloat, _ isSafe: Bool = false) -> Self {
+        let sview = superview()
         #if os(iOS)
-        if #available(iOS 11.0, *) {
-            return self.whc_LeadingEqual(self.superview()?.safeAreaLayoutGuide, offset: space)
-        }
+            if #available(iOS 11.0, *), let _ = sview?.window, isSafe  {
+                return self.constraintWithItem(sview?.safeAreaLayoutGuide, attribute: .leading, constant: space)
+            }
         #endif
-        return self.constraintWithItem(superview(), attribute: .leading, constant: space)
+        return self.constraintWithItem(sview, attribute: .leading, constant: space)
     }
     
     /// 设置左边距与指定视图
@@ -916,15 +922,17 @@ extension WHC_VIEW {
     /// 设置右间距(默认相对父视图)
     ///
     /// - Parameter space: 右边距
+    /// - Parameter isSafe: 是否采用安全边界
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Trailing(_ space: CGFloat) -> Self {
+    public func whc_Trailing(_ space: CGFloat, _ isSafe: Bool = false) -> Self {
+        let sview = superview()
         #if os(iOS)
-        if #available(iOS 11.0, *) {
-            return self.whc_TrailingEqual(self.superview()?.safeAreaLayoutGuide, offset: space)
-        }
+            if #available(iOS 11.0, *), let _ = sview?.window, isSafe  {
+                return self.constraintWithItem(sview?.safeAreaLayoutGuide, attribute: .trailing, constant: 0.0 - space)
+            }
         #endif
-        return self.constraintWithItem(superview(), attribute: .trailing, constant: 0.0 - space)
+        return self.constraintWithItem(sview, attribute: .trailing, constant: 0.0 - space)
     }
     
     /// 设置右间距与指定视图
@@ -966,15 +974,17 @@ extension WHC_VIEW {
     /// 设置顶边距(默认相对父视图)
     ///
     /// - Parameter space: 顶边距
+    /// - Parameter isSafe: 是否采用安全边界
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Top(_ space: CGFloat) -> Self {
+    public func whc_Top(_ space: CGFloat, _ isSafe: Bool = false) -> Self {
+        let sview = superview()
         #if os(iOS)
-        if #available(iOS 11.0, *) {
-            return self.whc_TopEqual(self.superview()?.safeAreaLayoutGuide, offset: space)
-        }
+            if #available(iOS 11.0, *), let _ = sview?.window , isSafe  {
+                return self.constraintWithItem(sview?.safeAreaLayoutGuide, attribute: .top, constant: space)
+            }
         #endif
-        return self.constraintWithItem(superview(), attribute: .top, constant: space)
+        return self.constraintWithItem(sview, attribute: .top, constant: space)
     }
     
     /// 设置顶边距与指定视图
@@ -1016,15 +1026,17 @@ extension WHC_VIEW {
     /// 设置底边距(默认相对父视图)
     ///
     /// - Parameter space: 底边距
+    /// - Parameter isSafe: 是否采用安全边界
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_Bottom(_ space: CGFloat) -> Self {
+    public func whc_Bottom(_ space: CGFloat, _ isSafe: Bool = false) -> Self {
+        let sview = superview()
         #if os(iOS)
-        if #available(iOS 11.0, *) {
-            return self.whc_BottomEqual(self.superview()?.safeAreaLayoutGuide, offset: space)
-        }
+            if #available(iOS 11.0, *), let _ = sview?.window, isSafe  {
+                return self.constraintWithItem(sview?.safeAreaLayoutGuide, attribute: .bottom, constant: 0 - space)
+            }
         #endif
-        return self.constraintWithItem(superview(), attribute: .bottom, constant: 0 - space)
+        return self.constraintWithItem(sview, attribute: .bottom, constant: 0 - space)
     }
     
     /// 设置底边距与指定视图
@@ -2657,7 +2669,7 @@ extension WHC_VIEW {
                     #if os(iOS) || os(tvOS)
                         if #available(iOS 11.0, tvOS 11.0, *) {
                             data.1 = !(owningview(view1)?.safeAreaLayoutGuide === guide(view2) ||
-                            owningview(view2)?.safeAreaLayoutGuide === guide(view1))
+                                owningview(view2)?.safeAreaLayoutGuide === guide(view1))
                         }else {
                             data.1 = true
                         }
