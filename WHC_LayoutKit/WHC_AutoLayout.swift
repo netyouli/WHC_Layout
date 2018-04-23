@@ -1438,10 +1438,11 @@ extension WHC_VIEW {
     ///   - top: 顶边距
     ///   - right: 右边距
     ///   - bottom: 底边距
+    ///   - isSafe: 是否使用安全边界
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_AutoSize(left: CGFloat, top: CGFloat, right: CGFloat, bottom: CGFloat) -> Self {
-        return self.whc_Left(left).whc_Top(top).whc_Right(right).whc_Bottom(bottom)
+    public func whc_AutoSize(left: CGFloat, top: CGFloat, right: CGFloat, bottom: CGFloat, _ isSafe: Bool = false) -> Self {
+        return self.whc_Left(left, isSafe).whc_Top(top, isSafe).whc_Right(right, isSafe).whc_Bottom(bottom, isSafe)
     }
     
     /// 设置frame与指定视图（宽高自动）
@@ -1465,10 +1466,11 @@ extension WHC_VIEW {
     ///   - top: 顶边距
     ///   - right: 右边距
     ///   - height: 高度
+    ///   - isSafe: 是否使用安全边界
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_AutoWidth(left: CGFloat, top: CGFloat, right: CGFloat, height: CGFloat) -> Self {
-        return self.whc_Left(left).whc_Top(top).whc_Right(right).whc_Height(height)
+    public func whc_AutoWidth(left: CGFloat, top: CGFloat, right: CGFloat, height: CGFloat, _ isSafe: Bool = false) -> Self {
+        return self.whc_Left(left, isSafe).whc_Top(top, isSafe).whc_Right(right, isSafe).whc_Height(height)
     }
     
     /// 设置frame与指定视图（宽度自动）
@@ -1492,10 +1494,11 @@ extension WHC_VIEW {
     ///   - top: 顶边距
     ///   - width: 宽度
     ///   - bottom: 底边距
+    ///   - isSafe: 是否使用安全边界
     /// - Returns: 返回当前视图
     @discardableResult
-    public func whc_AutoHeight(left: CGFloat, top: CGFloat, width: CGFloat, bottom: CGFloat) -> Self {
-        return self.whc_Left(left).whc_Top(top).whc_Width(width).whc_Bottom(bottom)
+    public func whc_AutoHeight(left: CGFloat, top: CGFloat, width: CGFloat, bottom: CGFloat, _ isSafe: Bool = false) -> Self {
+        return self.whc_Left(left, isSafe).whc_Top(top, isSafe).whc_Width(width).whc_Bottom(bottom, isSafe)
     }
     
     /// 设置frame与指定视图（自动高度）
