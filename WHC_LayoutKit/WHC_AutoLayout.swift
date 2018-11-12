@@ -127,11 +127,11 @@ extension WHC_CLASS_VIEW: WHC_VIEW {
         static let kBottomLine = kTopLine + 1
     }
     
-    private func createLineWithTag(_ lineTag: Int)  -> WHC_Line! {
+    private func createLineWithTag(_ lineTag: Int)  -> WHC_Line? {
         var line: WHC_Line!
         for view in self.subviews {
             if view is WHC_Line && view.tag == lineTag {
-                line = view as! WHC_Line
+                line = view as? WHC_Line
                 break
             }
         }
@@ -176,7 +176,7 @@ extension WHC_CLASS_VIEW: WHC_VIEW {
 extension WHC_VIEW {
     
     /// 当前添加的约束对象
-    private var currentConstraint: NSLayoutConstraint! {
+    private var currentConstraint: NSLayoutConstraint? {
         set {
             objc_setAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kCurrentConstraints, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
@@ -184,7 +184,7 @@ extension WHC_VIEW {
         get {
             let value = objc_getAssociatedObject(self, &WHC_LayoutAssociatedObjectKey.kCurrentConstraints)
             if value != nil {
-                return value as! NSLayoutConstraint
+                return value as? NSLayoutConstraint
             }
             return nil
         }

@@ -35,12 +35,12 @@
 
 
 #if os(iOS) || os(tvOS)
-    public typealias WHC_LayoutRelation = NSLayoutRelation
-    public typealias WHC_LayoutAttribute = NSLayoutAttribute
+    public typealias WHC_LayoutRelation = NSLayoutConstraint.Relation
+    public typealias WHC_LayoutAttribute = NSLayoutConstraint.Attribute
     public typealias WHC_CLASS_VIEW = UIView
     public typealias WHC_COLOR = UIColor
     public typealias WHC_LayoutPriority = UILayoutPriority
-    public typealias WHC_ConstraintAxis = UILayoutConstraintAxis
+    public typealias WHC_ConstraintAxis = NSLayoutConstraint.Axis
     
     @available(iOS 9.0, *)
     public typealias WHC_CLASS_LGUIDE = UILayoutGuide

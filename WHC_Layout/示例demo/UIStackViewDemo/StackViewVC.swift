@@ -101,7 +101,7 @@ class StackViewVC: UIViewController {
         stackView1.whc_Orientation = .all
         stackView1.whc_VSpace = 10
         stackView1.whc_HSpace = 10
-        stackView1.whc_Edge = UIEdgeInsetsMake(10, 10, 10, 10)
+        stackView1.whc_Edge = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         let titleArray = [["吴海超", "WHC", "Github", "iOS"],
                       ["开发者", "whc", "netyouli", "android"],
                       ["Star", "菜鸟你好", "谢谢", "体验"],
@@ -127,7 +127,7 @@ class StackViewVC: UIViewController {
         stackView2.whc_Orientation = .all
         stackView2.whc_HSpace = 20
         stackView2.whc_VSpace = 10
-        stackView2.whc_Edge = UIEdgeInsetsMake(10, 10, 10, 10)
+        stackView2.whc_Edge = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         let titleArray = [["  吴海超  ", "  WHC  ", "  Github  ", "  iOS  "],
                           ["  开发者  ", "  whc  ", "  netyouli  ", "  android  "],
                           ["  Star  ", "  菜鸟你好  ", "  谢谢  ", "  体验  "],
@@ -141,8 +141,8 @@ class StackViewVC: UIViewController {
                 button.layer.cornerRadius = 5
                 button.layer.borderWidth = 1
                 button.layer.borderColor = UIColor.orange.cgColor
-                button.setTitle(title, for: UIControlState())
-                button.setTitleColor(UIColor.black, for: UIControlState())
+                button.setTitle(title, for: UIControl.State())
+                button.setTitleColor(UIColor.black, for: UIControl.State())
             }
         }
         stackView2.whc_StartLayout()
@@ -153,7 +153,7 @@ class StackViewVC: UIViewController {
         stackView3.whc_Orientation = .horizontal
         stackView3.whc_HSpace = 20
         stackView3.whc_VSpace = 10
-        stackView3.whc_Edge = UIEdgeInsetsMake(10, 10, 10, 10)
+        stackView3.whc_Edge = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         let titles = ["吴海超", "WHC", "Github", "iOS"]
             for title in titles {
                 let label = UILabel()
@@ -172,7 +172,7 @@ class StackViewVC: UIViewController {
     fileprivate func makeStyle4ContentView() {
         stackView4.whc_Orientation = .vertical
         stackView4.whc_VSpace = 10
-        stackView4.whc_Edge = UIEdgeInsetsMake(10, 10, 10, 10)
+        stackView4.whc_Edge = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         let titles = ["Github", "iOS"]
         for title in titles {
             let label = UILabel()

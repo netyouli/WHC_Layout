@@ -21,7 +21,7 @@ class MyCell: UITableViewCell , UITableViewDataSource, UITableViewDelegate {
     fileprivate let tableView = UITableView()
     fileprivate var other: UILabel!
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         tableView.delegate = self
         tableView.dataSource = self

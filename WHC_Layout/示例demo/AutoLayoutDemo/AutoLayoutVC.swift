@@ -73,7 +73,7 @@ class AutoLayoutVC: UIViewController {
         
         button.backgroundColor = UIColor.red
         
-        button.setTitle("开始动画", for: UIControlState())
+        button.setTitle("开始动画", for: UIControl.State())
         button.addTarget(self, action: #selector(self.clickStartAnimation(_:)), for: .touchUpInside)
     }
 
