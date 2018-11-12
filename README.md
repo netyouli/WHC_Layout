@@ -34,7 +34,7 @@ Require
 ==============
 * iOS 8.0+ / Mac OS X 10.11+ / tvOS 9.0+
 * Xcode 8.0 or later
-* Swift 4.0
+* Swift 4.2.1
 
 - If you want to use swift3.2, please pod WHC_Layout '~> 1.0.9'
 
