@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "WHC_Layout"
-  s.version      = "1.1.5.6"
+  s.version      = "1.1.6.1"
   s.summary      = "Swift5.+ Service to update constraints, convenient and quick dynamic UI layout，服务于更新约束方便快捷动态UI构建的自动布局库，支持Cell高度自动，view高宽自动"
 
   s.homepage     = "https://github.com/netyouli/WHC_Layout"
