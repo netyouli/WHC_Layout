@@ -1,3 +1,4 @@
+
 # WHC_Layout (Swift)
 <div align=center><img src="https://github.com/netyouli/WHC_AutoLayoutKit/blob/master/Gif/WHC_AutoLayoutLogo.png" width = "319.5" height = "129"/></div></br>
 
@@ -34,14 +35,14 @@ Require
 ==============
 * iOS 8.0+ / Mac OS X 10.11+ / tvOS 9.0+
 * Xcode 8.0 or later
-* Swift 4.2.1
+* Swift 5.1
 
 - If you want to use swift3.2, please pod WHC_Layout '~> 1.0.9'
 
 Note
 ==============
 - When the view call **removeFromSuperview()**  the view must call **whc_ResetConstraints()** to clear the cache constraint
-- Swift4 + has abandoned the **initialize** class method, and if you need to use the automatic computing UITableViewCell height, you can call **UITableview.whc_initconfig ()** in the AppDelegate initialization method.
+- Swift5 + has abandoned the **initialize** class method, and if you need to use the automatic computing UITableViewCell height, you can call **UITableview.whc_initconfig ()** in the AppDelegate initialization method.
 
 Install
 ==============
@@ -51,7 +52,7 @@ Usage
 ==============
 
 ## UILayoutGuide，safeAreaLayoutGuide
-```Swift4
+```Swift
 let guide = UILayoutGuide()
 let view = UIView()
 
