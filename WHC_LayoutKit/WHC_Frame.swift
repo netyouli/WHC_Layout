@@ -32,7 +32,7 @@
     import AppKit
 #endif
 
-public extension WHC_CLASS_VIEW {
+extension WHC_CLASS_VIEW {
     #if os(iOS) || os(tvOS)
     public var whc_sw: CGFloat {
         return UIScreen.main.bounds.width

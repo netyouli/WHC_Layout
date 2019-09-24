@@ -257,7 +257,7 @@ extension UITableView {
     }
 }
 
-public extension UITableViewCell {
+extension UITableViewCell {
     /// cell上最底部的视图
     public var whc_CellBottomView: UIView? {
         set {

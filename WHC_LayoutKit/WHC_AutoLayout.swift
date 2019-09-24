@@ -1588,6 +1588,8 @@ extension WHC_VIEW {
             setLeftGreaterConstraint(constraint)
         case .lessThanOrEqual:
             setLeftLessConstraint(constraint)
+        @unknown default:
+            break
         }
     }
     
@@ -1599,6 +1601,8 @@ extension WHC_VIEW {
             return leftGreaterConstraint()
         case .lessThanOrEqual:
             return leftLessConstraint()
+        @unknown default:
+            return nil
         }
     }
     
@@ -1634,6 +1638,8 @@ extension WHC_VIEW {
             setRightGreaterConstraint(constraint)
         case .lessThanOrEqual:
             setRightLessConstraint(constraint)
+        @unknown default:
+            break
         }
     }
     
@@ -1645,6 +1651,8 @@ extension WHC_VIEW {
             return rightGreaterConstraint()
         case .lessThanOrEqual:
             return rightLessConstraint()
+        @unknown default:
+            return nil
         }
     }
     
@@ -1680,6 +1688,8 @@ extension WHC_VIEW {
             setTopGreaterConstraint(constraint)
         case .lessThanOrEqual:
             setTopLessConstraint(constraint)
+        @unknown default:
+            break
         }
     }
     
@@ -1691,6 +1701,8 @@ extension WHC_VIEW {
             return topGreaterConstraint()
         case .lessThanOrEqual:
             return topLessConstraint()
+        @unknown default:
+            return nil
         }
     }
     
@@ -1726,6 +1738,8 @@ extension WHC_VIEW {
             setBottomGreaterConstraint(constraint)
         case .lessThanOrEqual:
             setBottomLessConstraint(constraint)
+        @unknown default:
+            break
         }
     }
     
@@ -1737,6 +1751,8 @@ extension WHC_VIEW {
             return bottomGreaterConstraint()
         case .lessThanOrEqual:
             return bottomLessConstraint()
+        @unknown default:
+            return nil
         }
     }
     
@@ -1772,6 +1788,8 @@ extension WHC_VIEW {
             setLeadingGreaterConstraint(constraint)
         case .lessThanOrEqual:
             setLeadingLessConstraint(constraint)
+        @unknown default:
+            break
         }
     }
     
@@ -1783,6 +1801,8 @@ extension WHC_VIEW {
             return leadingGreaterConstraint()
         case .lessThanOrEqual:
             return leadingLessConstraint()
+        @unknown default:
+            return nil
         }
     }
     
@@ -1818,6 +1838,8 @@ extension WHC_VIEW {
             setTrailingGreaterConstraint(constraint)
         case .lessThanOrEqual:
             setTrailingLessConstraint(constraint)
+        @unknown default:
+            break
         }
     }
     
@@ -1829,6 +1851,8 @@ extension WHC_VIEW {
             return trailingGreaterConstraint()
         case .lessThanOrEqual:
             return trailingLessConstraint()
+        @unknown default:
+            return nil
         }
     }
     
@@ -1864,6 +1888,8 @@ extension WHC_VIEW {
             setWidthGreaterConstraint(constraint)
         case .lessThanOrEqual:
             setWidthLessConstraint(constraint)
+        @unknown default:
+            break
         }
     }
     
@@ -1875,6 +1901,8 @@ extension WHC_VIEW {
             return widthGreaterConstraint()
         case .lessThanOrEqual:
             return widthLessConstraint()
+        @unknown default:
+            return nil
         }
         
     }
@@ -1911,6 +1939,8 @@ extension WHC_VIEW {
             setHeightGreaterConstraint(constraint)
         case .lessThanOrEqual:
             setHeightLessConstraint(constraint)
+        @unknown default:
+            break
         }
     }
     
@@ -1922,6 +1952,8 @@ extension WHC_VIEW {
             return heightGreaterConstraint()
         case .lessThanOrEqual:
             return heightLessConstraint()
+        @unknown default:
+            return nil
         }
     }
     
@@ -1957,6 +1989,8 @@ extension WHC_VIEW {
             setCenterXGreaterConstraint(constraint)
         case .lessThanOrEqual:
             setCenterXLessConstraint(constraint)
+        @unknown default:
+            break
         }
     }
     
@@ -1968,6 +2002,8 @@ extension WHC_VIEW {
             return centerXGreaterConstraint()
         case .lessThanOrEqual:
             return centerXLessConstraint()
+        @unknown default:
+            return nil
         }
     }
     
@@ -2003,6 +2039,8 @@ extension WHC_VIEW {
             setCenterYGreaterConstraint(constraint)
         case .lessThanOrEqual:
             setCenterYLessConstraint(constraint)
+        @unknown default:
+            break
         }
     }
     
@@ -2014,6 +2052,8 @@ extension WHC_VIEW {
             return centerYGreaterConstraint()
         case .lessThanOrEqual:
             return centerYLessConstraint()
+        @unknown default:
+            return nil
         }
     }
     
@@ -2049,6 +2089,8 @@ extension WHC_VIEW {
             setLastBaselineGreaterConstraint(constraint)
         case .lessThanOrEqual:
             setLastBaselineLessConstraint(constraint)
+        @unknown default:
+            break
         }
     }
     
@@ -2060,6 +2102,8 @@ extension WHC_VIEW {
             return lastBaselineGreaterConstraint()
         case .lessThanOrEqual:
             return lastBaselineLessConstraint()
+        @unknown default:
+            return nil
         }
     }
     
@@ -2095,6 +2139,8 @@ extension WHC_VIEW {
             setFirstBaselineGreaterConstraint(constraint)
         case .lessThanOrEqual:
             setFirstBaselineLessConstraint(constraint)
+        @unknown default:
+            break
         }
     }
     
@@ -2106,6 +2152,8 @@ extension WHC_VIEW {
             return firstBaselineGreaterConstraint()
         case .lessThanOrEqual:
             return firstBaselineLessConstraint()
+        @unknown default:
+            return nil
         }
     }
     

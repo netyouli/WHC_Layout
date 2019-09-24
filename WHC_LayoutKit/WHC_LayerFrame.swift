@@ -32,7 +32,7 @@
     import AppKit
 #endif
 
-public extension CALayer {
+extension CALayer {
     #if os(iOS) || os(tvOS)
     public var whc_sw: CGFloat {
         return UIScreen.main.bounds.width

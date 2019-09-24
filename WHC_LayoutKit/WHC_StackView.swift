@@ -538,23 +538,28 @@ public class WHC_StackView: WHC_CLASS_VIEW {
                 }
                 frontRowView = rowView;
             }
-            if whc_AutoWidth {
-                let subCount = self.subviews.count
+            
+            if whc_AutoWidth && whc_Orientation != .horizontal {
+                let tempSubviews = self.whc_SubViews
+                let subCount = tempSubviews.count
                 if subCount == 0 {return}
                 #if os(iOS) || os(tvOS)
-                    self.layoutIfNeeded()
+                self.layoutIfNeeded()
                 #else
-                    self.makeBackingLayer().layoutIfNeeded()
+                self.makeBackingLayer().layoutIfNeeded()
                 #endif
                 var rowLastColumnViewMaxX: CGFloat = 0
                 var rowLastColumnViewMaxXView: WHC_CLASS_VIEW!
                 for r in 0 ..< subCount {
                     let index = r
-                    let maxWidthView = subviews[index]
+                    let maxWidthView = tempSubviews[index]
+                    if r == subCount - 1 {
+                        maxWidthView.whc_RemoveAttrs(.right)
+                    }
                     #if os(iOS) || os(tvOS)
-                        maxWidthView.layoutIfNeeded()
+                    maxWidthView.layoutIfNeeded()
                     #else
-                        maxWidthView.makeBackingLayer().layoutIfNeeded()
+                    maxWidthView.makeBackingLayer().layoutIfNeeded()
                     #endif
                     if maxWidthView.whc_maxX > rowLastColumnViewMaxX {
                         rowLastColumnViewMaxX = maxWidthView.whc_maxX
@@ -564,30 +569,34 @@ public class WHC_StackView: WHC_CLASS_VIEW {
                 rowLastColumnViewMaxXView.whc_Right(whc_Edge.right)
             }
             
-            if whc_AutoHeight {
-                let subCount = self.subviews.count
+            if whc_AutoHeight && whc_Orientation != .vertical {
+                let tempSubviews = self.whc_SubViews
+                let subCount = tempSubviews.count
                 if subCount == 0 {return}
                 #if os(iOS) || os(tvOS)
-                    self.layoutIfNeeded()
+                self.layoutIfNeeded()
                 #else
-                    self.makeBackingLayer().layoutIfNeeded()
+                self.makeBackingLayer().layoutIfNeeded()
                 #endif
                 var columnLastRowViewMaxY: CGFloat = 0
                 var columnLastRowViewMaxYView: WHC_CLASS_VIEW!
                 for r in 0 ..< subCount {
                     let index = r
-                    let maxHeightView = subviews[index]
+                    let maxHeightView = tempSubviews[index]
+                    if r == subCount - 1 {
+                        maxHeightView.whc_RemoveAttrs(.bottom)
+                    }
                     #if os(iOS) || os(tvOS)
-                        maxHeightView.layoutIfNeeded()
+                    maxHeightView.layoutIfNeeded()
                     #else
-                        maxHeightView.makeBackingLayer().layoutIfNeeded()
+                    maxHeightView.makeBackingLayer().layoutIfNeeded()
                     #endif
                     if maxHeightView.whc_maxY > columnLastRowViewMaxY {
                         columnLastRowViewMaxY = maxHeightView.whc_maxY
                         columnLastRowViewMaxYView = maxHeightView
                     }
                 }
-                columnLastRowViewMaxYView.whc_Bottom(whc_Edge.bottom)
+                columnLastRowViewMaxYView?.whc_Bottom(whc_Edge.bottom)
             }
         }
     }
