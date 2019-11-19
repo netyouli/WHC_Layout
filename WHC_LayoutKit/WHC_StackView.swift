@@ -131,6 +131,10 @@ public class WHC_StackView: WHC_CLASS_VIEW {
     public lazy var whc_SegmentLinePadding: CGFloat = 0
     /// 设置分割线的颜色
     public lazy var whc_SegmentLineColor = WHC_COLOR(white: 0.9, alpha: 1.0)
+    /// 隐藏行分割线
+    public lazy var whc_HideRowSegmentLine = false
+    /// 隐藏列分割线
+    public lazy var whc_HideColumnSegmentLine = false
     /// 子视图集合
     public var whc_SubViews: [WHC_CLASS_VIEW] {
         var subViews = [WHC_CLASS_VIEW]()
@@ -429,7 +433,7 @@ public class WHC_StackView: WHC_CLASS_VIEW {
                     nextRowView = currentSubViews[nextRow]
                 }
                 var rowLineView: WHC_StackViewLineView!
-                if whc_SegmentLineSize > 0.0 && row > 0 {
+                if whc_SegmentLineSize > 0.0 && row > 0 && !whc_HideRowSegmentLine {
                     rowLineView = makeLine()
                     self.addSubview(rowLineView)
                     rowLineView.whc_Left(whc_SegmentLinePadding)
@@ -441,7 +445,7 @@ public class WHC_StackView: WHC_CLASS_VIEW {
                     index = row * self.whc_Column + column
                     let view  = currentSubViews[index]
                     var nextColumnView: WHC_CLASS_VIEW!
-                    if column > 0 && whc_SegmentLineSize > 0.0 {
+                    if column > 0 && whc_SegmentLineSize > 0.0 && !whc_HideColumnSegmentLine {
                         columnLineView = makeLine()
                         self.addSubview(columnLineView)
                         columnLineView.whc_Left(whc_HSpace / 2.0 ,toView:frontColumnView)
